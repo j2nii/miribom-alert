@@ -1,0 +1,96 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.env
+.venv
+venv/
+ENV/
+env/
+
+# Testing
+.tox/
+.coverage
+.coverage.*
+.pytest_cache/
+htmlcov/
+.cache
+
+# Type checkers
+.mypy_cache/
+.pyre/
+.pytype/
+
+# React (Create React App)
+.eslintcache
+.parcel-cache/
+
+# Next.js
+.next/
+out/
+.vercel
+next-env.d.ts
+
+# Turbo
+.turbo/
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+*.stackdump
+
+# Data (raw/interim/processed/prod은 용량·민감정보 이슈로 미커밋 — 경로는 .gitkeep으로 유지)
+# data/schema, data/mock은 계약(contract)이므로 계속 추적함
+data/raw/**
+!data/raw/**/
+!data/raw/**/.gitkeep
+
+data/interim/**
+!data/interim/**/
+!data/interim/**/.gitkeep
+
+data/processed/**
+!data/processed/**/
+!data/processed/**/.gitkeep
+
+data/prod/**
+!data/prod/**/
+!data/prod/**/.gitkeep
