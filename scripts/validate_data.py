@@ -29,6 +29,7 @@ FILES = [
     "precedent",
     "before_after",
     "timeline",
+    "briefing",
 ]
 
 
@@ -69,7 +70,24 @@ def check_signal_status(payload: dict) -> list[str]:
     return errors
 
 
-SEMANTIC_CHECKS = {"signal_status": check_signal_status}
+def check_briefing(payload: dict) -> list[str]:
+    """D-04: 문단 순서 고정, 글자 수 일치, 권고 조치는 원문·쪽수 그대로 3문단에."""
+    d = payload["data"]
+    errors = []
+    headings = [p["heading"] for p in d["paragraphs"]]
+    if headings != ["현재 상황", "예상 전개", "권고 조치"]:
+        errors.append(f"문단 순서는 현재 상황 → 예상 전개 → 권고 조치 (현재 {headings})")
+    total = sum(len(p["text"]) for p in d["paragraphs"])
+    if total != d["char_count"]:
+        errors.append(f"char_count={d['char_count']}인데 실제 {total}자")
+    last = d["paragraphs"][-1]["text"]
+    for a in d["actions"]:
+        if a["action"] not in last or f"p.{a['page']}" not in last:
+            errors.append(f"{a['checklist_id']}의 원문 또는 쪽수가 권고 조치 문단에 없다")
+    return errors
+
+
+SEMANTIC_CHECKS = {"signal_status": check_signal_status, "briefing": check_briefing}
 
 
 def validate_payload(name: str, payload: dict) -> list[str]:

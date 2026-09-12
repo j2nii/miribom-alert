@@ -31,6 +31,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 sys.path.insert(0, str(ROOT / "agents"))
 
+from common import load_input, load_prompt, merge_sources  # noqa: E402
 from llm_client import LLMError, complete_json  # noqa: E402
 from validate_data import validate_payload  # noqa: E402
 
@@ -57,22 +58,6 @@ RELEVANCE_ORDER = {r: i for i, r in enumerate(RELEVANCE)}
 
 
 # ── 입력 ────────────────────────────────────────────────────────────────
-
-def load_input(name: str) -> tuple[dict, bool]:
-    for folder in ("prod", "mock"):
-        path = ROOT / "data" / folder / f"{name}.json"
-        if path.exists():
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            return payload, bool(payload.get("_mock", False))
-    raise FileNotFoundError(f"{name}.json이 data/prod에도 data/mock에도 없다")
-
-
-def load_prompt() -> tuple[str, str]:
-    text = PROMPT_PATH.read_text(encoding="utf-8")
-    version = re.search(r"^version:\s*(\S+)", text, re.M).group(1)
-    system = text.split("# 시스템 프롬프트", 1)[1].split("\n---\n", 1)[0].strip()
-    return system, f"agent3_manual_match_{version}"
-
 
 def normalize_poi(name: str) -> str:
     return re.sub(r"\s+", "", name)
@@ -237,11 +222,7 @@ def build_payload(candidates, excluded, verdict, situation, inputs, model_info) 
         caveat.append("콘텐츠 반복 언급 지점과 급증 지점 명칭이 거의 일치하지 않는다. POI 명칭 정규화 전이다.")
 
     top_type = max(content["data"]["summary"], key=lambda r: r["count"])["content_type"]
-    sources = [MANUAL_SRC]
-    for name in ("signal_status", "content_type"):
-        for src in inputs[name][0]["source"]:
-            if src["name"] not in {s["name"] for s in sources}:
-                sources.append(src)
+    sources = merge_sources([MANUAL_SRC], signal["source"], content["source"])
 
     return {
         "_mock": bool(mock_inputs),
@@ -290,7 +271,7 @@ def main() -> None:
     print(f"상황: {situation['alert_level']} / 혼잡도 {situation['congestion_level']} / {spatial}")
     print(f"후보 {len(candidates)}건 (발동 {active} · 대기 {len(candidates) - active}) / 제외 {excluded}건")
 
-    system, prompt_version = load_prompt()
+    system, prompt_version = load_prompt(PROMPT_PATH)
     user = json.dumps({"situation": situation, "candidates": [candidate_view(r, s) for r, s in candidates]},
                       ensure_ascii=False, indent=1)
     schema = output_schema(ids)
