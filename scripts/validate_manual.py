@@ -13,7 +13,8 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent.parent
 
-시점 = {"오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"}
+시점 = {"사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"}  # 사전: D-07
+상황유형 = {"유입 급증형", "병목 정체형", "안전 위험형", "민원 급증형"}  # 매뉴얼 p.39, 선택 필드
 단계 = {"관심", "주의", "경계", "심각"}
 혼잡도단계 = {1, 2, 3, 4, 5}
 공간유형 = {
@@ -52,9 +53,16 @@ def check(item: dict, index: int) -> list[str]:
         if value not in 혼잡도단계:
             errors.append(f"{label}: 혼잡도단계 '{value}'은 1~5 범위 밖")
 
+    if item.get("혼잡도단계") == []:
+        errors.append(f"{label}: 혼잡도단계가 비어 있음 — 상관없으면 [1,2,3,4,5]")
+
     for value in item.get("공간유형", []):
         if value not in 공간유형:
             errors.append(f"{label}: 공간유형 '{value}'은 허용 목록에 없음")
+
+    for value in item.get("상황유형", []):
+        if value not in 상황유형:
+            errors.append(f"{label}: 상황유형 '{value}'은 허용 목록에 없음")
 
     if item.get("우선순위") not in 우선순위:
         errors.append(f"{label}: 우선순위 '{item.get('우선순위')}'은 허용 목록에 없음")
