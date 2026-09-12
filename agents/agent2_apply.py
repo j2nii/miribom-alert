@@ -21,9 +21,22 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "data" / "raw" / "youtube"
 OUT = ROOT / "data" / "prod" / "content_type.json"
 
-PROMPT_VERSION = "agent2_content_type_v1.0"
+PROMPT_VERSION = "agent2_content_type_v1.1"
 MODEL = "claude-opus-5"
 CONFIDENCE_FLOOR = 0.6
+
+# 수요 쏠림/이탈 신호 (설계결정 D-02).
+# 관광무관으로 분류된 영상도 신호는 가질 수 있다 — 집계에서 빠지는 것과
+# 신호를 버리는 것은 다르다. 데드존이 지목한 지점은 분산 정책의 목적지 후보다.
+ZONE_SIGNALS = {
+    "RPIcHaAlQJM": "핫존",   # 원이가 떡상시킨 거제 포차 레전드 근황
+    "AieL-kFdglY": "핫존",   # 올 여름 최고 떡상 관광지, 거제 덕포
+    "pOlOp2SXdTE": "핫존",   # 거제 바가지, 확답 듣고 왔습니다
+    "tkqICH01Zjw": "핫존",   # 발길이 끊이지 않는 거제 맛집 (KBS)
+    "S-oHqdG_qj4": "핫존",   # 거제시 물가대책·바가지 신고센터 운영
+    "NzrnKlFVKu0": "데드존",  # 해금강 마을, 호텔도 횟집도 파리만 날린다
+    "JHoYYHEk5D8": "데드존",  # 거가대교가 바꾼 거제도의 몰락
+}
 
 # video_id: (유형, 신뢰도, 근거, 언급 지점, 감성)
 RESULTS = {
@@ -50,7 +63,7 @@ RESULTS = {
     "2xfEsHprjHE": ("관광무관", 0.80, "부산 영도 여행 콘텐츠로 거제와 무관하며 검색어 일치로 수집됨", [], "중립"),
     "Z6PcJkDiBec": ("자연경관형", 0.70, "수국 군락지 소개로 자연 경관 자체가 방문 목적", [], "긍정"),
     "2H6lk2dAKp8": ("예능·방송 노출형", 0.80, "'리센느 추천 갈비탕집'으로 점포 선택 근거가 인물 추천", [], "긍정"),
-    "44HJcCNCYcw": ("맛집형", 0.48, "숙소·맛집·카페·관광지를 모두 다루는 종합 안내여서 단일 유형으로 특정되지 않음", [], "긍정"),
+    "44HJcCNCYcw": ("코스·일정형", 0.72, "'거제 숙소부터 맛집, 카페, 둘러볼 곳까지 딱 정리'로 지역 전반의 방문 계획 수립이 목적", [], "긍정"),
     "RDzPGWOnaOA": ("예능·방송 노출형", 0.84, "'리센느가 끌어올린 요즘 대세 거제도'로 인물 열풍을 방문 배경으로 명시", ["칠천도"], "긍정"),
     "S-oHqdG_qj4": ("축제·이벤트형", 0.62, "해수욕장 16개소 개장과 운영기간(7.4~8.23)이 명시된 지자체 안내", ["거제시 해수욕장"], "긍정"),
     "pOlOp2SXdTE": ("예능·방송 노출형", 0.66, "'거제 바가지 확답 듣고 왔습니다' — 인물 열풍에 따른 물가 우려를 취재한 후속 보도", [], "부정"),
@@ -66,9 +79,9 @@ RESULTS = {
     "77sn4xtuI8Q": ("관광무관", 0.85, "김해 진영·장유 맛집 콘텐츠로 거제와 무관", [], "중립"),
     "9VPOIBsLEsU": ("맛집형", 0.86, "산오징어회·오징어통찜 등 메뉴와 가격(15만원)을 구체적으로 소개", ["소노캄 거제 인근"], "긍정"),
     "aUO8cgJGpTk": ("예능·방송 노출형", 0.85, "'리센느 원이의 추천은 계속된다'로 인물 추천 코스를 이어가는 시리즈 2편", ["망치몽돌해수욕장", "지세포진성", "흥남철수기념공원", "매미성"], "긍정"),
-    "oYy3GzigOxo": ("포토스팟형", 0.48, "관광지 50곳을 아우르는 코스 안내로 단일 유형으로 특정되지 않음", ["신선대"], "긍정"),
+    "oYy3GzigOxo": ("코스·일정형", 0.88, "'현지인이 완벽하게 짜준 1박 2일 거제여행 코스'로 일정 단위가 제목에 명시되고 이동 순서로 구성됨", ["신선대"], "긍정"),
     "Q6uAbGVC6tI": ("관광무관", 0.84, "하동·사천 패키지 여행 콘텐츠로 거제와 무관", [], "중립"),
-    "nXo6TemgLPU": ("체험·액티비티형", 0.60, "요트·케이블카가 포함된 패키지 상품 이용기", [], "긍정"),
+    "nXo6TemgLPU": ("코스·일정형", 0.74, "'1박3식 패키지'로 숙박·식사·요트·케이블카가 정해진 일정으로 묶여 제시됨", [], "긍정"),
     "-PGvCaBvamo": ("예능·방송 노출형", 0.83, "태그에 '순대리아, 거제현지인맛집'과 인물명이 함께 있고 인물 추천이 방문 근거", ["순대리아"], "긍정"),
     "bzDv0XfRMVU": ("자연경관형", 0.72, "지세포진성 꽃동산·칠천도·씨릉섬 출렁다리 등 경관 자원을 지자체가 소개", ["지세포진성 꽃동산", "칠천도", "씨릉섬 출렁다리"], "긍정"),
     "Ko1D9hdjgmM": ("관광무관", 0.85, "통영 숙소 소개 콘텐츠로 거제와 무관", [], "중립"),
@@ -100,7 +113,7 @@ def main() -> None:
             print(f"  [건너뜀] 분류 결과 없음: {video['video_id']} {video['title'][:30]}")
             continue
         content_type, confidence, evidence, pois, sentiment = verdict
-        items.append({
+        item = {
             "video_id": video["video_id"],
             "title": video["title"],
             "channel": video["channel"],
@@ -113,7 +126,10 @@ def main() -> None:
             "evidence": evidence,
             "poi_mentioned": pois,
             "sentiment": sentiment,
-        })
+        }
+        if video["video_id"] in ZONE_SIGNALS:
+            item["zone_signal"] = ZONE_SIGNALS[video["video_id"]]
+        items.append(item)
 
     counted = [i for i in items if i["confidence"] >= CONFIDENCE_FLOOR and i["content_type"] != "관광무관"]
     by_type: dict[str, list] = {}
@@ -150,7 +166,7 @@ def main() -> None:
             "검색 결과 상위 영상만 수집해 소규모 채널 콘텐츠가 과소 대표된다.",
             "조회수는 수집 시점 기준이며 이후 계속 변동한다.",
             "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
-            "숙소·맛집·관광지를 함께 다루는 종합 코스 안내는 현재 8개 유형 중 하나로 특정하기 어려워 신뢰도를 낮게 부여했다. 유형 체계 보완이 필요한 지점이다.",
+            "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
             "분류는 제목·설명·태그 텍스트만으로 수행했으며 영상 내용을 시청해 검증하지 않았다.",
         ],
         "data": {
@@ -159,6 +175,13 @@ def main() -> None:
             "items": items,
             "summary": summary,
             "unclassified_count": len(items) - len(counted),
+            "zone_signals": {
+                "핫존": sum(1 for i in items if i.get("zone_signal") == "핫존"),
+                "데드존": sum(1 for i in items if i.get("zone_signal") == "데드존"),
+                "데드존_지점": sorted({
+                    poi for i in items if i.get("zone_signal") == "데드존" for poi in i["poi_mentioned"]
+                }),
+            },
         },
     }
 
@@ -175,6 +198,11 @@ def main() -> None:
     print("\n언급 지점 상위 (수요 집중 지표):")
     for poi, count in poi_counts.most_common(8):
         print(f"  {poi:<22} {count}회")
+
+    zones = payload["data"]["zone_signals"]
+    print(f"\n쏠림/이탈 신호: 핫존 {zones['핫존']}건 · 데드존 {zones['데드존']}건")
+    if zones["데드존_지점"]:
+        print(f"  데드존 지목 지점(분산 후보): {', '.join(zones['데드존_지점'])}")
 
 
 if __name__ == "__main__":

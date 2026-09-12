@@ -46,7 +46,12 @@
                 "description": "영상에서 언급된 지점. hotspots와 조인하는 키.",
                 "items": { "type": "string" }
               },
-              "sentiment": { "type": "string", "enum": ["긍정", "중립", "부정"] }
+              "sentiment": { "type": "string", "enum": ["긍정", "중립", "부정"] },
+              "zone_signal": {
+                "type": "string",
+                "enum": ["핫존", "데드존"],
+                "description": "수요 쏠림/이탈 신호. 해당 없으면 필드를 넣지 않는다. '관광무관'으로 분류된 항목도 이 값은 가질 수 있다 — 집계에서 빠지는 것과 신호를 버리는 것은 다르다. 데드존은 문제가 아니라 분산 정책의 목적지 후보다. 설계 근거는 docs/설계결정.md D-02 참조."
+              }
             }
           }
         },
@@ -67,7 +72,21 @@
         "unclassified_count": {
           "type": "integer",
           "minimum": 0,
-          "description": "신뢰도 미달로 분류하지 않은 건수. 숨기지 않고 표시한다."
+          "description": "신뢰도 미달 또는 관광무관으로 집계에서 제외한 건수. 숨기지 않고 표시한다."
+        },
+        "zone_signals": {
+          "type": "object",
+          "description": "핫존/데드존 신호 집계. 데드존 항목은 AREA 1에서 분산 후보지로, AREA 3에서 분산 유도 조치의 근거로 쓰인다.",
+          "properties": {
+            "핫존": { "type": "integer", "minimum": 0 },
+            "데드존": { "type": "integer", "minimum": 0 },
+            "데드존_지점": {
+              "type": "array",
+              "description": "데드존 신호가 지목한 지점명",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
         }
       }
     }

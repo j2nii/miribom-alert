@@ -27,9 +27,14 @@
           "minItems": 1,
           "items": {
             "type": "object",
-            "required": ["id", "phase", "action", "manual_ref"],
+            "required": ["id", "rank", "phase", "action", "manual_ref"],
             "properties": {
               "id": { "type": "string", "pattern": "^CL-\\d{3}$" },
+              "rank": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "표시 우선순위. 정렬 기준은 ①우선순위(최우선>높음>보통) ②시점(오전→운영중→비상→마감) ③콘텐츠 유형 일치 ④id. 매칭된 항목은 자르지 않고 전부 담으며, 화면 표시 개수는 프론트가 정한다(권장: 시점별 상위 5건 + 더보기). 설계 근거는 docs/설계결정.md D-03 참조."
+              },
               "phase": {
                 "type": "string",
                 "enum": ["오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"],

@@ -26,6 +26,13 @@ API = "https://www.googleapis.com/youtube/v3"
 
 COST = {"search": 100, "videos": 1, "commentThreads": 1}
 
+# 고정 검색어 템플릿 (설계결정 D-06)
+# 시계열 비교를 하려면 수집 조건이 같아야 한다. 검색어가 바뀌면 건수 변화가
+# 수요 변화인지 검색어 변화인지 구분할 수 없다.
+# 지역명 단독 검색은 쓰지 않는다 — 인물명·상품명과 겹쳐 관광 콘텐츠가 밀려난다
+# (2026-09-12 '거제' 실측에서 상위가 인물 예능으로 채워짐).
+DEFAULT_QUERIES = ["{지역} 여행", "{지역} 가볼만한곳", "{지역} 맛집"]
+
 
 class Quota:
     def __init__(self) -> None:
@@ -117,7 +124,7 @@ def simplify(video: dict) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--region", default="거제", help="대상 지역명")
-    parser.add_argument("--queries", nargs="*", help="검색어 목록 (기본: 지역명 단독 + 여행/맛집)")
+    parser.add_argument("--queries", nargs="*", help="검색어 목록. 기본값은 고정 템플릿 3종(설계결정 D-06)")
     parser.add_argument("--days", type=int, default=90, help="최근 N일 업로드분만")
     parser.add_argument("--limit", type=int, default=25, help="검색어당 수집 영상 수 (최대 50)")
     parser.add_argument("--comments", action="store_true", help="영상별 상위 댓글도 수집 (영상당 1 unit)")
@@ -126,7 +133,7 @@ def main() -> None:
 
     key = get_key()
     quota = Quota()
-    queries = args.queries or [args.region, f"{args.region} 여행", f"{args.region} 맛집"]
+    queries = args.queries or [q.format(지역=args.region) for q in DEFAULT_QUERIES]
 
     print(f"대상: {args.region} / 검색어 {len(queries)}개 / 최근 {args.days}일\n")
 

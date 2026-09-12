@@ -54,6 +54,19 @@
             "total": { "type": "integer", "const": 3 }
           }
         },
+        "escalation": {
+          "type": "object",
+          "description": "다음 단계로 올라가는 조건과 충족 여부. 단계마다 조치 비용이 다르므로 요구 확신도를 차등한다 — 관심→주의 1/3, 주의→경계 2/3, 경계→심각 3/3 또는 혼잡도 5단계 실측. 하향은 2회 연속 조건 미달 시에만(깜빡임 방지). 설계 근거는 docs/설계결정.md D-05 참조.",
+          "required": ["next_level", "required_exceeded", "current_exceeded", "met"],
+          "properties": {
+            "next_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+            "required_exceeded": { "type": "integer", "minimum": 1, "maximum": 3 },
+            "current_exceeded": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "met": { "type": "boolean" },
+            "note": { "type": "string", "description": "예: 경계→심각은 혼잡도 단계 5 실측으로도 충족" }
+          },
+          "additionalProperties": false
+        },
         "basis": {
           "type": "string",
           "minLength": 10,

@@ -350,6 +350,10 @@ def content_type():
     write("content_type", payload)
 
 
+PRIORITY_ORDER = {"최우선": 0, "높음": 1, "보통": 2}
+PHASE_ORDER = {"오전(준비)": 0, "운영 중(모니터링)": 1, "비상 대응": 2, "마감(평가)": 3}
+
+
 def checklist():
     sample = json.loads((ROOT / "manual" / "checklist_items.sample.json").read_text(encoding="utf-8"))
     items = []
@@ -373,6 +377,11 @@ def checklist():
             },
             "match_reason": "경보 단계 '주의'에 해당하며 공간 유형 조건을 충족함",
         })
+
+    # 정렬 기준은 설계결정 D-03: 우선순위 → 시점 → id. 매칭 결과는 자르지 않고 rank만 부여한다.
+    items.sort(key=lambda i: (PRIORITY_ORDER[i["priority"]], PHASE_ORDER[i["phase"]], i["id"]))
+    for rank, item in enumerate(items, 1):
+        item["rank"] = rank
 
     payload = envelope([MANUAL_SRC], "2026-09-12", "2026-09-12", [
         "매뉴얼 구조화 작업이 진행 중이어서 현재는 샘플 5건 기준으로만 매칭된다. 전체 항목 반영 시 결과가 달라진다.",
