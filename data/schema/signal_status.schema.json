@@ -35,7 +35,12 @@
             "type": "object",
             "required": ["signal", "provider", "value", "threshold", "exceeded"],
             "properties": {
-              "signal": { "type": "string", "description": "예: 이동통신 유동인구 증가율" },
+              "stage": {
+                "type": "string",
+                "enum": ["관심", "의도", "실현"],
+                "description": "신호가 수요 전개의 어느 단계를 보는가 (v3 회의안 A). 관심=SNS 언급량, 의도=내비게이션 검색건수, 실현=방문자 수. 배열 순서도 이 순서를 따른다. 경보 단계(alert_level)의 '관심'과는 다른 축이다."
+              },
+              "signal": { "type": "string", "description": "예: SNS 언급량 전주 대비 증가율" },
               "provider": { "type": "string" },
               "value": { "type": "number" },
               "threshold": { "type": "number" },
@@ -47,7 +52,7 @@
         },
         "agreement": {
           "type": "object",
-          "description": "몇 개 신호가 임계를 넘었는가. 2/3 이상이면 경보 상향.",
+          "description": "몇 개 신호가 임계를 넘었는가. 상향에 필요한 개수는 단계마다 다르다 — escalation 참조 (설계결정 D-05).",
           "required": ["exceeded_count", "total"],
           "properties": {
             "exceeded_count": { "type": "integer", "minimum": 0, "maximum": 3 },
