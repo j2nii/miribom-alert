@@ -1,0 +1,90 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/site/portal/ex/bbs/View.do?cbIdx=1603&bcIdx=310400"
+    },
+    {
+      "name": "한국관광 데이터랩 지역별 방문자 통계",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/"
+    }
+  ],
+  "period": {
+    "start": "2023-01-01",
+    "end": "2026-08-31",
+    "granularity": "년"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "선례의 성과 수치는 각 지자체 공개 자료 기준이며 측정 방식이 서로 달라 직접 비교가 어렵다.",
+    "유사도는 공간 유형·경보 단계·방문객 구성 3개 축의 일치 정도로 산출한 값이다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "matched_for": {
+      "spatial_type": "지형·경사 이동·저항 흐름형",
+      "content_type": "포토스팟형",
+      "alert_level": "주의"
+    },
+    "cases": [
+      {
+        "case_id": "PC-001",
+        "region_name": "부산 감천문화마을",
+        "year": 2024,
+        "situation": "경사 골목 구간에서 사진 촬영 대기가 발생해 보행 흐름이 끊기고 주민 통행로가 막힘",
+        "spatial_type": "지형·경사 이동·저항 흐름형",
+        "content_type": "포토스팟형",
+        "actions": [
+          "구간별 일방통행 지정",
+          "촬영 대기선 표시 및 대기 구역 분리",
+          "주민 전용 통행로 확보"
+        ],
+        "outcome": {
+          "summary": "주말 병목 구간 평균 체류시간이 감소하고 주민 민원이 줄었다고 보고됨",
+          "metric": "병목 구간 체류 시간",
+          "measured": false
+        },
+        "similarity": 0.81,
+        "source": {
+          "name": "경사 보정 이동 혼잡도 지표 적용 사례(감천문화마을)",
+          "provider": "한국관광공사",
+          "retrieved_at": "2026-09-12",
+          "note": "매뉴얼 p.54 사례"
+        }
+      },
+      {
+        "case_id": "PC-002",
+        "region_name": "강릉 안목해변",
+        "year": 2023,
+        "situation": "영상 콘텐츠 확산 후 주말 방문이 급증하여 주차 대기열이 진입로를 막음",
+        "spatial_type": "실외 공간 가치 체류 중심형",
+        "content_type": "포토스팟형",
+        "actions": [
+          "외곽 주차장 셔틀 운행",
+          "진입 차량 사전 안내",
+          "집중 시간대 분산 홍보"
+        ],
+        "outcome": {
+          "summary": "진입로 정체 시간이 줄었다고 발표됨",
+          "metric": "유입/유출 비율",
+          "measured": false
+        },
+        "similarity": 0.64,
+        "source": {
+          "name": "지자체 혼잡 관리 보도자료",
+          "provider": "강릉시",
+          "retrieved_at": "2026-09-12"
+        }
+      }
+    ]
+  }
+}

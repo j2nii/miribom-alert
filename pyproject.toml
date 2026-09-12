@@ -1,0 +1,22 @@
+[project]
+name = "tourism-early-warning"
+version = "0.1.0"
+description = "2026 한국관광 데이터랩 활용 경진대회 — 관광지 혼잡 조기경보 시스템"
+requires-python = ">=3.10"
+dependencies = [
+    "jsonschema>=4.18",
+    "python-dotenv>=1.0",
+    "requests>=2.31",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+llm = ["anthropic>=0.40"]
+notebook = ["jupyter>=1.0", "matplotlib>=3.8"]
+
+[tool.uv]
+default-groups = []
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"

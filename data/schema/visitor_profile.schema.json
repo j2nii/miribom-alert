@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/visitor_profile.schema.json",
+  "title": "visitor_profile — 방문객 프로파일 (성·연령/거주지/거리/소비/동반유형)",
+  "description": "누가 오는가. 조치 선택의 근거가 된다 (예: 20대 비중이 높으면 SNS 분산 안내가 유효).",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "total_visitors", "gender_age", "residence", "distance", "spending", "companion"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "total_visitors": { "type": "integer", "minimum": 0 },
+        "local_external_mix": {
+          "type": "object",
+          "description": "현지인/외지인 구성. 매뉴얼의 '주민 정주권 보호' 판단에 쓰인다.",
+          "required": ["local", "external"],
+          "properties": {
+            "local": { "$ref": "_envelope.schema.json#/definitions/ratio" },
+            "external": { "$ref": "_envelope.schema.json#/definitions/ratio" }
+          }
+        },
+        "gender_age": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["gender", "age_band", "ratio"],
+            "properties": {
+              "gender": { "type": "string", "enum": ["남", "여"] },
+              "age_band": { "type": "string", "enum": ["10대", "20대", "30대", "40대", "50대", "60대이상"] },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" }
+            }
+          }
+        },
+        "residence": {
+          "type": "array",
+          "description": "거주지 시도별 비중 상위",
+          "items": {
+            "type": "object",
+            "required": ["sido", "ratio"],
+            "properties": {
+              "sido": { "type": "string" },
+              "sigungu": { "type": "string" },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" }
+            }
+          }
+        },
+        "distance": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["band", "ratio"],
+            "properties": {
+              "band": { "type": "string", "enum": ["50km 미만", "50~100km", "100~200km", "200km 이상"] },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" }
+            }
+          }
+        },
+        "spending": {
+          "type": "array",
+          "description": "업종별 소비. 체류형 전환 성과(매뉴얼 p.47 '1인당 소비 증가') 측정의 기준선.",
+          "items": {
+            "type": "object",
+            "required": ["category", "amount_krw", "ratio"],
+            "properties": {
+              "category": { "type": "string", "description": "예: 음식, 숙박, 소매, 여가서비스, 교통" },
+              "amount_krw": { "type": "integer", "minimum": 0 },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" },
+              "per_capita_krw": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "companion": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "ratio"],
+            "properties": {
+              "type": { "type": "string", "enum": ["나홀로", "가족", "친구·연인", "단체"] },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" }
+            }
+          }
+        },
+        "profile_tags": {
+          "type": "array",
+          "description": "체크리스트 매칭용 요약 태그. 에이전트③이 이 값으로 조치를 거른다.",
+          "items": { "type": "string", "description": "예: 20대비중높음, 당일치기우세, 외지인우세" }
+        }
+      }
+    }
+  }
+}

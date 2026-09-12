@@ -1,0 +1,94 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/site/portal/ex/bbs/View.do?cbIdx=1603&bcIdx=310400"
+    }
+  ],
+  "period": {
+    "start": "2026-09-12",
+    "end": "2026-09-12",
+    "granularity": "일"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "매뉴얼 구조화 작업이 진행 중이어서 현재는 샘플 5건 기준으로만 매칭된다. 전체 항목 반영 시 결과가 달라진다.",
+    "매뉴얼은 공공누리 4유형(출처표시·상업적이용금지·변경금지) 조건으로 이용한다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "matched_for": {
+      "alert_level": "주의",
+      "congestion_level": 3,
+      "spatial_type": "지형·경사 이동·저항 흐름형",
+      "content_type": "포토스팟형",
+      "profile_tags": [
+        "20대비중높음",
+        "외지인우세"
+      ]
+    },
+    "items": [
+      {
+        "id": "CL-001",
+        "phase": "오전(준비)",
+        "action": "시스템 정상 작동 확인 (서버/네트워크)",
+        "owner": "협업 및 지원부서(데이터·IT)",
+        "priority": "보통",
+        "alert_level": "주의",
+        "spatial_type": [],
+        "profile_tags": [],
+        "manual_ref": {
+          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
+          "page": 50,
+          "section": "부록 - 일일 운영 실무 가이드(체크리스트)",
+          "quote": "시스템 정상 작동 확인 / 서버·네트워크"
+        },
+        "match_reason": "경보 단계 '주의'에 해당하며 공간 유형 조건을 충족함"
+      },
+      {
+        "id": "CL-003",
+        "phase": "오전(준비)",
+        "action": "금일 예상 방문객 확인 (예측 모델)",
+        "owner": "관광지 혼잡도 운영관리 총괄 관리자",
+        "priority": "높음",
+        "alert_level": "주의",
+        "spatial_type": [],
+        "profile_tags": [],
+        "manual_ref": {
+          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
+          "page": 50,
+          "section": "부록 - 일일 운영 실무 가이드(체크리스트)",
+          "quote": "금일 예상 방문객 확인 / 예측 모델"
+        },
+        "match_reason": "경보 단계 '주의'에 해당하며 공간 유형 조건을 충족함"
+      },
+      {
+        "id": "CL-024",
+        "phase": "운영 중(모니터링)",
+        "action": "구간별 수용인원·밀집 상한 설정 및 상·하행 분리, 조기 경보·유입 조절",
+        "owner": "운영주관부서",
+        "priority": "높음",
+        "alert_level": "주의",
+        "spatial_type": [
+          "지형·경사 이동·저항 흐름형"
+        ],
+        "profile_tags": [],
+        "manual_ref": {
+          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
+          "page": 13,
+          "section": "II. 기획·설계 및 준비 > 대상지 유형 분류 및 결정 > 관광지 유형 분류 2",
+          "quote": "관리: 구간별 수용인원·밀집 상한 설정, 상·하행 분리, 조기 경보·유입 조절"
+        },
+        "match_reason": "경보 단계 '주의'에 해당하며 공간 유형 조건을 충족함"
+      }
+    ],
+    "excluded_count": 2
+  }
+}

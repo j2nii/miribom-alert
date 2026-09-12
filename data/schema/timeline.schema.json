@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/timeline.schema.json",
+  "title": "timeline — 사례별 타임라인 (에이전트①)",
+  "description": "콘텐츠 확산 → 방문 급증 → 민원·혼잡 → 조치 → 완화로 이어지는 전개를 시간축에 놓는다. '조기경보가 가능했다'를 보여주는 근거 화면.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["case_id", "region", "title", "events"],
+      "properties": {
+        "case_id": { "type": "string", "pattern": "^TL-\\d{3}$" },
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "title": { "type": "string" },
+        "spatial_type": { "$ref": "_envelope.schema.json#/definitions/spatial_type" },
+        "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
+        "lead_time_days": {
+          "type": "integer",
+          "description": "콘텐츠 확산 시점부터 방문 급증까지의 일수. 이 값이 곧 조기경보로 벌 수 있는 시간이다."
+        },
+        "events": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["date", "type", "description", "source"],
+            "properties": {
+              "date": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "type": {
+                "type": "string",
+                "enum": ["콘텐츠 확산", "방문 급증", "혼잡 발생", "민원 발생", "조치 시행", "완화"]
+              },
+              "description": { "type": "string", "minLength": 5 },
+              "value": { "type": "number", "description": "해당 시점의 수치 (방문객 수, 조회수, 민원 건수 등)" },
+              "unit": { "type": "string" },
+              "source": { "$ref": "_envelope.schema.json#/definitions/source" },
+              "is_signal": {
+                "type": "boolean",
+                "description": "우리 시스템이 이 시점에 신호를 냈을/냈던 이벤트인지"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -94,3 +94,10 @@ data/processed/**
 data/prod/**
 !data/prod/**/
 !data/prod/**/.gitkeep
+# 단, 9종 계약 산출물은 웹이 직접 읽는 제품이므로 추적한다 (건당 수 KB)
+!data/prod/*.json
+
+# 원문 문서(매뉴얼/보고서 PDF)는 용량 이슈로 미커밋 — 구조화 산출물(manual/)만 추적함
+docs/manual-source/**
+!docs/manual-source/**/
+!docs/manual-source/**/.gitkeep

@@ -1,0 +1,179 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "이동통신 기반 유동인구",
+      "provider": "한국관광공사(통신사 제휴 데이터)",
+      "retrieved_at": "2026-09-12",
+      "note": "관광 데이터랩 제공 가공 지표"
+    },
+    {
+      "name": "한국관광 데이터랩 지역별 방문자 통계",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/"
+    }
+  ],
+  "period": {
+    "start": "2026-08-13",
+    "end": "2026-09-12",
+    "granularity": "일"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "증감률은 직전 30일 대비다. 방문객 수가 적은 지점은 소수 인원 변동에도 증감률이 크게 흔들린다.",
+    "공간 유형은 매뉴얼 p.13 분류 기준을 지점별로 적용한 값으로, 현장 확인을 거치지 않은 잠정 분류다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "baseline_period": {
+      "start": "2026-07-14",
+      "end": "2026-08-12",
+      "granularity": "일"
+    },
+    "ranking": [
+      {
+        "rank": 1,
+        "poi_name": "바람의 언덕",
+        "coord": {
+          "lat": 34.7761,
+          "lng": 128.6893
+        },
+        "visitors": 47120,
+        "change_rate": 0.72,
+        "visitor_mix": {
+          "local": 0.11,
+          "external": 0.89
+        },
+        "congestion_level": 4,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 2,
+        "poi_name": "외도 보타니아 선착장",
+        "coord": {
+          "lat": 34.7415,
+          "lng": 128.7268
+        },
+        "visitors": 36146,
+        "change_rate": 0.58,
+        "visitor_mix": {
+          "local": 0.08,
+          "external": 0.92
+        },
+        "congestion_level": 4,
+        "spatial_type": "네트워크 보행 흐름형"
+      },
+      {
+        "rank": 3,
+        "poi_name": "매미성",
+        "coord": {
+          "lat": 34.9142,
+          "lng": 128.7481
+        },
+        "visitors": 32793,
+        "change_rate": 0.51,
+        "visitor_mix": {
+          "local": 0.19,
+          "external": 0.81
+        },
+        "congestion_level": 3,
+        "spatial_type": "지형·경사 이동·저항 흐름형",
+        "bottleneck": {
+          "name": "매미성 진입 계단 구간",
+          "dwell_minutes": 12.3,
+          "avg_speed_mps": 0.79
+        }
+      },
+      {
+        "rank": 4,
+        "poi_name": "거제 포로수용소 유적공원",
+        "coord": {
+          "lat": 34.8802,
+          "lng": 128.6237
+        },
+        "visitors": 28847,
+        "change_rate": 0.29,
+        "visitor_mix": {
+          "local": 0.24,
+          "external": 0.76
+        },
+        "congestion_level": 3,
+        "spatial_type": "실내 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 5,
+        "poi_name": "windy hill 주차장 일대",
+        "coord": {
+          "lat": 34.7772,
+          "lng": 128.6871
+        },
+        "visitors": 27068,
+        "change_rate": 0.44,
+        "visitor_mix": {
+          "local": 0.16,
+          "external": 0.84
+        },
+        "congestion_level": 4,
+        "spatial_type": "네트워크 보행 흐름형"
+      },
+      {
+        "rank": 6,
+        "poi_name": "신선대",
+        "coord": {
+          "lat": 34.7846,
+          "lng": 128.6543
+        },
+        "visitors": 21904,
+        "change_rate": 0.33,
+        "visitor_mix": {
+          "local": 0.13,
+          "external": 0.87
+        },
+        "congestion_level": 3,
+        "spatial_type": "지형·경사 이동·저항 흐름형",
+        "bottleneck": {
+          "name": "신선대 진입 계단 구간",
+          "dwell_minutes": 7.7,
+          "avg_speed_mps": 0.66
+        }
+      },
+      {
+        "rank": 7,
+        "poi_name": "구조라 해수욕장",
+        "coord": {
+          "lat": 34.8195,
+          "lng": 128.7102
+        },
+        "visitors": 16270,
+        "change_rate": 0.21,
+        "visitor_mix": {
+          "local": 0.31,
+          "external": 0.69
+        },
+        "congestion_level": 2,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 8,
+        "poi_name": "고현시장 일대",
+        "coord": {
+          "lat": 34.8806,
+          "lng": 128.6214
+        },
+        "visitors": 14346,
+        "change_rate": 0.09,
+        "visitor_mix": {
+          "local": 0.68,
+          "external": 0.32
+        },
+        "congestion_level": 2,
+        "spatial_type": "네트워크 보행 흐름형"
+      }
+    ]
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/_envelope.schema.json",
+  "title": "공통 봉투(envelope)",
+  "description": "모든 산출 JSON은 이 봉투 구조를 따른다. data 외의 필드가 없으면 화면에 렌더하지 않는다 = 출처 없는 값은 표시되지 않는다.",
+  "type": "object",
+  "required": ["source", "period", "caveat", "data"],
+  "properties": {
+    "_mock": {
+      "type": "boolean",
+      "description": "목업 데이터 여부. true면 화면 상단에 샘플 배지를 띄운다. 실데이터 교체 시 false 또는 필드 삭제."
+    },
+    "generated_at": {
+      "$ref": "#/definitions/datetime",
+      "description": "이 파일이 생성된 시각"
+    },
+    "source": {
+      "type": "array",
+      "description": "값의 출처. 복수 데이터를 결합한 경우 모두 나열한다.",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/source" }
+    },
+    "period": { "$ref": "#/definitions/period" },
+    "caveat": {
+      "type": "array",
+      "description": "해석 시 주의사항. 표본 한계, 추정 방식, 결측 처리 등. 빈 배열 금지 — 주의할 점이 없으면 그 근거를 문장으로 적는다.",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 5 }
+    },
+    "data": {
+      "description": "파일별 본문. 각 파일 스키마에서 재정의한다.",
+      "type": "object"
+    }
+  },
+  "definitions": {
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "YYYY-MM-DD"
+    },
+    "datetime": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\+09:00|Z)$"
+    },
+    "ratio": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "비율은 0~1 실수로 통일한다 (퍼센트 금지)"
+    },
+    "source": {
+      "type": "object",
+      "required": ["name", "provider", "retrieved_at"],
+      "properties": {
+        "name": { "type": "string", "description": "데이터셋/지표 명칭" },
+        "provider": { "type": "string", "description": "제공 기관" },
+        "retrieved_at": { "$ref": "#/definitions/date", "description": "조회·수집일" },
+        "url": { "type": "string" },
+        "note": { "type": "string", "description": "가공 방식 등 부가 설명" }
+      },
+      "additionalProperties": false
+    },
+    "period": {
+      "type": "object",
+      "description": "데이터가 커버하는 기간. 예측 파일은 예측 대상 기간을 적는다.",
+      "required": ["start", "end", "granularity"],
+      "properties": {
+        "start": { "$ref": "#/definitions/date" },
+        "end": { "$ref": "#/definitions/date" },
+        "granularity": { "type": "string", "enum": ["일", "주", "월", "분기", "년"] }
+      },
+      "additionalProperties": false
+    },
+    "region": {
+      "type": "object",
+      "description": "행정구역. code는 법정동코드 5자리(시군구).",
+      "required": ["code", "name"],
+      "properties": {
+        "code": { "type": "string", "pattern": "^\\d{5}$" },
+        "name": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "alert_level": {
+      "type": "string",
+      "enum": ["관심", "주의", "경계", "심각"],
+      "description": "경보 단계. 매뉴얼 p.10 '혼잡 단계별(관심·주의·경계·심각) 선제적 대응 체계'."
+    },
+    "congestion_level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "혼잡도 단계 1~5. 매뉴얼 p.53 밀도 기준 (1:0.2명/㎡ 이하, 2:~0.4, 3:~0.6, 4:~0.8, 5:0.8 초과). 경사지는 보정계수 K 적용."
+    },
+    "spatial_type": {
+      "type": "string",
+      "enum": [
+        "네트워크 보행 흐름형",
+        "지형·경사 이동·저항 흐름형",
+        "실내 공간 가치 체류 중심형",
+        "실외 공간 가치 체류 중심형"
+      ],
+      "description": "관광지 유형. 매뉴얼 p.13 공식 4분류. 에이전트③ 매뉴얼 매칭의 1차 키."
+    },
+    "content_type": {
+      "type": "string",
+      "enum": [
+        "예능·방송 노출형",
+        "맛집형",
+        "포토스팟형",
+        "체험·액티비티형",
+        "축제·이벤트형",
+        "자연경관형",
+        "드라마·영화촬영지형",
+        "관광무관"
+      ],
+      "description": "콘텐츠 수요 유형. 매뉴얼의 공간 유형과 다른 축이며, 에이전트②가 영상 콘텐츠에서 분류한다. '예능·방송 노출형'은 인물·프로그램 노출로 수요가 유발되는 유형으로 확산 속도가 가장 빠르다. '관광무관'은 지역명만 겹치고 방문 수요와 무관한 콘텐츠로, 집계에서 제외하되 제외 건수는 표시한다."
+    },
+    "manual_ref": {
+      "type": "object",
+      "description": "매뉴얼 근거. AI가 정책을 창작하지 않았음을 화면에서 증명하는 장치.",
+      "required": ["document", "page"],
+      "properties": {
+        "document": { "type": "string", "description": "예: 지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)" },
+        "page": { "type": "integer", "minimum": 1 },
+        "section": { "type": "string", "description": "예: 부록 - 일일 운영 실무 가이드(체크리스트)" },
+        "quote": { "type": "string", "description": "원문 인용. 공공누리 4유형(변경금지)이므로 요약 대신 원문을 그대로 옮긴다." }
+      },
+      "additionalProperties": false
+    }
+  }
+}

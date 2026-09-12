@@ -1,0 +1,103 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "이동통신 기반 유동인구",
+      "provider": "한국관광공사(통신사 제휴 데이터)",
+      "retrieved_at": "2026-09-12",
+      "note": "관광 데이터랩 제공 가공 지표"
+    },
+    {
+      "name": "신용카드 가맹점 소비 통계",
+      "provider": "한국관광공사(카드사 제휴 데이터)",
+      "retrieved_at": "2026-09-12"
+    },
+    {
+      "name": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/site/portal/ex/bbs/View.do?cbIdx=1603&bcIdx=310400"
+    }
+  ],
+  "period": {
+    "start": "2026-07-01",
+    "end": "2026-08-31",
+    "granularity": "일"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "전후 비교 구간의 계절성이 달라 개선분 전부를 조치 효과로 볼 수 없다.",
+    "KPI 명칭은 매뉴얼 p.15의 3-tier 체계를 그대로 사용한다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "intervention": {
+      "name": "매미성 진입 계단 구간 상·하행 분리 및 우회 안내",
+      "applied_at": "2026-08-01",
+      "actions": [
+        "구간별 수용인원·밀집 상한 설정 및 상·하행 분리",
+        "우회 경로 유도 안내"
+      ],
+      "checklist_ids": [
+        "CL-024",
+        "CL-007"
+      ]
+    },
+    "comparison_window": {
+      "before": {
+        "start": "2026-07-01",
+        "end": "2026-07-31",
+        "granularity": "일"
+      },
+      "after": {
+        "start": "2026-08-01",
+        "end": "2026-08-31",
+        "granularity": "일"
+      }
+    },
+    "metrics": [
+      {
+        "kpi": "병목 구간 체류 시간",
+        "tier": 2,
+        "before": 13.8,
+        "after": 9.1,
+        "unit": "분",
+        "change_rate": -0.34,
+        "direction": "낮을수록좋음",
+        "significance": "7월 대비 8월은 방문객이 더 많은 기간이므로, 방문 증가에도 체류시간이 줄어든 점에 의미가 있다."
+      },
+      {
+        "kpi": "단위 면적당 인원수(경사도 보정)",
+        "tier": 2,
+        "before": 0.61,
+        "after": 0.48,
+        "unit": "명/㎡",
+        "change_rate": -0.21,
+        "direction": "낮을수록좋음",
+        "significance": "경사 16.5° 구간 기준 보정값. 4단계(0.342 이상) 진입 빈도가 감소."
+      },
+      {
+        "kpi": "혼잡 임계치 초과 횟수/지속시간",
+        "tier": 2,
+        "before": 22,
+        "after": 13,
+        "unit": "회/월",
+        "change_rate": -0.41,
+        "direction": "낮을수록좋음"
+      },
+      {
+        "kpi": "구간별 평균 이동 속도",
+        "tier": 3,
+        "before": 0.68,
+        "after": 0.79,
+        "unit": "m/s",
+        "change_rate": 0.16,
+        "direction": "높을수록좋음"
+      }
+    ]
+  }
+}
