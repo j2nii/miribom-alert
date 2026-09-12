@@ -72,50 +72,54 @@ def check_signal_status(payload: dict) -> list[str]:
 SEMANTIC_CHECKS = {"signal_status": check_signal_status}
 
 
-def validate(data_dir: Path) -> int:
+def validate_payload(name: str, payload: dict) -> list[str]:
+    """스키마 검사 후, 통과하면 필드 간 규칙까지 검사한다. 에이전트 스크립트도 이 함수로 출력 직전 검증한다."""
     store = {}
     for schema_path in SCHEMA_DIR.glob("*.schema.json"):
         schema = load(schema_path)
         store[schema["$id"]] = schema
         store[schema_path.name] = schema
 
+    schema = store[f"{name}.schema.json"]
+    resolver = RefResolver(base_uri=f"{SCHEMA_DIR.as_uri()}/", referrer=schema, store=store)
+    errors = sorted(Draft7Validator(schema, resolver=resolver).iter_errors(payload), key=lambda e: e.path)
+    if errors:
+        return [f"{'/'.join(str(p) for p in e.absolute_path) or '(root)'}: {e.message}" for e in errors]
+    return SEMANTIC_CHECKS[name](payload) if name in SEMANTIC_CHECKS else []
+
+
+def validate(data_dir: Path, partial: bool = False) -> int:
     failures = 0
     for name in FILES:
         data_path = data_dir / f"{name}.json"
-        schema_path = SCHEMA_DIR / f"{name}.schema.json"
 
         if not data_path.exists():
-            print(f"[MISSING] {data_path.relative_to(ROOT)}")
-            failures += 1
+            if partial:
+                print(f"[없음] {name}.json")
+            else:
+                print(f"[MISSING] {data_path.relative_to(ROOT)}")
+                failures += 1
             continue
 
-        schema = load(schema_path)
-        resolver = RefResolver(base_uri=f"{SCHEMA_DIR.as_uri()}/", referrer=schema, store=store)
-        validator = Draft7Validator(schema, resolver=resolver)
         payload = load(data_path)
-        errors = sorted(validator.iter_errors(payload), key=lambda e: e.path)
-
+        errors = validate_payload(name, payload)
         if errors:
             failures += 1
             print(f"[FAIL] {name}.json ({len(errors)}건)")
-            for err in errors[:5]:
-                location = "/".join(str(p) for p in err.absolute_path) or "(root)"
-                print(f"    {location}: {err.message}")
-        elif name in SEMANTIC_CHECKS and (rule_errors := SEMANTIC_CHECKS[name](payload)):
-            failures += 1
-            print(f"[FAIL] {name}.json (규칙 위반 {len(rule_errors)}건)")
-            for msg in rule_errors:
+            for msg in errors[:5]:
                 print(f"    {msg}")
         else:
-            mock_flag = load(data_path).get("_mock", False)
-            print(f"[OK]   {name}.json{'  (목업)' if mock_flag else ''}")
+            print(f"[OK]   {name}.json{'  (목업)' if payload.get('_mock', False) else ''}")
 
     return failures
 
 
 if __name__ == "__main__":
-    target = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "data/mock")
+    # --partial: 아직 교체되지 않은 파일은 실패로 세지 않는다 (data/prod 점진 교체 중에 사용)
+    partial = "--partial" in sys.argv
+    positional = [a for a in sys.argv[1:] if not a.startswith("--")]
+    target = ROOT / (positional[0] if positional else "data/mock")
     print(f"검사 대상: {target.relative_to(ROOT)}\n")
-    failed = validate(target)
+    failed = validate(target, partial)
     print(f"\n{'실패 ' + str(failed) + '건' if failed else '전체 통과'}")
     sys.exit(1 if failed else 0)

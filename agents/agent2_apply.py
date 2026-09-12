@@ -23,7 +23,13 @@ OUT = ROOT / "data" / "prod" / "content_type.json"
 
 PROMPT_VERSION = "agent2_content_type_v1.1"
 MODEL = "claude-opus-5"
+# RESULTS는 API 호출이 아니라 Claude Code 세션 안에서 프롬프트를 적용해 얻은 판정이다.
+# (Opus 5는 temperature 파라미터를 받지 않으므로 temperature 기록도 두지 않는다)
+PROVIDER = "Claude Code 세션(API 미경유)"
 CONFIDENCE_FLOOR = 0.6
+# RESULTS가 판정한 수집본. 최신 파일을 자동으로 고르면 다른 수집본(예: 220일치)과
+# 조인되어 결과가 조용히 바뀌므로 고정한다. 재분류할 때 함께 바꾼다.
+RAW_FILE = "거제_20260912_1320.json"
 
 # 수요 쏠림/이탈 신호 (설계결정 D-02).
 # 관광무관으로 분류된 영상도 신호는 가질 수 있다 — 집계에서 빠지는 것과
@@ -103,7 +109,7 @@ RESULTS = {
 
 
 def main() -> None:
-    raw_path = sorted(RAW_DIR.glob("*.json"))[-1]
+    raw_path = RAW_DIR / RAW_FILE
     raw = json.loads(raw_path.read_text(encoding="utf-8"))
 
     items = []
@@ -171,7 +177,7 @@ def main() -> None:
         ],
         "data": {
             "region": {"code": "48310", "name": "거제시"},
-            "model": {"name": MODEL, "prompt_version": PROMPT_VERSION, "temperature": 0},
+            "model": {"name": MODEL, "provider": PROVIDER, "prompt_version": PROMPT_VERSION},
             "items": items,
             "summary": summary,
             "unclassified_count": len(items) - len(counted),
