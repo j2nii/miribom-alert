@@ -9,7 +9,8 @@
 
 사용법:
     uv run python agents/agent3_match.py --dump-prompt                 # LLM 요청만 저장
-    uv run --extra llm python agents/agent3_match.py                    # Anthropic API
+    uv run --extra llm python agents/agent3_match.py                    # .env에 있는 키로 자동 선택
+    uv run python agents/agent3_match.py --provider upstage              # Upstage Solar
     uv run python agents/agent3_match.py --provider openai --model qwen2.5:14b   # 로컬 서버
     uv run python agents/agent3_match.py --provider replay --response agents/runs/agent3_xxx.json
 """
@@ -249,7 +250,8 @@ def build_payload(candidates, excluded, verdict, situation, inputs, model_info) 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="에이전트③ 매뉴얼 매칭")
-    parser.add_argument("--provider", choices=["anthropic", "openai", "replay"], help="기본: LLM_PROVIDER 또는 anthropic")
+    parser.add_argument("--provider", choices=["anthropic", "upstage", "openai", "replay"],
+                        help="기본: LLM_PROVIDER, 없으면 .env에 있는 키로 선택")
     parser.add_argument("--model")
     parser.add_argument("--base-url", help="openai 백엔드 주소")
     parser.add_argument("--response", type=Path, help="replay 백엔드가 읽을 응답 파일")

@@ -1,16 +1,18 @@
 """LLM 호출 백엔드. 에이전트③⑤가 공유한다 (설계결정 D-08).
 
-백엔드 3종 — 호출하는 쪽 코드는 백엔드가 무엇이든 같다.
+백엔드 4종 — 호출하는 쪽 코드는 백엔드가 무엇이든 같다.
     anthropic  Anthropic API. 공식 SDK 사용, 기본 모델 claude-opus-5
-    openai     OpenAI 호환 서버. vLLM·Ollama·llama.cpp 등 로컬 서빙용 (Claude가 아닌 모델)
+    upstage    Upstage Solar API (OpenAI 호환). 모델 solar-pro3 (무료 — 이 프로젝트는 이것만 쓴다)
+    openai     OpenAI 호환 로컬 서버. vLLM·Ollama·llama.cpp 등
     replay     저장해 둔 응답 파일을 그대로 돌려준다. 재현·오프라인 시연용
 
 설정은 인자 > 환경변수(.env) 순으로 읽는다.
-    LLM_PROVIDER   anthropic | openai | replay
-    LLM_MODEL      모델명. openai 백엔드는 필수 (예: qwen2.5:14b)
-    LLM_BASE_URL   openai 백엔드 주소. 기본 http://localhost:11434/v1 (Ollama). vLLM은 보통 :8000/v1
-    LLM_API_KEY    openai 백엔드 인증이 필요할 때만
-    ANTHROPIC_API_KEY  anthropic 백엔드 (SDK가 직접 읽는다)
+    LLM_PROVIDER   위 4종 중 하나. 비우면 .env에 있는 키로 고른다 (ANTHROPIC_API_KEY → UPSTAGE_API_KEY 순)
+    LLM_MODEL      모델명. 비우면 백엔드 기본값. openai(로컬) 백엔드는 필수 (예: qwen2.5:14b)
+    LLM_BASE_URL   openai(로컬) 백엔드 주소. 기본 http://localhost:11434/v1 (Ollama). vLLM은 보통 :8000/v1
+    LLM_API_KEY    openai(로컬) 백엔드 인증이 필요할 때만
+    LLM_REASONING_EFFORT  upstage 추론 강도 low | medium | high. 기본 medium
+    ANTHROPIC_API_KEY / UPSTAGE_API_KEY  각 백엔드의 키
 """
 
 import json
@@ -25,6 +27,8 @@ load_dotenv()
 
 DEFAULT_ANTHROPIC_MODEL = "claude-opus-5"
 DEFAULT_OPENAI_BASE_URL = "http://localhost:11434/v1"
+UPSTAGE_BASE_URL = "https://api.upstage.ai/v1"
+DEFAULT_UPSTAGE_MODEL = "solar-pro3"  # 팀 결정(09.13): 무료로 쓸 수 있는 solar-pro3만 사용
 
 
 class LLMError(RuntimeError):
@@ -49,22 +53,41 @@ def complete_json(
     base_url: str | None = None,
     response_path: Path | None = None,
     max_tokens: int = 16000,
+    reasoning_effort: str | None = None,
 ) -> LLMResult:
     """system·user 프롬프트를 보내고 schema에 맞는 JSON 객체를 받는다."""
-    provider = provider or os.getenv("LLM_PROVIDER", "anthropic")
+    provider = provider or os.getenv("LLM_PROVIDER") or _provider_from_keys()
     if provider == "anthropic":
         return _anthropic(system, user, schema, model or os.getenv("LLM_MODEL") or DEFAULT_ANTHROPIC_MODEL, max_tokens)
+    if provider == "upstage":
+        api_key = os.getenv("UPSTAGE_API_KEY")
+        if not api_key:
+            raise LLMError("UPSTAGE_API_KEY가 .env에 없다 (파일 저장 여부 확인)")
+        # 호출하는 에이전트가 정한 값 > LLM_REASONING_EFFORT > medium
+        effort = reasoning_effort or os.getenv("LLM_REASONING_EFFORT") or "medium"
+        return _openai_compatible(system, user, schema, model or os.getenv("LLM_MODEL") or DEFAULT_UPSTAGE_MODEL,
+                                  base_url or UPSTAGE_BASE_URL, max_tokens, api_key=api_key,
+                                  extra={"reasoning_effort": effort}, label="upstage")
     if provider == "openai":
         model = model or os.getenv("LLM_MODEL")
         if not model:
             raise LLMError("openai 백엔드는 모델명이 필요하다 (--model 또는 LLM_MODEL)")
         url = base_url or os.getenv("LLM_BASE_URL") or DEFAULT_OPENAI_BASE_URL
-        return _openai_compatible(system, user, schema, model, url, max_tokens)
+        return _openai_compatible(system, user, schema, model, url, max_tokens,
+                                  api_key=os.getenv("LLM_API_KEY"), label="openai-compatible")
     if provider == "replay":
         if response_path is None:
             raise LLMError("replay 백엔드는 응답 파일이 필요하다 (--response)")
         return _replay(response_path)
     raise LLMError(f"알 수 없는 백엔드: {provider}")
+
+
+def _provider_from_keys() -> str:
+    if os.getenv("ANTHROPIC_API_KEY"):
+        return "anthropic"
+    if os.getenv("UPSTAGE_API_KEY"):
+        return "upstage"
+    raise LLMError("LLM 키가 없다 — .env에 ANTHROPIC_API_KEY 또는 UPSTAGE_API_KEY를 넣거나 --provider를 지정")
 
 
 def _anthropic(system: str, user: str, schema: dict, model: str, max_tokens: int) -> LLMResult:
@@ -105,33 +128,37 @@ def _anthropic(system: str, user: str, schema: dict, model: str, max_tokens: int
     return LLMResult(_parse(text), text, "anthropic", response.model)
 
 
-def _openai_compatible(system: str, user: str, schema: dict, model: str, base_url: str, max_tokens: int) -> LLMResult:
+def _openai_compatible(system: str, user: str, schema: dict, model: str, base_url: str, max_tokens: int, *,
+                       api_key: str | None, extra: dict | None = None, label: str) -> LLMResult:
     import requests
 
-    headers = {}
-    if api_key := os.getenv("LLM_API_KEY"):
-        headers["Authorization"] = f"Bearer {api_key}"
+    headers = {"Authorization": f"Bearer {api_key}"} if api_key else {}
     body = {
         "model": model,
         "temperature": 0,
         "max_tokens": max_tokens,
         "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-        # vLLM·Ollama 모두 json_schema 형식을 지원한다. 미지원 서버는 무시하므로 _parse에서 한 번 더 방어한다.
+        # Upstage·vLLM·Ollama 모두 json_schema 형식을 지원한다. 미지원 서버는 무시하므로 _parse에서 한 번 더 방어한다.
         "response_format": {"type": "json_schema", "json_schema": {"name": "output", "schema": schema, "strict": True}},
+        **(extra or {}),
     }
     try:
         response = requests.post(f"{base_url.rstrip('/')}/chat/completions", json=body, headers=headers, timeout=600)
         response.raise_for_status()
     except requests.ConnectionError as e:
-        raise LLMError(f"로컬 LLM 서버({base_url})에 연결할 수 없다 — 서버 실행 여부 확인") from e
+        raise LLMError(f"{label} 서버({base_url})에 연결할 수 없다 — 네트워크·서버 실행 여부 확인") from e
     except requests.HTTPError as e:
-        raise LLMError(f"로컬 LLM 서버 오류 {response.status_code}: {response.text[:300]}") from e
+        raise LLMError(f"{label} 서버 오류 {response.status_code}: {response.text[:300]}") from e
 
     choice = response.json()["choices"][0]
     if choice.get("finish_reason") == "length":
-        raise LLMError("출력이 max_tokens에서 잘렸다 — 로컬 모델의 컨텍스트 길이 확인")
+        usage = response.json().get("usage", {})
+        reasoning = usage.get("completion_tokens_details", {}).get("reasoning_tokens")
+        raise LLMError(f"출력이 max_tokens({max_tokens})에서 잘렸다 — 추론 토큰 {reasoning}개. "
+                       "추론이 한도를 다 썼다면 reasoning_effort를 낮출 것")
     text = choice["message"]["content"]
-    return LLMResult(_parse(text), text, "openai-compatible", model)
+    # 응답 모델명을 기록한다 (별칭으로 호출해도 실제 버전이 남도록)
+    return LLMResult(_parse(text), text, label, response.json().get("model", model))
 
 
 def _replay(path: Path) -> LLMResult:
