@@ -1,0 +1,273 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-16T23:51:26+09:00",
+  "source": [
+    {
+      "name": "YouTube 「거제 야호~!」 (르센느 아니고 리센느)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=J4slV9fQLXc",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "YouTube 「갸루와 거제에 왔습니다 (거제 1편)」 (안녕하세요원이입니다잘부탁드립니다)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=OrCOflk2QmQ",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "거제시, 그룹'리센느(RESCENE)'와 손잡고 도시 홍보 나선다",
+      "provider": "거제시청 보도자료",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.geoje.go.kr/board/view.geoje?boardId=BBS_0000028&menuCd=DOM_000008902003004000&contentsSid=12979&paging=ok&startPage=1&dataSid=306413707",
+      "note": "보도 2026-05-24"
+    },
+    {
+      "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+      "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+      "retrieved_at": "2026-09-16",
+      "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+    },
+    {
+      "name": "거제시,여름 휴가철 앞두고 해수욕장 바가지요금 근절 캠페인",
+      "provider": "거제저널",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.geojejournal.co.kr/news/articleView.html?idxno=206184",
+      "note": "보도 2026-06-18"
+    },
+    {
+      "name": "“거제, 야호!”…폭염에 ‘리센느 효과’로 피서객 몰린 거제 앞바다",
+      "provider": "서울경제",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.sedaily.com/article/20077219",
+      "note": "보도 2026-08-08"
+    },
+    {
+      "name": "리센느가 불러온 '거제 여행 열풍'...폭우로 관광객 '뚝' [앵커리포트]",
+      "provider": "YTN",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.ytn.co.kr/_ln/0103_202608210840470190",
+      "note": "보도 2026-08-21"
+    }
+  ],
+  "period": {
+    "start": "2026-04-05",
+    "end": "2026-08-31",
+    "granularity": "일"
+  },
+  "caveat": [
+    "시군구 단위 외지인 방문자수는 기점 이후에도 전년 동요일 대비 임계(전국 상위 1%)를 넘지 않았다. 방문 급증은 해수욕장 등 지점 단위 집계에서만 확인된다.",
+    "해수욕장 방문 급증 기사(서울경제 2026-08-08)는 핵심 동력으로 '마른장마'를 꼽았다 — 콘텐츠 효과와 날씨 효과가 분리되지 않는다.",
+    "거제시의 확인된 조치(5/22 홍보대사 위촉, 6/12 바가지요금 캠페인)는 모두 이 사례에 대한 수용·관리 대응으로 인정하지 않았다. 6/12 캠페인은 2025년 5월에도 시행된 개장 전 정례 행사다. 따라서 lags에 첫 조치일이 없다.",
+    "8월 후반 검색 급증은 폭우 피해 보도에 따른 것으로 관광 수요 신호가 아니다 — 검색 지표 단독 판정의 오경보 사례다.",
+    "content_type은 기점 영상(OrCOflk2QmQ)에 대한 에이전트② 판정(신뢰도 0.95)이다.",
+    "시스템 신호 규칙은 임시값(D-12)이다. 역할2의 백테스트로 임계와 지속 조건이 바뀔 수 있다.",
+    "기사 이벤트는 웹 검색으로 찾은 것이며 전수 조사가 아니다. 더 이른 조치가 보도되지 않았을 수 있다.",
+    "유튜브 게시일은 DB에 적재된 시각의 날짜 부분이며, 조회수는 적재 시점 값이다."
+  ],
+  "data": {
+    "case_id": "TL-001",
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "title": "거제 — 리센느 '거제 야호' 확산과 해수욕장 방문 급증",
+    "case_kind": "수요 급증",
+    "content_type": "예능·방송 노출형",
+    "lags": {
+      "content_date": "2026-05-22",
+      "signal_date": "2026-06-01",
+      "content_to_signal_days": 10
+    },
+    "signal_rule": {
+      "metric": "네이버 검색지수 (일별)",
+      "statistic": "전년 동요일(364일 전) 대비 배율의 최근 7일 중앙값",
+      "threshold": 1.73,
+      "threshold_basis": "2024년 전국 99백분위 (합성 지역 제외, 사례 지역을 보고 정하지 않음)",
+      "min_duration_days": 7
+    },
+    "signal_check": [
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2026-04-05",
+        "window_end": "2026-05-21",
+        "max_value": 1.13,
+        "max_date": "2026-05-20",
+        "threshold": 1.73,
+        "signaled": false,
+        "note": "인물 밈 확산기 — 장소 콘텐츠 이전"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2026-04-05",
+        "window_end": "2026-05-21",
+        "max_value": 1.0,
+        "max_date": "2026-04-14",
+        "threshold": 1.51,
+        "signaled": false,
+        "note": "인물 밈 확산기 — 장소 콘텐츠 이전"
+      },
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2026-05-22",
+        "window_end": "2026-08-10",
+        "max_value": 2.14,
+        "max_date": "2026-07-03",
+        "threshold": 1.73,
+        "signaled": true,
+        "note": "장소 콘텐츠 기점 이후"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2026-05-22",
+        "window_end": "2026-08-10",
+        "max_value": 1.07,
+        "max_date": "2026-08-09",
+        "threshold": 1.51,
+        "signaled": false,
+        "note": "장소 콘텐츠 기점 이후"
+      },
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2026-08-15",
+        "window_end": "2026-08-31",
+        "max_value": 7.53,
+        "max_date": "2026-08-20",
+        "threshold": 1.73,
+        "signaled": true,
+        "note": "광복절 연휴 폭우"
+      }
+    ],
+    "events": [
+      {
+        "type": "콘텐츠 확산",
+        "description": "리센느 팬 채널에 「거제 야호~!」 게시 — 인물 밈의 시작. 이후 한 달 반 동안 인물 콘텐츠가 이어졌으나 '거제' 검색은 전년 수준에 머물렀다",
+        "date": "2026-04-05",
+        "date_basis": "게시일",
+        "value": 3077230,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「거제 야호~!」 (르센느 아니고 리센느)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=J4slV9fQLXc",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "콘텐츠 확산",
+        "description": "원이 채널에 「갸루와 거제에 왔습니다 (거제 1편)」 게시 — 인물이 거제를 실제로 방문하는 첫 장소 콘텐츠. 다음 날부터 '거제' 검색이 전년의 2배를 넘었다",
+        "date": "2026-05-22",
+        "date_basis": "게시일",
+        "value": 14023703,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「갸루와 거제에 왔습니다 (거제 1편)」 (안녕하세요원이입니다잘부탁드립니다)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=OrCOflk2QmQ",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "거제시가 리센느를 홍보대사로 위촉 — 밈을 도시 홍보에 활용한 것으로, 방문 수요에 대한 수용·관리 대응은 아니다",
+        "actor": "행정",
+        "is_case_response": false,
+        "date": "2026-05-22",
+        "date_basis": "사건일",
+        "quote": "거제시가 지난 22일, 5인조 걸그룹 ‘리센느(RESCENE)’를 새로운 거제시 홍보대사로 위촉하며 젊은 세대와의 소통 강화 및 도시 브랜드 홍보에 본격적으로 나섰다.",
+        "source": {
+          "name": "거제시, 그룹'리센느(RESCENE)'와 손잡고 도시 홍보 나선다",
+          "provider": "거제시청 보도자료",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.geoje.go.kr/board/view.geoje?boardId=BBS_0000028&menuCd=DOM_000008902003004000&contentsSid=12979&paging=ok&startPage=1&dataSid=306413707",
+          "note": "보도 2026-05-24"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2026-06-01",
+        "date_basis": "관측일",
+        "type": "검색 급증",
+        "description": "네이버 검색지수 전년 동요일 대비 배율의 7일 중앙값이 임계(1.73배)를 05/26부터 7일 연속 초과 — 시스템 신호 확정. 구간 최고 2.06배(06/05)",
+        "value": 1.83,
+        "unit": "배(전년 동요일 대비 7일 중앙값)",
+        "source": {
+          "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+          "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+          "retrieved_at": "2026-09-16",
+          "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+        },
+        "is_signal": true
+      },
+      {
+        "type": "조치 시행",
+        "description": "덕포해수욕장 일대 바가지요금 근절 캠페인 — 해수욕장 개장 전 정례 행사로, 2025년 5월에도 같은 캠페인이 추진됐다",
+        "actor": "행정",
+        "is_case_response": false,
+        "date": "2026-06-12",
+        "date_basis": "사건일",
+        "quote": "지난 12일 덕포해수욕장 일대에서 열린 이번 캠페인에는 거제시소상공인연합회 회원 50여 명이 참여해 관광객과 상인들에게 적정가격 준수, 가격표시제 이행, 친절한 서비스 제공을 적극적으로 알렸다.",
+        "source": {
+          "name": "거제시,여름 휴가철 앞두고 해수욕장 바가지요금 근절 캠페인",
+          "provider": "거제저널",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.geojejournal.co.kr/news/articleView.html?idxno=206184",
+          "note": "보도 2026-06-18"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "방문 급증",
+        "description": "개장 이후 8/2까지 거제 16개 해수욕장 방문 인원이 전년 같은 기간(31만1782명)보다 80% 많았다 (경남도 집계)",
+        "date": "2026-08-02",
+        "date_basis": "집계 기준일",
+        "quote": "8일 경남도에 따르면 올해 해수욕장 개장 이후 이달 2일까지 거제 지역 16개 해수욕장을 찾은 인원은 56만723명으로 집계됐다. 지난해 같은 기간(31만1782명) 대비 80% 폭증한 수치다.",
+        "value": 560723,
+        "unit": "명",
+        "source": {
+          "name": "“거제, 야호!”…폭염에 ‘리센느 효과’로 피서객 몰린 거제 앞바다",
+          "provider": "서울경제",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.sedaily.com/article/20077219",
+          "note": "보도 2026-08-08"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "외부 요인",
+        "description": "광복절 연휴 폭우로 해수욕장 16곳 중 14곳 피해 — 같은 시기 '거제' 검색 급증은 관광 수요가 아니라 재난 관심이다",
+        "date": "2026-08-21",
+        "date_basis": "보도일",
+        "quote": "지난 광복절 연휴에 들이닥친 물난리로 관광객은 썰물처럼 빠져나가고, 해수욕장엔 쓰레기 더미와 중장비들만 자리하고 있습니다.",
+        "source": {
+          "name": "리센느가 불러온 '거제 여행 열풍'...폭우로 관광객 '뚝' [앵커리포트]",
+          "provider": "YTN",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.ytn.co.kr/_ln/0103_202608210840470190",
+          "note": "보도 2026-08-21"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2026-08-25",
+        "date_basis": "관측일",
+        "type": "검색 급증",
+        "description": "네이버 검색지수 전년 동요일 대비 배율의 7일 중앙값이 임계(1.73배)를 08/19부터 7일 연속 초과 — 시스템 신호 확정. 구간 최고 7.53배(08/20)",
+        "value": 5.59,
+        "unit": "배(전년 동요일 대비 7일 중앙값)",
+        "source": {
+          "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+          "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+          "retrieved_at": "2026-09-16",
+          "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+        },
+        "is_signal": true
+      }
+    ]
+  }
+}

@@ -1,11 +1,12 @@
 ---
 agent: 3
 name: 매뉴얼 매칭
-version: v1.1
-updated: 2026-09-13
+version: v1.2
+updated: 2026-09-16
 input: agents/agent3_match.py가 조립 (signal_status · hotspots · visitor_profile · content_type + 후보 매뉴얼 항목)
 output: data/prod/checklist.json (스키마: data/schema/checklist.schema.json)
 changelog:
+  - v1.2 혼잡도 단계가 null(미측정)일 때의 해석을 명시 — signal_status 실데이터에 혼잡도 실측이 없음 (D-13)
   - v1.1 민원 급증형 판단에서 데드존(쇠퇴) 신호를 근거로 쓰지 않도록 명시 — solar-pro4 첫 실행에서 해금강마을·거가대교 쇠퇴 영상을 민원 근거로 씀
   - v1.0 최초 작성 (설계결정 D-07·D-08)
 ---
@@ -25,6 +26,7 @@ changelog:
 - `situation`: 경보 단계, 혼잡도 단계, 3중 교차검증 결과, 급증 지점(공간 유형 포함), 방문객 프로파일, 콘텐츠 유형 비중, 반복 언급 지점, 핫존/데드존 신호, 부정 감성 영상
 - `candidates`: 코드가 경보 단계·공간 유형·프로파일 조건으로 이미 거른 매뉴얼 항목
   - `status: 대기`는 현재 혼잡도가 조건에 못 미쳐 아직 실행하지 않는 현장 조치다. 조건에 도달하면 즉시 실행된다.
+  - 혼잡도 단계가 `null`이면 현장 실측이 없다는 뜻이다. 혼잡도를 추정하거나 높다고 가정하지 않는다. 근거에 혼잡도 수치를 쓰지 않는다.
   - `시점: 사전(예보 대응)`은 며칠 앞서 준비하는 조치다.
 
 ## 할 일 1 — 예상 혼잡 상황 유형 (`situation_types`)

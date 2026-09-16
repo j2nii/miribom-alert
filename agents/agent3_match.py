@@ -75,7 +75,7 @@ def build_situation(signal: dict, hotspots: dict, profile: dict, content: dict, 
         "as_of": s["as_of"],
         "alert_level": s["alert_level"],
         "previous_alert_level": s.get("previous_alert_level"),
-        "congestion_level": s["congestion_level"],
+        "congestion_level": s.get("congestion_level"),  # 없으면 None = 미측정 (D-13)
         "cross_validation": [
             {k: v for k, v in sig.items() if k in ("stage", "signal", "value", "threshold", "exceeded", "trend")}
             for sig in s["cross_validation"]
@@ -112,6 +112,9 @@ def standby_condition(levels: list[int]) -> str:
     return f"혼잡도 {'·'.join(map(str, levels))}단계 관측 시"
 
 
+ALL_LEVELS = {1, 2, 3, 4, 5}
+
+
 def select_candidates(records: list[dict], alert: str, congestion: int, spatial: str, profile_tags: list[str]):
     candidates, excluded = [], 0
     for r in records:
@@ -122,7 +125,9 @@ def select_candidates(records: list[dict], alert: str, congestion: int, spatial:
         elif r["프로파일"] and not set(r["프로파일"]) & set(profile_tags):  # 3차
             excluded += 1
         else:
-            status = "발동" if congestion in r["혼잡도단계"] else "대기"  # D-07
+            # D-07. 혼잡도 미측정(None)이면 조건 없는 조치(1~5단계 전체)만 발동한다 (D-13)
+            unconditional = set(r["혼잡도단계"]) == ALL_LEVELS
+            status = "발동" if (congestion in r["혼잡도단계"] if congestion is not None else unconditional) else "대기"
             candidates.append((r, status))
     return candidates, excluded
 
@@ -217,6 +222,8 @@ def build_payload(candidates, excluded, verdict, situation, inputs, model_info) 
         "'대기' 항목은 현재 혼잡도가 조건에 미달한 현장 조치다. 선행 신호만으로는 발동하지 않는다(D-07).",
         f"공간 유형은 급증 지점 1위 기준({situation['target_spatial_type']})이다. 지점별로 유형이 다르면 결과가 달라진다.",
     ]
+    if situation["congestion_level"] is None:
+        caveat.append("혼잡도 실측이 없어 혼잡도 조건이 붙은 현장 조치는 모두 '대기'다. 조건 없는 사전 조치만 발동했다(D-13).")
     if mock_inputs:
         caveat.insert(0, f"입력 중 목업이 있다({', '.join(mock_inputs)}). 판정 방식 검증용이며 수치로 판단하지 말 것.")
     if len(content_pois & hotspot_pois) <= 1:
@@ -235,7 +242,7 @@ def build_payload(candidates, excluded, verdict, situation, inputs, model_info) 
             "region": signal["data"]["region"],
             "matched_for": {
                 "alert_level": situation["alert_level"],
-                "congestion_level": situation["congestion_level"],
+                **({"congestion_level": situation["congestion_level"]} if situation["congestion_level"] is not None else {}),
                 "spatial_type": situation["target_spatial_type"],
                 "content_type": top_type,
                 "profile_tags": situation["visitor_profile_tags"],
@@ -270,7 +277,8 @@ def main() -> None:
         records, situation["alert_level"], situation["congestion_level"], spatial, situation["visitor_profile_tags"])
     ids = [r["id"] for r, _ in candidates]
     active = sum(1 for _, s in candidates if s == "발동")
-    print(f"상황: {situation['alert_level']} / 혼잡도 {situation['congestion_level']} / {spatial}")
+    congestion = situation["congestion_level"]
+    print(f"상황: {situation['alert_level']} / 혼잡도 {congestion if congestion is not None else '미측정'} / {spatial}")
     print(f"후보 {len(candidates)}건 (발동 {active} · 대기 {len(candidates) - active}) / 제외 {excluded}건")
 
     system, prompt_version = load_prompt(PROMPT_PATH)

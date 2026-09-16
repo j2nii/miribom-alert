@@ -43,6 +43,7 @@ MAX_ACTIONS = 3
 CIRCLED = "①②③"
 WEEKDAY = "월화수목금토일"
 ALERT_ORDER = ["관심", "주의", "경계", "심각"]
+REQUIRED_FOR_LEVEL = {"주의": 1, "경계": 2, "심각": 3}  # D-05: 그 단계에 머무르는 요건
 NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 FORBIDDEN = re.compile(r"AI|인공지능|LLM|에이전트|분석한 결과|확실히|반드시")
 
@@ -88,15 +89,28 @@ def iga(word: str) -> str:
 
 # 템플릿 문장은 짧게 쓴다 — 코드가 아낀 글자만큼 3문단(권고 조치)에 예산이 돌아간다.
 # 09.13 첫 템플릿은 1문단 194자·2문단 151자여서 권고가 1건만 들어갔다.
-SIGNAL_SHORT = {"내비게이션 검색건수": "내비게이션 검색"}
+SIGNAL_SHORT = {"내비게이션 검색건수": "내비게이션 검색", "외지인 방문자수": "외지인 방문자"}
+
+
+def signal_value(sig: dict, key: str) -> str:
+    """신호 값 표기. %p는 전국 중앙값 대비 초과분, 배는 전년 동요일 대비 배율이다 (D-13)."""
+    x = sig[key]
+    if x is None:
+        return "값 없음"
+    unit = sig.get("unit", "")
+    if unit == "비율":
+        return pct(x)
+    if unit == "%p":
+        return f"{x:+}%p"
+    return f"{x}{unit}"
 
 
 def signal_phrase(sig: dict) -> str:
-    fmt = pct if sig.get("unit") == "비율" else (lambda x: f"{x}{sig.get('unit', '')}")
-    name = re.sub(r"\s*전주 대비 증가율$", "", sig["signal"]).replace("목적지 ", "")
+    name = re.sub(r"\s*전[주월년].*$", "", sig["signal"]).replace("목적지 ", "")
     name = SIGNAL_SHORT.get(name, name)
-    body = f"{name} {fmt(sig['value'])}, 임계 {fmt(sig['threshold'])}"
-    return f"{sig['stage']} 신호({body})" if sig.get("stage") else f"{name}({fmt(sig['value'])}, 임계 {fmt(sig['threshold'])})"
+    basis = {"%p": " 전국 대비", "배": " 전년 대비"}.get(sig.get("unit", ""), "")
+    body = f"{name}{basis} {signal_value(sig, 'value')}, 임계 {signal_value(sig, 'threshold')}"
+    return f"{sig['stage']} 신호({body})" if sig.get("stage") else f"{name}({body})"
 
 
 def demand_verdict(exceeded_stages: set) -> str:
@@ -113,6 +127,9 @@ def demand_verdict(exceeded_stages: set) -> str:
 def render_situation(signal: dict) -> str:
     s = signal["data"]
     region, cur, prev = s["region"]["name"], s["alert_level"], s.get("previous_alert_level")
+    # 월 단위 판정이면 기준 월을 밝힌다 — 오늘 상황으로 읽히지 않게 (D-13)
+    if signal["period"]["granularity"] == "월":
+        region = f"{date.fromisoformat(s['as_of']).month}월 기준 {region}"
     if prev and prev != cur:
         verb = "올렸다" if ALERT_ORDER.index(cur) > ALERT_ORDER.index(prev) else "내렸다"
         out = [f"{region} 경보를 {prev}에서 {cur}{ro(cur)} {verb}."]
@@ -130,6 +147,10 @@ def render_situation(signal: dict) -> str:
         out.append(f"{b}{eun(b)} 모두 미달이다.")
     if verdict := demand_verdict({x.get("stage") for x in over}):
         out.append(verdict)
+    # 현 단계 요건에 못 미쳤는데 유지한 경우 이유를 밝힌다 — "모두 미달인데 왜 주의인가"로 읽히지 않게 (D-05)
+    held = (not prev or prev == cur) and cur != "관심" and len(over) < REQUIRED_FOR_LEVEL[cur]
+    if held:
+        out.append("하향은 2개월 연속 미달일 때만 한다.")
     if esc := s.get("escalation"):
         out.append(f"{esc['next_level']} 상향에는 3개 중 {esc['required_exceeded']}개 초과가 필요하다.")
     return " ".join(out)
@@ -181,9 +202,7 @@ def build_facts(inputs: dict) -> list[dict]:
     add("경보 단계", f"{s['alert_level']} (직전 {s.get('previous_alert_level', '-')})",
         "3중 교차검증 판정(설계결정 D-05)", "signal_status")
     for sig in s["cross_validation"]:
-        ratio = sig.get("unit") == "비율"
-        value = pct(sig["value"]) if ratio else f"{sig['value']}{sig.get('unit', '')}"
-        threshold = pct(sig["threshold"]) if ratio else f"{sig['threshold']}{sig.get('unit', '')}"
+        value, threshold = signal_value(sig, "value"), signal_value(sig, "threshold")
         label = f"{sig['stage']} 신호 — {sig['signal']}" if sig.get("stage") else sig["signal"]
         add(label, f"{value} (임계 {threshold}, {'초과' if sig['exceeded'] else '미달'})", sig["provider"], "signal_status")
     if esc := s.get("escalation"):
@@ -273,21 +292,22 @@ def verify_llm(out: dict, allowed: set[str]) -> list[str]:
 
 
 def fit_actions(p12_len: int, out: dict, candidates: dict, note: str) -> tuple[str, list[dict], dict]:
-    """600자를 넘으면 ① 뒤쪽 권고의 사유를 본문에서 빼고(첫 권고의 사유는 남김) ② 그래도 넘치면 뒤쪽 권고를 뺀다.
+    """600자를 넘으면 ① 뒤쪽 권고부터 사유를 본문에서 빼고(모든 사유까지) ② 그래도 넘치면 뒤쪽 권고를 뺀다.
 
-    D-04가 요구하는 것은 권고 조치와 쪽수이고 사유는 부가 정보다. solar-pro3는 사유를 30자로 쓰라고 해도
-    40~60자로 써서(09.13) 권고를 빼는 방식으로는 1건만 남았다.
+    D-04가 요구하는 것은 권고 조치와 쪽수이고 사유는 부가 정보다(JSON의 actions[].why에는 남는다).
+    solar-pro3는 사유를 30자로 쓰라고 해도 40~60자로 써서(09.13) 권고를 빼는 방식으로는 1건만 남았다.
+    09.16: 첫 권고의 사유를 끝까지 남기자, 조치 원문을 되풀이한 사유 때문에 권고가 1건으로 줄었다 — 첫 사유도 뺄 수 있게 했다.
     """
     chosen = list(out["actions"])
     n = len(chosen)
-    plans = [[True] * k + [False] * (n - k) for k in range(n, 0, -1)]  # 사유를 뒤에서부터 하나씩 뺀 배치
+    plans = [[True] * k + [False] * (n - k) for k in range(n, -1, -1)]  # 사유를 뒤에서부터 하나씩 뺀 배치
     for with_why in plans:
         p3, actions = assemble_p3(out["action_lead"], chosen, candidates, note, with_why)
         if p12_len + len(p3) <= CHAR_MAX:
             return p3, actions, {"whys_omitted": with_why.count(False), "actions_dropped": 0}
     while len(chosen) > 1:
         chosen.pop()
-        with_why = [True] + [False] * (len(chosen) - 1)
+        with_why = [False] * len(chosen)
         p3, actions = assemble_p3(out["action_lead"], chosen, candidates, note, with_why)
         if p12_len + len(p3) <= CHAR_MAX:
             break

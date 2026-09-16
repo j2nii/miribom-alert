@@ -1,0 +1,134 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-16T23:51:26+09:00",
+  "source": [
+    {
+      "name": "YouTube 「울릉도는 원래 이런 곳인가요?? 처음 갔는데 많이 당황스럽네요;;」 (꾸준 kkujun)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=9zafUsI9_UY",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "YouTube 「[뉴스 '꾹'] \"울릉도는 원래 이런 곳이야?\" 유튜브 '펄펄' 군수 결국... (2025.07.23/MBC뉴스)」 (MBCNEWS)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=NBSUJ8vmBOE",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "“울릉도 원래 이래요?” 200만뷰 폭로영상에…군수도 “민낯 드러났다”",
+      "provider": "서울신문",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.seoul.co.kr/news/society/2025/07/24/20250724500053",
+      "note": "보도 2025-07-24"
+    }
+  ],
+  "period": {
+    "start": "2025-07-19",
+    "end": "2025-08-31",
+    "granularity": "일"
+  },
+  "caveat": [
+    "평판 위기는 방문 수요를 만들지 않아 검색·방문자 지표에 신호가 나타나지 않는다. 이 시스템의 탐지 범위 밖이다.",
+    "군수 입장문의 게시일은 기사에 없어 보도일(7/24)을 썼다. DB에 7/23 MBC 보도 영상이 있어 실제 게시는 그보다 이를 수 있다.",
+    "첫 행정 조치일은 보도일 기준이라 실제 조치는 더 이를 수 있다 — content_to_action_days는 상한값이다.",
+    "시스템 신호 규칙은 임시값(D-12)이다. 역할2의 백테스트로 임계와 지속 조건이 바뀔 수 있다.",
+    "기사 이벤트는 웹 검색으로 찾은 것이며 전수 조사가 아니다. 더 이른 조치가 보도되지 않았을 수 있다.",
+    "유튜브 게시일은 DB에 적재된 시각의 날짜 부분이며, 조회수는 적재 시점 값이다."
+  ],
+  "data": {
+    "case_id": "TL-004",
+    "region": {
+      "code": "47940",
+      "name": "울릉군"
+    },
+    "title": "울릉 — 바가지·서비스 폭로 영상과 군수 사과",
+    "case_kind": "평판 위기",
+    "lags": {
+      "content_date": "2025-07-19",
+      "first_action_date": "2025-07-24",
+      "content_to_action_days": 5
+    },
+    "signal_rule": {
+      "metric": "네이버 검색지수 (일별)",
+      "statistic": "전년 동요일(364일 전) 대비 배율의 최근 7일 중앙값",
+      "threshold": 1.73,
+      "threshold_basis": "2024년 전국 99백분위 (합성 지역 제외, 사례 지역을 보고 정하지 않음)",
+      "min_duration_days": 7
+    },
+    "signal_check": [
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2025-07-19",
+        "window_end": "2025-08-31",
+        "max_value": 1.4,
+        "max_date": "2025-07-27",
+        "threshold": 1.73,
+        "signaled": false,
+        "note": "폭로 영상 이후"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2025-07-19",
+        "window_end": "2025-08-31",
+        "max_value": 1.24,
+        "max_date": "2025-08-18",
+        "threshold": 1.51,
+        "signaled": false,
+        "note": "폭로 영상 이후"
+      }
+    ],
+    "events": [
+      {
+        "type": "콘텐츠 확산",
+        "description": "여행 유튜버 '꾸준' 「울릉도는 원래 이런 곳인가요??」 게시 — 비계 삼겹살·고장 난 숙소 에어컨 폭로",
+        "date": "2025-07-19",
+        "date_basis": "게시일",
+        "value": 3983444,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「울릉도는 원래 이런 곳인가요?? 처음 갔는데 많이 당황스럽네요;;」 (꾸준 kkujun)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=9zafUsI9_UY",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "민원 발생",
+        "description": "MBC 뉴스가 폭로 영상과 군의 반응을 보도 — 논란이 지상파로 번짐",
+        "date": "2025-07-23",
+        "date_basis": "게시일",
+        "value": 2071567,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「[뉴스 '꾹'] \"울릉도는 원래 이런 곳이야?\" 유튜브 '펄펄' 군수 결국... (2025.07.23/MBC뉴스)」 (MBCNEWS)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=NBSUJ8vmBOE",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "남한권 울릉군수가 군 홈페이지 입장문으로 사과하고 개선책 마련을 약속",
+        "actor": "행정",
+        "is_case_response": true,
+        "date": "2025-07-24",
+        "date_basis": "보도일",
+        "quote": "24일 울릉군 등에 따르면 남한권 울릉군수는 최근 군 홈페이지에 올린 입장문에서 “최근 온라인 플랫폼을 통해 알려진 관광 서비스와 관련한 전반적인 품질 및 가격 문제 이슈에 대해 심심한 사과의 입장을 밝힌다”고 했다.",
+        "source": {
+          "name": "“울릉도 원래 이래요?” 200만뷰 폭로영상에…군수도 “민낯 드러났다”",
+          "provider": "서울신문",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.seoul.co.kr/news/society/2025/07/24/20250724500053",
+          "note": "보도 2025-07-24"
+        },
+        "is_signal": false
+      }
+    ]
+  }
+}

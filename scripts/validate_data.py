@@ -13,6 +13,7 @@ from pathlib import Path
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from jsonschema import Draft7Validator, RefResolver
+import itertools
 
 sys.stdout.reconfigure(encoding="utf-8")
 
@@ -49,6 +50,23 @@ def check_signal_status(payload: dict) -> list[str]:
     exceeded = sum(1 for s in d["cross_validation"] if s["exceeded"])
     if d["agreement"]["exceeded_count"] != exceeded:
         errors.append(f"agreement.exceeded_count={d['agreement']['exceeded_count']}인데 exceeded=true 신호는 {exceeded}개")
+
+    for sig in d["cross_validation"]:
+        if sig["value"] is None and (sig["exceeded"] or not sig.get("missing_reason")):
+            errors.append(f"{sig.get('stage', sig['signal'])}: 값이 없으면 exceeded=false이고 missing_reason이 있어야 한다")
+
+    history = d.get("history")
+    if history:  # D-13: 이력의 마지막 항목이 현재 판정이다
+        last = history[-1]
+        if (last["as_of"], last["alert_level"], last["exceeded_count"]) != (d["as_of"], d["alert_level"], exceeded):
+            errors.append("history 마지막 항목이 as_of·alert_level·초과 개수와 다르다")
+        if len(history) > 1 and d.get("previous_alert_level") != history[-2]["alert_level"]:
+            errors.append("previous_alert_level이 history 직전 항목과 다르다")
+        for prev, cur in itertools.pairwise(history):
+            step = ALERT_ORDER.index(cur["alert_level"]) - ALERT_ORDER.index(prev["alert_level"])
+            expected = {1: "상향", -1: "하향", 0: "유지"}.get(step)
+            if expected is None or cur["change"] != expected:
+                errors.append(f"{cur['as_of']}: 한 달에 한 단계씩만 움직이고 change가 이동과 맞아야 한다 (D-05)")
 
     esc = d.get("escalation")
     if esc is None:
@@ -119,17 +137,27 @@ def validate(data_dir: Path, partial: bool = False) -> int:
                 failures += 1
             continue
 
-        payload = load(data_path)
-        errors = validate_payload(name, payload)
-        if errors:
-            failures += 1
-            print(f"[FAIL] {name}.json ({len(errors)}건)")
-            for msg in errors[:5]:
-                print(f"    {msg}")
-        else:
-            print(f"[OK]   {name}.json{'  (목업)' if payload.get('_mock', False) else ''}")
+        failures += check_file(name, data_path)
+
+    # 지역별 추가 파일 — 기본 지역은 {name}.json, 그 밖의 지역은 {name}_{시군구코드}.json (D-12)
+    for data_path in sorted(data_dir.glob("*_[0-9][0-9][0-9][0-9][0-9].json")):
+        name = data_path.stem.rsplit("_", 1)[0]
+        if name in FILES:
+            failures += check_file(name, data_path)
 
     return failures
+
+
+def check_file(name: str, data_path: Path) -> int:
+    payload = load(data_path)
+    errors = validate_payload(name, payload)
+    if errors:
+        print(f"[FAIL] {data_path.name} ({len(errors)}건)")
+        for msg in errors[:5]:
+            print(f"    {msg}")
+        return 1
+    print(f"[OK]   {data_path.name}{'  (목업)' if payload.get('_mock', False) else ''}")
+    return 0
 
 
 if __name__ == "__main__":

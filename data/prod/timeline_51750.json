@@ -1,0 +1,215 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-16T23:51:26+09:00",
+  "source": [
+    {
+      "name": "500만 돌파 ‘왕과 사는 남자’ 효과… 영월 청령포, 설 연휴 1만명 몰렸다",
+      "provider": "이슈온",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.issueon.co.kr/news/articleView.html?idxno=12361",
+      "note": "보도 2026-02-23"
+    },
+    {
+      "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+      "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+      "retrieved_at": "2026-09-16",
+      "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+    },
+    {
+      "name": "YouTube 「지금 영월 청령포에 배 타려고 끝없는 줄 서는 진짜 이유」 (순삭킥)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=FdEnIDAsejg",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "영월 청령포, 사람 몰리자 먼저 점검했다",
+      "provider": "트래블아이",
+      "retrieved_at": "2026-09-16",
+      "url": "https://traveli.net/news/view.php?no=13606",
+      "note": "보도 2026-03-06"
+    },
+    {
+      "name": "‘왕사남’의 도시 영월군, 관광 수용 대책 본격 가동",
+      "provider": "강원일보(다음뉴스)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://v.daum.net/v/20260417000818766",
+      "note": "보도 2026-04-17"
+    }
+  ],
+  "period": {
+    "start": "2026-02-04",
+    "end": "2026-04-30",
+    "granularity": "일"
+  },
+  "caveat": [
+    "시스템 신호(검색 급증 확정)는 설 연휴 청령포 혼잡과 같은 시기에 나왔다 — 영월에서 조기경보가 번 시간은 '혼잡보다 먼저'가 아니라 '행정 조치보다 먼저'다.",
+    "첫 행정 조치(3/6)는 영월군이 아니라 강원특별자치도의 유도선 안전점검이다. 영월군의 종합 수용 대책은 4/16 발표다.",
+    "시군구 단위 외지인 방문자수는 설 연휴를 제외하면 임계를 넘지 않았다. 급증은 청령포·장릉 등 지점 단위에서 확인된다.",
+    "영화는 촬영지가 아니라 역사적 배경지(단종 유배지)로서 수요를 만들었다. 콘텐츠 유형 9종에 정확히 맞는 값이 없어 content_type을 두지 않았다.",
+    "시스템 신호 규칙은 임시값(D-12)이다. 역할2의 백테스트로 임계와 지속 조건이 바뀔 수 있다.",
+    "기사 이벤트는 웹 검색으로 찾은 것이며 전수 조사가 아니다. 더 이른 조치가 보도되지 않았을 수 있다.",
+    "유튜브 게시일은 DB에 적재된 시각의 날짜 부분이며, 조회수는 적재 시점 값이다."
+  ],
+  "data": {
+    "case_id": "TL-002",
+    "region": {
+      "code": "51750",
+      "name": "영월군"
+    },
+    "title": "영월 — 영화 '왕과 사는 남자' 흥행과 청령포 혼잡",
+    "case_kind": "수요 급증",
+    "lead_time_days": 10,
+    "lags": {
+      "content_date": "2026-02-04",
+      "signal_date": "2026-02-15",
+      "content_to_signal_days": 11,
+      "first_action_date": "2026-03-06",
+      "content_to_action_days": 30,
+      "signal_to_action_days": 19
+    },
+    "signal_rule": {
+      "metric": "네이버 검색지수 (일별)",
+      "statistic": "전년 동요일(364일 전) 대비 배율의 최근 7일 중앙값",
+      "threshold": 1.73,
+      "threshold_basis": "2024년 전국 99백분위 (합성 지역 제외, 사례 지역을 보고 정하지 않음)",
+      "min_duration_days": 7
+    },
+    "signal_check": [
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2026-02-04",
+        "window_end": "2026-04-30",
+        "max_value": 10.79,
+        "max_date": "2026-03-07",
+        "threshold": 1.73,
+        "signaled": true,
+        "note": "개봉 이후"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2026-02-04",
+        "window_end": "2026-04-30",
+        "max_value": 1.95,
+        "max_date": "2026-02-18",
+        "threshold": 1.51,
+        "signaled": false,
+        "note": "개봉 이후"
+      }
+    ],
+    "events": [
+      {
+        "type": "콘텐츠 확산",
+        "description": "영화 '왕과 사는 남자' 개봉 — 단종 유배지인 영월 청령포·장릉이 주요 배경",
+        "date": "2026-02-04",
+        "date_basis": "사건일",
+        "quote": "지난 2월 4일 개봉한《왕과 사는 남자》는 전날 기준 누적 관객 526만 명을 넘어서며 압도적인 흥행을 이어가고 있다.",
+        "source": {
+          "name": "500만 돌파 ‘왕과 사는 남자’ 효과… 영월 청령포, 설 연휴 1만명 몰렸다",
+          "provider": "이슈온",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.issueon.co.kr/news/articleView.html?idxno=12361",
+          "note": "보도 2026-02-23"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "방문 급증",
+        "description": "설 연휴(2/14~18) 청령포 방문객이 전년 동기(2,006명)의 5배 이상 (영월군문화관광재단 집계)",
+        "date": "2026-02-14",
+        "date_basis": "기간 시작일",
+        "quote": "영월군문화관광재단은 지난 설 연휴 기간(2월 14~18일) 청령포를 찾은 방문객이 총 1만 641명으로 집계됐다고 밝혔다.",
+        "value": 10641,
+        "unit": "명",
+        "source": {
+          "name": "500만 돌파 ‘왕과 사는 남자’ 효과… 영월 청령포, 설 연휴 1만명 몰렸다",
+          "provider": "이슈온",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.issueon.co.kr/news/articleView.html?idxno=12361",
+          "note": "보도 2026-02-23"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2026-02-15",
+        "date_basis": "관측일",
+        "type": "검색 급증",
+        "description": "네이버 검색지수 전년 동요일 대비 배율의 7일 중앙값이 임계(1.73배)를 02/09부터 7일 연속 초과 — 시스템 신호 확정. 구간 최고 10.79배(03/07)",
+        "value": 2.38,
+        "unit": "배(전년 동요일 대비 7일 중앙값)",
+        "source": {
+          "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+          "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+          "retrieved_at": "2026-09-16",
+          "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+        },
+        "is_signal": true
+      },
+      {
+        "type": "혼잡 발생",
+        "description": "「지금 영월 청령포에 배 타려고 끝없는 줄 서는 진짜 이유」 게시 — 나룻배 대기줄 자체가 콘텐츠가 됨",
+        "date": "2026-02-21",
+        "date_basis": "게시일",
+        "value": 2482616,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「지금 영월 청령포에 배 타려고 끝없는 줄 서는 진짜 이유」 (순삭킥)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=FdEnIDAsejg",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "혼잡 발생",
+        "description": "청령포 나룻배 선착장에 긴 대기줄",
+        "date": "2026-02-23",
+        "date_basis": "보도일",
+        "quote": "이는 전년 동기(2,006명) 대비 5배 이상 폭증한 수치로, 나룻배 선착장에 긴 대기줄이 이어지는 진풍경이 연출되고 있다.",
+        "source": {
+          "name": "500만 돌파 ‘왕과 사는 남자’ 효과… 영월 청령포, 설 연휴 1만명 몰렸다",
+          "provider": "이슈온",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.issueon.co.kr/news/articleView.html?idxno=12361",
+          "note": "보도 2026-02-23"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "강원특별자치도가 청령포 나루 유도선 사업장 특별안전점검 착수 발표",
+        "actor": "행정",
+        "is_case_response": true,
+        "date": "2026-03-06",
+        "date_basis": "발표일",
+        "quote": "강원특별자치도는 3월 6일 영화 ‘왕과 사는 남자’ 흥행으로 방문객이 급증한 영월 청령포 나루를 대상으로 유도선 사업장 특별안전 점검에 나선다고 밝혔다.",
+        "source": {
+          "name": "영월 청령포, 사람 몰리자 먼저 점검했다",
+          "provider": "트래블아이",
+          "retrieved_at": "2026-09-16",
+          "url": "https://traveli.net/news/view.php?no=13606",
+          "note": "보도 2026-03-06"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "영월군이 장릉·청령포 관광객 수용 대책(교통 통제·임시주차장·대기줄 관리·시간대별 혼잡도 안내) 발표",
+        "actor": "행정",
+        "is_case_response": true,
+        "date": "2026-04-16",
+        "date_basis": "발표일",
+        "quote": "군은 16일 군청에서 정례브리핑을 열고 장릉·청령포 관광객 수용 대책을 발표했다.",
+        "source": {
+          "name": "‘왕사남’의 도시 영월군, 관광 수용 대책 본격 가동",
+          "provider": "강원일보(다음뉴스)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://v.daum.net/v/20260417000818766",
+          "note": "보도 2026-04-17"
+        },
+        "is_signal": false
+      }
+    ]
+  }
+}
