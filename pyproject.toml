@@ -8,6 +8,7 @@ dependencies = [
     "python-dotenv>=1.0",
     "requests>=2.31",
     "pandas>=2.0",
+    "pymysql>=1.2.0",
 ]
 
 [project.optional-dependencies]
