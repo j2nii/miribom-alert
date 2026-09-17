@@ -391,6 +391,7 @@ body {
   gap: 8px;
   font-size: 11px;
   margin: 4px 0;
+  position: relative;
 }
 .source-tag-real,
 .source-tag-sample {
@@ -413,20 +414,28 @@ body {
   color: var(--ink-soft);
 }
 /* Opening this used to push the whole panel taller by however many sources
-   existed (3+ for AI-answer citations) -- cap it to about one line and let
-   the rest scroll instead, so expanding never shifts surrounding layout. */
+   existed (3+ for AI-answer citations), even after capping the list's own
+   height -- any in-flow height at all still shoved the next block (해석 시
+   주의) down a little. Taking the list out of flow entirely (float it over
+   the content instead of pushing it) is the only way opening causes zero
+   layout shift, matching the closed state exactly. */
 .source-badge__details ul {
-  margin: 6px 0 0;
-  padding-left: 16px;
-  height: 18px;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  margin: 0;
+  padding: 8px 10px;
+  width: max-content;
+  max-width: 300px;
+  max-height: 140px;
   overflow-y: auto;
   font-size: 12px;
-  line-height: 18px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.source-badge__details ul::-webkit-scrollbar {
-  display: none;
+  line-height: 1.5;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(16, 32, 47, 0.16);
 }
 .source-badge__details li {
   margin-bottom: 4px;
