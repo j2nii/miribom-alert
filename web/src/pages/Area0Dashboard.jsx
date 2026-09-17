@@ -7,7 +7,7 @@ import ChatWidget from "../components/common/ChatWidget.jsx";
 import SignalStatusPanel from "../components/area0-dashboard/SignalStatusPanel.jsx";
 import LifecyclePanel from "../components/area0-dashboard/LifecyclePanel.jsx";
 
-export default function Area0Dashboard({ region }) {
+export default function Area0Dashboard({ region, onRegionChange }) {
   const signalStatus = useRegionData("signal_status", region);
   const forecast = useRegionData("forecast", region);
   const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
@@ -44,7 +44,19 @@ export default function Area0Dashboard({ region }) {
       <div className="panel-head">
         <p className="panel-eyebrow">AREA 0 · CONTROL DASHBOARD</p>
         <h2>관제 대시보드</h2>
-        <p className="panel-subtitle">현재 지역의 경보 상태를 한눈에 확인합니다.</p>
+        <p className="panel-subtitle">지역을 선택해 경보 상태를 한눈에 확인합니다. 여기서 바꾸는 지역은 화면 전체(AREA1~4)에 적용됩니다.</p>
+      </div>
+
+      <div className="scan-form">
+        <div className="scan-input-wrap">
+          <select value={region} onChange={(e) => onRegionChange(e.target.value)}>
+            {REGIONS.map((r) => (
+              <option key={r.key} value={r.key}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="area0-layout" ref={layoutRef}>

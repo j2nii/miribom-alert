@@ -20,11 +20,11 @@ export default function App() {
       <Header />
       <div className="app-grid">
         <section id="area0" className="panel panel-dashboard">
-          <Area0Dashboard region={region} />
+          <Area0Dashboard region={region} onRegionChange={setRegion} />
         </section>
 
         <section id="area1" className="panel panel-scan panel-scroll">
-          <Area1SignalScan region={region} onRegionChange={setRegion} />
+          <Area1SignalScan region={region} />
         </section>
 
         <section id="area2" className="panel panel-summary panel-scroll">
