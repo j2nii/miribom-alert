@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/signal_status.schema.json",
+  "title": "signal_status — 현재 경보 단계와 3중 교차검증 결과",
+  "description": "AREA 0 관제 대시보드의 최상단. 단일 지표가 아니라 3개 독립 신호의 합의로 단계를 판정한다.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "as_of", "alert_level", "cross_validation", "agreement", "basis"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "as_of": {
+          "$ref": "_envelope.schema.json#/definitions/date",
+          "$comment": "판정 기준일. 월 단위 판정이면 그 달의 말일 (D-13)"
+        },
+        "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+        "previous_alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+        "congestion_level": {
+          "$ref": "_envelope.schema.json#/definitions/congestion_level",
+          "$comment": "실측·추정이 없으면 생략한다 — 값을 지어내지 않는다. 생략되면 에이전트③은 현장 조치를 모두 '대기'로 두고, 화면은 '미측정'으로 표시한다 (D-07, D-13)"
+        },
+        "density": {
+          "type": "object",
+          "description": "밀도 실측/추정치. 경사지는 slope_corrected를 사용한다 (매뉴얼 p.53).",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": { "type": "number", "minimum": 0 },
+            "unit": { "type": "string", "enum": ["명/㎡"] },
+            "slope_corrected": { "type": "boolean" },
+            "slope_degree": { "type": "number" },
+            "k_factor": { "type": "number", "description": "경사 보정계수 K = 경사 보행속도 ÷ 평지 보행속도(1.33m/s)" }
+          }
+        },
+        "cross_validation": {
+          "type": "array",
+          "description": "3중 교차검증. 서로 다른 출처의 독립 신호 3개를 고정한다.",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["signal", "provider", "value", "threshold", "exceeded"],
+            "properties": {
+              "stage": {
+                "type": "string",
+                "enum": ["관심", "의도", "실현"],
+                "description": "신호가 수요 전개의 어느 단계를 보는가 (v3 회의안 A). 관심=SNS 언급량, 의도=내비게이션 검색건수, 실현=방문자 수. 배열 순서도 이 순서를 따른다. 경보 단계(alert_level)의 '관심'과는 다른 축이다."
+              },
+              "signal": { "type": "string", "description": "예: SNS 언급량 전주 대비 증가율" },
+              "provider": { "type": "string" },
+              "value": {
+                "type": ["number", "null"],
+                "description": "원천 값이 없으면 null이고 exceeded=false, missing_reason에 이유를 적는다. 0으로 채우지 않는다 (D-13)"
+              },
+              "missing_reason": { "type": "string" },
+              "threshold": { "type": "number" },
+              "unit": { "type": "string" },
+              "exceeded": { "type": "boolean", "description": "임계 초과 여부" },
+              "trend": { "type": "string", "enum": ["상승", "유지", "하락"] }
+            }
+          }
+        },
+        "agreement": {
+          "type": "object",
+          "description": "몇 개 신호가 임계를 넘었는가. 상향에 필요한 개수는 단계마다 다르다 — escalation 참조 (설계결정 D-05).",
+          "required": ["exceeded_count", "total"],
+          "properties": {
+            "exceeded_count": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "total": { "type": "integer", "const": 3 }
+          }
+        },
+        "escalation": {
+          "type": "object",
+          "description": "다음 단계로 올라가는 조건과 충족 여부. 단계마다 조치 비용이 다르므로 요구 확신도를 차등한다 — 관심→주의 1/3, 주의→경계 2/3, 경계→심각 3/3 또는 혼잡도 5단계 실측. 하향은 2회 연속 조건 미달 시에만(깜빡임 방지). 설계 근거는 docs/설계결정.md D-05 참조.",
+          "required": ["next_level", "required_exceeded", "current_exceeded", "met"],
+          "properties": {
+            "next_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+            "required_exceeded": { "type": "integer", "minimum": 1, "maximum": 3 },
+            "current_exceeded": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "met": { "type": "boolean" },
+            "note": { "type": "string", "description": "예: 경계→심각은 혼잡도 단계 5 실측으로도 충족" }
+          },
+          "additionalProperties": false
+        },
+        "history": {
+          "type": "array",
+          "description": "월별 판정 이력 (D-13). D-05의 상향·하향 규칙을 첫 달부터 차례로 적용한 결과이며, 마지막 항목이 현재 판정이다.",
+          "items": {
+            "type": "object",
+            "required": ["as_of", "alert_level", "exceeded_count", "exceeded_stages", "change"],
+            "properties": {
+              "as_of": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+              "exceeded_count": { "type": "integer", "minimum": 0, "maximum": 3 },
+              "exceeded_stages": { "type": "array", "items": { "type": "string", "enum": ["관심", "의도", "실현"] } },
+              "change": { "type": "string", "enum": ["상향", "하향", "유지"] }
+            },
+            "additionalProperties": false
+          }
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 10,
+          "description": "판정 근거를 사람이 읽는 한 문장으로. 화면에 그대로 노출된다."
+        },
+        "manual_ref": { "$ref": "_envelope.schema.json#/definitions/manual_ref" }
+      }
+    }
+  }
+}

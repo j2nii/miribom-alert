@@ -1,0 +1,207 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "한국관광 데이터랩 지역별 방문자 통계",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/"
+    },
+    {
+      "name": "이동통신 기반 유동인구",
+      "provider": "한국관광공사(통신사 제휴 데이터)",
+      "retrieved_at": "2026-09-12",
+      "note": "관광 데이터랩 제공 가공 지표"
+    },
+    {
+      "name": "신용카드 가맹점 소비 통계",
+      "provider": "한국관광공사(카드사 제휴 데이터)",
+      "retrieved_at": "2026-09-12"
+    }
+  ],
+  "period": {
+    "start": "2026-06-01",
+    "end": "2026-08-31",
+    "granularity": "월"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "이동통신 기반 추정치로 실제 방문객 수와 차이가 있다. 구성비 해석에 사용하고 절대 규모 비교에는 쓰지 않는다.",
+    "소비 데이터는 카드 결제분만 집계되어 현금 결제가 많은 업종은 과소 추정된다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "total_visitors": 2184000,
+    "local_external_mix": {
+      "local": 0.28,
+      "external": 0.72
+    },
+    "gender_age": [
+      {
+        "gender": "남",
+        "age_band": "10대",
+        "ratio": 0.0235
+      },
+      {
+        "gender": "여",
+        "age_band": "10대",
+        "ratio": 0.0265
+      },
+      {
+        "gender": "남",
+        "age_band": "20대",
+        "ratio": 0.1128
+      },
+      {
+        "gender": "여",
+        "age_band": "20대",
+        "ratio": 0.1272
+      },
+      {
+        "gender": "남",
+        "age_band": "30대",
+        "ratio": 0.1081
+      },
+      {
+        "gender": "여",
+        "age_band": "30대",
+        "ratio": 0.1219
+      },
+      {
+        "gender": "남",
+        "age_band": "40대",
+        "ratio": 0.094
+      },
+      {
+        "gender": "여",
+        "age_band": "40대",
+        "ratio": 0.106
+      },
+      {
+        "gender": "남",
+        "age_band": "50대",
+        "ratio": 0.0799
+      },
+      {
+        "gender": "여",
+        "age_band": "50대",
+        "ratio": 0.0901
+      },
+      {
+        "gender": "남",
+        "age_band": "60대이상",
+        "ratio": 0.0517
+      },
+      {
+        "gender": "여",
+        "age_band": "60대이상",
+        "ratio": 0.0583
+      }
+    ],
+    "residence": [
+      {
+        "sido": "경상남도",
+        "sigungu": "창원시",
+        "ratio": 0.147
+      },
+      {
+        "sido": "부산광역시",
+        "ratio": 0.213
+      },
+      {
+        "sido": "경상남도",
+        "sigungu": "김해시",
+        "ratio": 0.061
+      },
+      {
+        "sido": "서울특별시",
+        "ratio": 0.094
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.088
+      },
+      {
+        "sido": "대구광역시",
+        "ratio": 0.052
+      }
+    ],
+    "distance": [
+      {
+        "band": "50km 미만",
+        "ratio": 0.312
+      },
+      {
+        "band": "50~100km",
+        "ratio": 0.244
+      },
+      {
+        "band": "100~200km",
+        "ratio": 0.186
+      },
+      {
+        "band": "200km 이상",
+        "ratio": 0.258
+      }
+    ],
+    "spending": [
+      {
+        "category": "음식",
+        "amount_krw": 48200000000,
+        "ratio": 0.361,
+        "per_capita_krw": 22069
+      },
+      {
+        "category": "숙박",
+        "amount_krw": 31500000000,
+        "ratio": 0.236,
+        "per_capita_krw": 14423
+      },
+      {
+        "category": "소매",
+        "amount_krw": 24100000000,
+        "ratio": 0.18,
+        "per_capita_krw": 11035
+      },
+      {
+        "category": "여가서비스",
+        "amount_krw": 18700000000,
+        "ratio": 0.14,
+        "per_capita_krw": 8562
+      },
+      {
+        "category": "교통",
+        "amount_krw": 11100000000,
+        "ratio": 0.083,
+        "per_capita_krw": 5082
+      }
+    ],
+    "companion": [
+      {
+        "type": "가족",
+        "ratio": 0.402
+      },
+      {
+        "type": "친구·연인",
+        "ratio": 0.361
+      },
+      {
+        "type": "나홀로",
+        "ratio": 0.143
+      },
+      {
+        "type": "단체",
+        "ratio": 0.094
+      }
+    ],
+    "profile_tags": [
+      "20대비중높음",
+      "외지인우세",
+      "근거리당일치기혼재"
+    ]
+  }
+}

@@ -1,0 +1,997 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-12T15:52:18+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-12",
+      "note": "검색어 거제도 여행, 거제 가볼만한곳, 거제 맛집 / 최근 120일 업로드분 59건"
+    }
+  ],
+  "period": {
+    "start": "2026-05-19",
+    "end": "2026-09-04",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색 결과 상위 영상만 수집해 소규모 채널 콘텐츠가 과소 대표된다.",
+    "조회수는 수집 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·설명·태그 텍스트만으로 수행했으며 영상 내용을 시청해 검증하지 않았다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "model": {
+      "name": "claude-opus-5",
+      "provider": "Claude Code 세션(API 미경유)",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "_Z9j2jILw4k",
+        "title": "원이의 사투리 특강",
+        "channel": "왕구랜드 Wanggu Land",
+        "published_at": "2026-06-11",
+        "view_count": 18969633,
+        "like_count": 175064,
+        "comment_count": 4104,
+        "content_type": "관광무관",
+        "confidence": 0.71,
+        "evidence": "사투리 강의 형식의 인물 콘텐츠로 방문할 장소에 대한 정보가 전혀 없음",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "_bYHFtOe_YA",
+        "title": "의도한다고 나올 수 없는 정겨운 장면들 #거제도 #리센느원이 #리센느 #미나미 #갸루귀신 #원이",
+        "channel": "숑숑숏",
+        "published_at": "2026-07-28",
+        "view_count": 14130710,
+        "like_count": 209004,
+        "comment_count": 4490,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.66,
+        "evidence": "인물 출연 장면 편집 쇼츠로 해시태그가 인물명 중심(#리센느원이 #미나미)",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "OrCOflk2QmQ",
+        "title": "갸루와 거제에 왔습니다 (거제 1편)",
+        "channel": "안녕하세요원이입니다잘부탁드립니다",
+        "published_at": "2026-05-22",
+        "view_count": 13945540,
+        "like_count": 268130,
+        "comment_count": 45019,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.95,
+        "evidence": "제목 '갸루와 거제에 왔습니다'로 인물의 방문 자체가 콘텐츠이며 이후 파생 콘텐츠의 기점",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "SF29doLuBfc",
+        "title": "갸루와 거제 2편",
+        "channel": "안녕하세요원이입니다잘부탁드립니다",
+        "published_at": "2026-06-05",
+        "view_count": 6724864,
+        "like_count": 170834,
+        "comment_count": 22997,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.95,
+        "evidence": "'갸루와 거제 2편'으로 1편에 이은 인물 방문 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "zn948OnPonE",
+        "title": "원이x미나미 거제 여행편 킬포 하나만 골라보면?",
+        "channel": "도플리 dobby playlist",
+        "published_at": "2026-05-25",
+        "view_count": 3509443,
+        "like_count": 33475,
+        "comment_count": 400,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.88,
+        "evidence": "태그에 '#예능 #아이돌'이 명시되고 인물 조합('원이x미나미')이 제목 중심",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "_GKSineBozo",
+        "title": "거제의 딸 원이가 인정한 거제 핫플 풀코스 여행 🚗  [원이 & 미나미] | 절친소 EP1",
+        "channel": "왕구랜드 Wanggu Land",
+        "published_at": "2026-06-11",
+        "view_count": 1706557,
+        "like_count": 31360,
+        "comment_count": 3815,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.92,
+        "evidence": "'거제의 딸 원이가 인정한 거제 핫플 풀코스'로 인물 추천이 코스 선정 기준",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "eqDd8JEg4Mk",
+        "title": "스노쿨링하다가 주위를 봐야해요 #여름휴가 #구조라해수욕장 #거제도여행 #여름휴가추천 #국내여행 #윤돌섬 #거제윤돌섬 #스노쿨링 #프리다이빙",
+        "channel": "쏘콜부부",
+        "published_at": "2026-07-26",
+        "view_count": 1558368,
+        "like_count": 3370,
+        "comment_count": 0,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.86,
+        "evidence": "해시태그가 '#스노쿨링 #프리다이빙'으로 참여형 활동이 목적",
+        "poi_mentioned": [
+          "구조라해수욕장",
+          "윤돌섬"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "yIowLN_Jkok",
+        "title": "리센느 거제도편에 댓글달았다가 여행가게 된 팬",
+        "channel": "돌픽갤러리",
+        "published_at": "2026-06-18",
+        "view_count": 1483448,
+        "like_count": 10542,
+        "comment_count": 302,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.84,
+        "evidence": "'리센느 거제도편에 댓글달았다가 여행가게 된 팬' — 콘텐츠 시청이 실제 방문으로 이어진 사례를 콘텐츠 자체가 서술",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "cm3U4TWCPf4",
+        "title": "거제 현지인 원이가 강력 추천하는 곳 #거제 #리센느",
+        "channel": "한국관광공사TV",
+        "published_at": "2026-07-06",
+        "view_count": 1125820,
+        "like_count": 9520,
+        "comment_count": 364,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.83,
+        "evidence": "'거제 현지인 원이가 강력 추천하는 곳'으로 장소 선정 근거가 인물 추천",
+        "poi_mentioned": [
+          "외도 보타니아"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "Gdez_IKDK-I",
+        "title": "[Re:Creation] 리센느의 방방곡곡 in 거제 | RESCENE (리센느)",
+        "channel": "RESCENE",
+        "published_at": "2026-06-17",
+        "view_count": 1092759,
+        "like_count": 37445,
+        "comment_count": 4870,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.9,
+        "evidence": "아티스트 공식 채널의 '리센느의 방방곡곡 in 거제' 자체 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "5aQynbQhwJU",
+        "title": "리센느야 고마워 #리센느 #거제 #원이 #거제여행 #연애브이로그 #쇼츠",
+        "channel": "MAYBe보경",
+        "published_at": "2026-07-05",
+        "view_count": 977565,
+        "like_count": 10799,
+        "comment_count": 842,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.72,
+        "evidence": "'리센느야 고마워'로 인물에 대한 반응이 제목 중심이며 거제여행 태그가 병기됨",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "Lkby3ZUBmQ8",
+        "title": "리센느 안원잘부 거제 영상은 어째서 '영화적'인가?",
+        "channel": "라이너의 컬쳐쇼크",
+        "published_at": "2026-07-11",
+        "view_count": 858594,
+        "like_count": 30417,
+        "comment_count": 4450,
+        "content_type": "관광무관",
+        "confidence": 0.68,
+        "evidence": "'거제 영상은 어째서 영화적인가' — 영상 연출 비평으로 방문 정보가 아님",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "RPIcHaAlQJM",
+        "title": "원이가 떡상시킨 거제 포차 레전드 근황 ㅋㅋㅋㅋㅋㅋㅋㅋㅋ",
+        "channel": "숏마니아",
+        "published_at": "2026-07-28",
+        "view_count": 811030,
+        "like_count": 15052,
+        "comment_count": 829,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.89,
+        "evidence": "'원이가 떡상시킨 거제 포차 레전드 근황' — 인물 언급 후 특정 점포에 수요가 몰린 결과를 다룸",
+        "poi_mentioned": [
+          "모래성분식포차"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "aFWkJDaTCIk",
+        "title": "거제 가기 전에 꼭 봐야 할 영상",
+        "channel": "MMTG 문명특급",
+        "published_at": "2026-06-06",
+        "view_count": 706991,
+        "like_count": 7162,
+        "comment_count": 146,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.85,
+        "evidence": "예능 채널(문명특급)의 '거제 가기 전에 꼭 봐야 할 영상', 태그에 '문명특급 리센느'",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "oNNo9Qu8QeQ",
+        "title": "저 덕연이 딸 친구인데요.. 원이야 이렇게 하면 된다며! #거제맛집",
+        "channel": "한국관광공사TV",
+        "published_at": "2026-07-06",
+        "view_count": 563017,
+        "like_count": 6007,
+        "comment_count": 156,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.79,
+        "evidence": "맛집 소재이나 '덕연이 딸' 등 인물 연계가 방문 동기로 제시됨",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "YV9Q9fBNzLs",
+        "title": "거제↗가면↘밥은↗줍니까? 밥도 주고 바다도 보여주는 리센느 원이픽🎯거제 코스ㅣEp.06 거제 야호 | 외도 보타니아, 해금강 십자동굴, 와현해수욕장, 거제 맛집",
+        "channel": "한국관광공사TV",
+        "published_at": "2026-07-03",
+        "view_count": 553008,
+        "like_count": 13861,
+        "comment_count": 1585,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.87,
+        "evidence": "'리센느 원이픽 거제 코스'로 인물 추천 코스를 그대로 따라가는 구성",
+        "poi_mentioned": [
+          "외도 보타니아",
+          "해금강 십자동굴",
+          "와현해수욕장"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "ESfiVMm3Nh8",
+        "title": "한국여행 마지막 날 거제 야호를 외친 관광객 #한국여행 #해외반응 #거제야호",
+        "channel": "꿀잼충전소",
+        "published_at": "2026-08-06",
+        "view_count": 525961,
+        "like_count": 4064,
+        "comment_count": 32,
+        "content_type": "자연경관형",
+        "confidence": 0.61,
+        "evidence": "거제식물원 정글돔 등 명소의 규모·특성을 지식 형식으로 소개",
+        "poi_mentioned": [
+          "거제식물원 정글돔"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "Exb6lRaPg9A",
+        "title": "1박 하고 싶어서 예약 폭주하는 수상한 섬!! 주부들에게는 지상 낙원이구나!!",
+        "channel": "마초TV",
+        "published_at": "2026-08-02",
+        "view_count": 501727,
+        "like_count": 12337,
+        "comment_count": 672,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.74,
+        "evidence": "'#낚시 #트레킹 #1박3식'으로 숙박 기반 참여형 활동이 중심",
+        "poi_mentioned": [
+          "이수도"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "ePNfrlXrxd8",
+        "title": "[실제상황] 거제도 여행 중에 리센느 만난 욱정수 \"오이쉬이~\"",
+        "channel": "웬만해선 정수를 막을 수 없다",
+        "published_at": "2026-07-15",
+        "view_count": 474708,
+        "like_count": 13825,
+        "comment_count": 1993,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.86,
+        "evidence": "'거제도 여행 중에 리센느 만난' — 인물 조우가 콘텐츠의 사건",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "AieL-kFdglY",
+        "title": "올 여름 최고 떡상 관광지, 거제 덕포(리센느 전담기자가 관광 효과 직접 확인해봄)",
+        "channel": "경남신문",
+        "published_at": "2026-06-17",
+        "view_count": 441883,
+        "like_count": 8745,
+        "comment_count": 1541,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.81,
+        "evidence": "'올 여름 최고 떡상 관광지, 거제 덕포 — 관광 효과 직접 확인'으로 인물 열풍의 방문 효과를 취재",
+        "poi_mentioned": [
+          "덕포해수욕장"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "2xfEsHprjHE",
+        "title": "요즘 부산 가면 다 여기 갑니다!!",
+        "channel": "투밥스",
+        "published_at": "2026-06-22",
+        "view_count": 283995,
+        "like_count": 4269,
+        "comment_count": 390,
+        "content_type": "관광무관",
+        "confidence": 0.8,
+        "evidence": "부산 영도 여행 콘텐츠로 거제와 무관하며 검색어 일치로 수집됨",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "Z6PcJkDiBec",
+        "title": "이번주 꼭 봐야할 수국 명소 TOP 7 #여행 #국내여행 #6월",
+        "channel": "마프의 등산이야기",
+        "published_at": "2026-06-14",
+        "view_count": 278136,
+        "like_count": 2657,
+        "comment_count": 43,
+        "content_type": "자연경관형",
+        "confidence": 0.7,
+        "evidence": "수국 군락지 소개로 자연 경관 자체가 방문 목적",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "2H6lk2dAKp8",
+        "title": "리센느 추천 갈비탕집 가봄ㄷㄷ",
+        "channel": "미니로운생활",
+        "published_at": "2026-08-06",
+        "view_count": 253057,
+        "like_count": 3432,
+        "comment_count": 437,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.8,
+        "evidence": "'리센느 추천 갈비탕집'으로 점포 선택 근거가 인물 추천",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "44HJcCNCYcw",
+        "title": "올여름 국내 여행지 1순위 '거제' 여행의 모든 것",
+        "channel": "또 떠나는 남자 ddoddunam",
+        "published_at": "2026-07-12",
+        "view_count": 248632,
+        "like_count": 3449,
+        "comment_count": 967,
+        "content_type": "코스·일정형",
+        "confidence": 0.72,
+        "evidence": "'거제 숙소부터 맛집, 카페, 둘러볼 곳까지 딱 정리'로 지역 전반의 방문 계획 수립이 목적",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "RDzPGWOnaOA",
+        "title": "[거제 야-호] 리센느가  끌어올린 요즘 대세 거제도! 손녀와 함께 욱정수가 다녀온 실패 없는 1등 코스",
+        "channel": "웬만해선 정수를 막을 수 없다",
+        "published_at": "2026-07-08",
+        "view_count": 239681,
+        "like_count": 4743,
+        "comment_count": 812,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.84,
+        "evidence": "'리센느가 끌어올린 요즘 대세 거제도'로 인물 열풍을 방문 배경으로 명시",
+        "poi_mentioned": [
+          "칠천도"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "S-oHqdG_qj4",
+        "title": "🏖️ 우리한텐 '리센느'가 월드컵이야!",
+        "channel": "거제시 공식 유튜브",
+        "published_at": "2026-07-05",
+        "view_count": 220759,
+        "like_count": 5900,
+        "comment_count": 747,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.62,
+        "evidence": "해수욕장 16개소 개장과 운영기간(7.4~8.23)이 명시된 지자체 안내",
+        "poi_mentioned": [
+          "거제시 해수욕장"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "pOlOp2SXdTE",
+        "title": "\"원이 이름에 먹칠 No!\" 거제 바가지, '확답' 듣고 왔습니다(리센느 전담기자가 직접 물어봄)",
+        "channel": "경남신문",
+        "published_at": "2026-06-30",
+        "view_count": 196071,
+        "like_count": 5760,
+        "comment_count": 1452,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.66,
+        "evidence": "'거제 바가지 확답 듣고 왔습니다' — 인물 열풍에 따른 물가 우려를 취재한 후속 보도",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "y79rrmFFTr8",
+        "title": "통영 필수코스라는 가성비 회시장~ 진짜 그럴까?",
+        "channel": "맛상무",
+        "published_at": "2026-06-06",
+        "view_count": 195593,
+        "like_count": 2191,
+        "comment_count": 304,
+        "content_type": "관광무관",
+        "confidence": 0.82,
+        "evidence": "통영 중앙시장 콘텐츠로 거제와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "tkqICH01Zjw",
+        "title": "[신선행] ‘덕연이 딸’ 리센느 원이 인기 타고 발길이 끊이지 않는 거제 맛집?! [생방송 굿모닝 대한민국] | KBS 260904 방송",
+        "channel": "에헤라 티비 : KBS LIFE",
+        "published_at": "2026-09-04",
+        "view_count": 185705,
+        "like_count": 1772,
+        "comment_count": 234,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.9,
+        "evidence": "지상파 생방송에서 '인기 타고 발길이 끊이지 않는 거제 맛집'으로 방문 급증을 보도",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "Z7dfT9EWCXA",
+        "title": "1일 방문객 1000명! 1박 3식의 원조라는 거제도의 한 섬에 다녀왔습니다",
+        "channel": "띠띠빵빵 TTIBBANG",
+        "published_at": "2026-05-27",
+        "view_count": 181162,
+        "like_count": 2499,
+        "comment_count": 309,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.7,
+        "evidence": "'1박 3식' 민박과 트레킹 루트가 중심이며 '1일 방문객 1000명'이 제목에 제시됨",
+        "poi_mentioned": [
+          "이수도"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "_yeeXFuCC3A",
+        "title": "서울에는 없다, 여름 거제에서만 맛볼 수 있는 귀한 맛을 찾아서｜한국기행｜#골라듄다큐",
+        "channel": "EBSDocumentary (EBS 다큐)",
+        "published_at": "2026-07-22",
+        "view_count": 170483,
+        "like_count": 817,
+        "comment_count": 76,
+        "content_type": "맛집형",
+        "confidence": 0.74,
+        "evidence": "다큐멘터리에서 오징어·왕우럭조개 등 지역 음식과 식당을 다룸",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "zFVFEAOK1r0",
+        "title": "목숨걸고 공개합니다. 현지인들 몰래 공개하는 거제도 10끼!",
+        "channel": "섬마을훈태TV",
+        "published_at": "2026-08-12",
+        "view_count": 169998,
+        "like_count": 3757,
+        "comment_count": 738,
+        "content_type": "맛집형",
+        "confidence": 0.88,
+        "evidence": "'거제도 10끼'로 식당 순회가 콘텐츠 전체이며 태그가 '거제맛집, 거제노포'",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "i5jt55wKk18",
+        "title": "거제도 청춘영화 #거제야호",
+        "channel": "title TV",
+        "published_at": "2026-05-25",
+        "view_count": 169175,
+        "like_count": 1274,
+        "comment_count": 42,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.72,
+        "evidence": "인물 출연분 편집 콘텐츠로 '#리센느 #원이 #미나미'가 설명 전부",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "NzrnKlFVKu0",
+        "title": "바다의 금강산? 거제도 해금강 마을, 호텔도 횟집도 파리만 날린다.",
+        "channel": "기러기아범",
+        "published_at": "2026-07-13",
+        "view_count": 164707,
+        "like_count": 1770,
+        "comment_count": 176,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "해금강 마을의 상권 침체 르포로 방문 수요를 유발하는 콘텐츠가 아님. 다만 동일 지역 내 데드존 신호로 별도 가치가 있음",
+        "poi_mentioned": [
+          "해금강마을"
+        ],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "YWPB7Xn7nbY",
+        "title": "거제야호 거제 토박이 리센느 원이 추천 거제맛집 6곳!! 오션뷰카페 맛집 매미성 거제 여행 코스 추천입니다",
+        "channel": "먹행자 │ 먹보 여행자",
+        "published_at": "2026-06-29",
+        "view_count": 163166,
+        "like_count": 1339,
+        "comment_count": 34,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.82,
+        "evidence": "'거제 토박이 리센느 원이 추천 거제맛집 6곳'으로 인물 추천이 선정 기준",
+        "poi_mentioned": [
+          "매미성"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "LYdnTjn3bKQ",
+        "title": "리센느 원이가 극찬한 맛집?! #리센느  #원이 #거제도",
+        "channel": "옆집잼냥이",
+        "published_at": "2026-08-14",
+        "view_count": 158534,
+        "like_count": 1349,
+        "comment_count": 45,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.78,
+        "evidence": "'리센느 원이가 극찬한 맛집'으로 점포 선택 근거가 인물",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "77sn4xtuI8Q",
+        "title": "김해 진영,장유 외곽맛집 Best 11",
+        "channel": "하이갱스 higaengs",
+        "published_at": "2026-06-25",
+        "view_count": 124653,
+        "like_count": 1560,
+        "comment_count": 156,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "김해 진영·장유 맛집 콘텐츠로 거제와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "9VPOIBsLEsU",
+        "title": "거제 소노캄 근처 오시면 가야되는 곳",
+        "channel": "얼보류",
+        "published_at": "2026-05-29",
+        "view_count": 109900,
+        "like_count": 465,
+        "comment_count": 26,
+        "content_type": "맛집형",
+        "confidence": 0.86,
+        "evidence": "산오징어회·오징어통찜 등 메뉴와 가격(15만원)을 구체적으로 소개",
+        "poi_mentioned": [
+          "소노캄 거제 인근"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "aUO8cgJGpTk",
+        "title": "거제에서 누가 돌아왔~~게! 리센느 원이의 추천은 계속된다!ㅣEp.07 감동의 거제ㅣ망치몽돌해수욕장, 막썰이회, 지세포진성, 흥남철수기념공원, 밀면, 매미성",
+        "channel": "한국관광공사TV",
+        "published_at": "2026-07-24",
+        "view_count": 84908,
+        "like_count": 2110,
+        "comment_count": 238,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.85,
+        "evidence": "'리센느 원이의 추천은 계속된다'로 인물 추천 코스를 이어가는 시리즈 2편",
+        "poi_mentioned": [
+          "망치몽돌해수욕장",
+          "지세포진성",
+          "흥남철수기념공원",
+          "매미성"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "oYy3GzigOxo",
+        "title": "현지인 추천 1박 2일 거제 여행 코스 #거제도 #거제여행 #geojeisland",
+        "channel": "지니기록",
+        "published_at": "2026-06-30",
+        "view_count": 79333,
+        "like_count": 649,
+        "comment_count": 15,
+        "content_type": "코스·일정형",
+        "confidence": 0.88,
+        "evidence": "'현지인이 완벽하게 짜준 1박 2일 거제여행 코스'로 일정 단위가 제목에 명시되고 이동 순서로 구성됨",
+        "poi_mentioned": [
+          "신선대"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "Q6uAbGVC6tI",
+        "title": "13만원에 1박 3식 케이블카 유람선까지 가능! 마들렌호텔 가성비 1박2일 하동여행 코스추천 / 국내여행 가볼만한곳 삼성궁 화개장터 정금정",
+        "channel": "유리소리TV",
+        "published_at": "2026-06-13",
+        "view_count": 78055,
+        "like_count": 1183,
+        "comment_count": 68,
+        "content_type": "관광무관",
+        "confidence": 0.84,
+        "evidence": "하동·사천 패키지 여행 콘텐츠로 거제와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "nXo6TemgLPU",
+        "title": "거제야호✌🏻🇰🇷엄마랑 요즘 핫한 거제&통영 14만원 패키지여행 브이로그⭐️(ft. 마들렌호텔 1박3식🏨)",
+        "channel": "초마드 CHOMAD",
+        "published_at": "2026-08-01",
+        "view_count": 66237,
+        "like_count": 1365,
+        "comment_count": 111,
+        "content_type": "코스·일정형",
+        "confidence": 0.74,
+        "evidence": "'1박3식 패키지'로 숙박·식사·요트·케이블카가 정해진 일정으로 묶여 제시됨",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "-PGvCaBvamo",
+        "title": "원이가 추천하고 또또가 먹고 유정이가 있는 곳?",
+        "channel": "한국관광공사TV",
+        "published_at": "2026-07-07",
+        "view_count": 63000,
+        "like_count": 919,
+        "comment_count": 51,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.83,
+        "evidence": "태그에 '순대리아, 거제현지인맛집'과 인물명이 함께 있고 인물 추천이 방문 근거",
+        "poi_mentioned": [
+          "순대리아"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "bzDv0XfRMVU",
+        "title": "🌊⛱️1st Full ALBUM｜이번 여름휴가는 거제로 올 거제~?!",
+        "channel": "거제시 공식 유튜브",
+        "published_at": "2026-06-27",
+        "view_count": 57771,
+        "like_count": 2624,
+        "comment_count": 648,
+        "content_type": "자연경관형",
+        "confidence": 0.72,
+        "evidence": "지세포진성 꽃동산·칠천도·씨릉섬 출렁다리 등 경관 자원을 지자체가 소개",
+        "poi_mentioned": [
+          "지세포진성 꽃동산",
+          "칠천도",
+          "씨릉섬 출렁다리"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "Ko1D9hdjgmM",
+        "title": "통영 가서 여기 안 가면 100% 후회! 나만 알고 싶은 통영 역대급 숙소 BEST 3 공개",
+        "channel": "호텔수집가",
+        "published_at": "2026-05-27",
+        "view_count": 56638,
+        "like_count": 540,
+        "comment_count": 4,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "통영 숙소 소개 콘텐츠로 거제와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "RRgTIg2-qzQ",
+        "title": "국내여행/가장 좋아하는 여름여행지 추천/수국, 해바라기, 녹차밭, 몽돌해수욕장, 바람의 언덕, 베스트/26년 6월에 놓치지 말아야 할 곳",
+        "channel": "별마을 Korea Culture",
+        "published_at": "2026-05-22",
+        "view_count": 53939,
+        "like_count": 726,
+        "comment_count": 24,
+        "content_type": "자연경관형",
+        "confidence": 0.68,
+        "evidence": "수국·몽돌해수욕장·바람의 언덕 등 경관 명소 나열",
+        "poi_mentioned": [
+          "바람의 언덕",
+          "몽돌해수욕장"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "JHoYYHEk5D8",
+        "title": "관광객은 오는데 왜 빈 건물만 늘어났나… 거가대교가 바꾼 거제도의 몰락",
+        "channel": "갓쓴경제학",
+        "published_at": "2026-07-20",
+        "view_count": 52978,
+        "like_count": 997,
+        "comment_count": 157,
+        "content_type": "관광무관",
+        "confidence": 0.72,
+        "evidence": "거가대교 이후 지역경제 변화를 다룬 분석 콘텐츠로 방문 안내가 아님. 체류 없는 통과형 관광의 문제를 지적",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "JXP_9qsC0o0",
+        "title": "6월 놓치면 안 되는 여행지 14곳 2026년",
+        "channel": "더여행",
+        "published_at": "2026-05-19",
+        "view_count": 37823,
+        "like_count": 514,
+        "comment_count": 70,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.66,
+        "evidence": "6월 여행지 목록에 '거제 수국축제'가 기간 행사로 포함됨",
+        "poi_mentioned": [
+          "거제 수국축제"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "qDnEXDIisaU",
+        "title": "국내 최고의 수국명소 6곳",
+        "channel": "더여행",
+        "published_at": "2026-06-01",
+        "view_count": 37430,
+        "like_count": 499,
+        "comment_count": 52,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.68,
+        "evidence": "저구항수국축제·지세포진성꽃동산 등 기간 한정 꽃 행사 중심",
+        "poi_mentioned": [
+          "저구항",
+          "지세포진성 꽃동산"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "jjzEbmpDSqg",
+        "title": "거제 수제버거 야호~",
+        "channel": "얼보류",
+        "published_at": "2026-05-30",
+        "view_count": 34142,
+        "like_count": 208,
+        "comment_count": 19,
+        "content_type": "맛집형",
+        "confidence": 0.84,
+        "evidence": "수제버거 단일 점포의 맛과 구성을 상세히 평가",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "BKZZX417Ej0",
+        "title": "여기 안 가면 100% 후회합니다ㅣ초여름 꼭 가봐야할 6월 가볼만한 곳 BEST 7(+축제일정,꿀팁)",
+        "channel": "여행톡톡",
+        "published_at": "2026-05-28",
+        "view_count": 33947,
+        "like_count": 336,
+        "comment_count": 9,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.52,
+        "evidence": "6월 여행지 목록으로 거제 관련 비중이 불분명",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "8SW1pTTBLXE",
+        "title": "[vlog] 리센느 원이 따라 거제 당일치기 브이로그 | 파라파라 추기(?), 바다 입수, 버스 엑스하기, 거제야호, 모래성분식포차, 거제맛집, w181카페, 덕포해수욕장",
+        "channel": "MAYBe보경",
+        "published_at": "2026-06-14",
+        "view_count": 32271,
+        "like_count": 1684,
+        "comment_count": 772,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.91,
+        "evidence": "설명에 '리센느 거제 영상 보고 다녀온 거제 당일치기'로 콘텐츠 시청이 방문 동기임을 직접 진술",
+        "poi_mentioned": [
+          "모래성분식포차",
+          "덕포해수욕장",
+          "w181카페"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "xQTZtFT4NQE",
+        "title": "거제 야-호!! 🤗 먹기만 하고 온 여행.. | 리센느 원이 치킨집•부산, 거제 맛집•풀빌라 | 친구랑 2박3일 거제, 부산 여행",
+        "channel": "평범한 곽순자씨",
+        "published_at": "2026-07-08",
+        "view_count": 32190,
+        "like_count": 1348,
+        "comment_count": 532,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.85,
+        "evidence": "'리센느 원이 치킨집'을 코스로 명시하고 '요즘 핫한 리센느'를 방문 배경으로 언급",
+        "poi_mentioned": [
+          "원이 치킨집"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "9Mrta-DFiq0",
+        "title": "'덕연이 딸' 시작된 전설의 식당 #거제여행 #거제도 #리센느 #원이 #미나미 #모래성분식포차",
+        "channel": "MAYBe보경",
+        "published_at": "2026-06-16",
+        "view_count": 32031,
+        "like_count": 859,
+        "comment_count": 80,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.87,
+        "evidence": "'덕연이 딸 시작된 전설의 식당'으로 인물 서사가 점포 방문의 이유",
+        "poi_mentioned": [
+          "모래성분식포차"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "myWJZGKPagY",
+        "title": "거제야호 거제 토박이 리센느 원이 추천 거제맛집 5곳! 금농갈비 순대리아 반박불가 거제 현지인 추천입니다!",
+        "channel": "먹행자 │ 먹보 여행자",
+        "published_at": "2026-07-04",
+        "view_count": 30944,
+        "like_count": 261,
+        "comment_count": 24,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.86,
+        "evidence": "'리센느 원이 추천 거제맛집 5곳'으로 점포 목록이 인물 추천에서 도출됨",
+        "poi_mentioned": [
+          "금농갈비",
+          "순대리아"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "Jb6TdlSt4HY",
+        "title": "리센느 원이 거제 단골 맛집 급습 브이로그",
+        "channel": "앤쵸리",
+        "published_at": "2026-06-15",
+        "view_count": 25483,
+        "like_count": 880,
+        "comment_count": 402,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.88,
+        "evidence": "'리센느 원이 거제 단골 맛집 급습'으로 인물의 단골 여부가 선정 기준",
+        "poi_mentioned": [
+          "순대리아"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "ZgsYyEiP4s0",
+        "title": "거를 타선 없는 현지인 추천 거제도 맛집 7곳! 거제 야호~🙋🏻‍♂️",
+        "channel": "갑짱부부vlog",
+        "published_at": "2026-07-21",
+        "view_count": 25273,
+        "like_count": 271,
+        "comment_count": 46,
+        "content_type": "맛집형",
+        "confidence": 0.87,
+        "evidence": "타임라인에 점포 7곳이 시간대별로 나열되어 식당 순회가 콘텐츠 전체",
+        "poi_mentioned": [
+          "우리들회식당",
+          "바다식당",
+          "버거섬",
+          "도시농부밥상",
+          "화간짬뽕",
+          "명가순두부",
+          "인생미역"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "pNPqIWMuoHM",
+        "title": "거제 야호~✌🏻 리센느 원이 맛집 다 뿌시기☆⌒(ゝ。∂) 1박2일 거제여행 🛳️",
+        "channel": "하니얌 haniyam",
+        "published_at": "2026-07-19",
+        "view_count": 22812,
+        "like_count": 311,
+        "comment_count": 68,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.85,
+        "evidence": "'리센느 원이 맛집 다 뿌시기'로 인물 추천 목록을 순회하는 구성",
+        "poi_mentioned": [
+          "금농갈비",
+          "매미성",
+          "외도 보타니아",
+          "순대리아",
+          "옥포밀면"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "zKlpyWBCM68",
+        "title": "거제 야호! 리센느 원이 추천 거제 맛집 탐방✨ 거제 여행 브이로그, 순대리아, 금농갈비, 매미성, 거제맛집",
+        "channel": "나나 Nanasserie",
+        "published_at": "2026-08-01",
+        "view_count": 22253,
+        "like_count": 328,
+        "comment_count": 41,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.86,
+        "evidence": "'리센느 원이의 고향으로 한참 뜨고 있는 거제'를 방문 이유로 서술",
+        "poi_mentioned": [
+          "순대리아",
+          "금농갈비",
+          "매미성"
+        ],
+        "sentiment": "긍정"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 31,
+        "ratio": 0.6327,
+        "total_views": 49958624
+      },
+      {
+        "content_type": "체험·액티비티형",
+        "count": 3,
+        "ratio": 0.0612,
+        "total_views": 2241257
+      },
+      {
+        "content_type": "자연경관형",
+        "count": 4,
+        "ratio": 0.0816,
+        "total_views": 915807
+      },
+      {
+        "content_type": "맛집형",
+        "count": 5,
+        "ratio": 0.102,
+        "total_views": 509796
+      },
+      {
+        "content_type": "코스·일정형",
+        "count": 3,
+        "ratio": 0.0612,
+        "total_views": 394202
+      },
+      {
+        "content_type": "축제·이벤트형",
+        "count": 3,
+        "ratio": 0.0612,
+        "total_views": 296012
+      }
+    ],
+    "unclassified_count": 10,
+    "zone_signals": {
+      "핫존": 5,
+      "데드존": 2,
+      "데드존_지점": [
+        "해금강마을"
+      ]
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-12",
+      "note": "'거제' 검색 결과 중 최근 90일 업로드 영상"
+    }
+  ],
+  "period": {
+    "start": "2026-06-14",
+    "end": "2026-09-12",
+    "granularity": "일"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "신뢰도 0.6 미만 항목은 집계에서 제외했다. 제외 건수는 unclassified_count에 표시한다.",
+    "조회수는 수집 시점 기준이며 이후 변동한다.",
+    "검색 결과 상위 영상만 수집해 소규모 채널 콘텐츠가 과소 대표될 수 있다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "model": {
+      "name": "claude-sonnet-5",
+      "prompt_version": "agent2_content_type_v0.1",
+      "temperature": 0
+    },
+    "items": [
+      {
+        "video_id": "dQw4w9Wg001",
+        "title": "거제 바람의 언덕 이 뷰 실화냐",
+        "channel": "여행하는 소희",
+        "published_at": "2026-08-21",
+        "view_count": 412000,
+        "like_count": 16954,
+        "comment_count": 907,
+        "content_type": "포토스팟형",
+        "confidence": 0.89,
+        "evidence": "영상 8분 중 6분이 전망대 사진 촬영 장면이며 '인생샷'이 7회 언급됨",
+        "poi_mentioned": [
+          "바람의 언덕"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg002",
+        "title": "거제 3대 횟집 다 가봤습니다",
+        "channel": "먹방로드",
+        "published_at": "2026-08-29",
+        "view_count": 287000,
+        "like_count": 10054,
+        "comment_count": 840,
+        "content_type": "맛집형",
+        "confidence": 0.94,
+        "evidence": "영상 전체가 식당 3곳 방문·시식으로 구성됨",
+        "poi_mentioned": [
+          "고현시장 일대"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg003",
+        "title": "매미성 가는 길 주차 꿀팁",
+        "channel": "캠핑브이로그",
+        "published_at": "2026-09-02",
+        "view_count": 156000,
+        "like_count": 6475,
+        "comment_count": 911,
+        "content_type": "포토스팟형",
+        "confidence": 0.71,
+        "evidence": "주차·접근 정보가 절반이나 목적지 선택 이유가 '사진 명소'로 서술됨",
+        "poi_mentioned": [
+          "매미성"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg004",
+        "title": "외도 보타니아 당일치기 코스",
+        "channel": "주말여행연구소",
+        "published_at": "2026-08-15",
+        "view_count": 98000,
+        "like_count": 4416,
+        "comment_count": 585,
+        "content_type": "자연경관형",
+        "confidence": 0.83,
+        "evidence": "식물원 경관 소개 중심, 음식·체험 언급 minimal",
+        "poi_mentioned": [
+          "외도 보타니아 선착장"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg005",
+        "title": "거제 카약 체험 후기",
+        "channel": "액티비티 기록",
+        "published_at": "2026-09-05",
+        "view_count": 74000,
+        "like_count": 2306,
+        "comment_count": 345,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.91,
+        "evidence": "카약 예약·장비·코스 설명이 영상 대부분을 차지",
+        "poi_mentioned": [
+          "구조라 해수욕장"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg006",
+        "title": "거제 포로수용소 생각보다 볼게 많음",
+        "channel": "역사여행",
+        "published_at": "2026-08-08",
+        "view_count": 61000,
+        "like_count": 1637,
+        "comment_count": 208,
+        "content_type": "자연경관형",
+        "confidence": 0.42,
+        "evidence": "실내 전시 관람 중심이나 유형 판단 근거가 약함",
+        "poi_mentioned": [
+          "거제 포로수용소 유적공원"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg007",
+        "title": "신선대 일출 보러 새벽 4시 출발",
+        "channel": "새벽러",
+        "published_at": "2026-09-07",
+        "view_count": 53000,
+        "like_count": 1806,
+        "comment_count": 244,
+        "content_type": "포토스팟형",
+        "confidence": 0.86,
+        "evidence": "일출 촬영이 영상의 목적으로 명시됨",
+        "poi_mentioned": [
+          "신선대"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "dQw4w9Wg008",
+        "title": "거제 섬&섬 축제 미리보기",
+        "channel": "경남여행",
+        "published_at": "2026-09-09",
+        "view_count": 22000,
+        "like_count": 883,
+        "comment_count": 119,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.88,
+        "evidence": "10월 축제 일정·프로그램 안내가 전체 내용",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "포토스팟형",
+        "count": 3,
+        "ratio": 0.4286,
+        "total_views": 621000
+      },
+      {
+        "content_type": "맛집형",
+        "count": 1,
+        "ratio": 0.1429,
+        "total_views": 287000
+      },
+      {
+        "content_type": "자연경관형",
+        "count": 1,
+        "ratio": 0.1429,
+        "total_views": 98000
+      },
+      {
+        "content_type": "체험·액티비티형",
+        "count": 1,
+        "ratio": 0.1429,
+        "total_views": 74000
+      },
+      {
+        "content_type": "축제·이벤트형",
+        "count": 1,
+        "ratio": 0.1429,
+        "total_views": 22000
+      }
+    ],
+    "unclassified_count": 1
+  }
+}

@@ -1,0 +1,93 @@
+"""팀 MySQL(tour_earlywarning)에서 분석·에이전트 입력을 내려받아 data/raw/db/에 CSV로 저장한다.
+
+DB를 매번 조회하지 않고 파일로 고정하는 이유: 데이터 담당이 적재를 계속 갱신 중이라
+같은 명령이 다른 결과를 낼 수 있다. 에이전트 결과는 어떤 스냅샷으로 만들었는지 남아야 한다
+(manifest.json에 추출 시각과 행 수를 기록한다).
+
+접속 정보는 .env의 DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD (조회 전용 계정).
+
+사용법:
+    uv run python collection/db_export.py
+"""
+
+import json
+import os
+import ssl
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
+import pymysql
+from dotenv import load_dotenv
+
+sys.stdout.reconfigure(encoding="utf-8")
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT_DIR = ROOT / "data" / "raw" / "db"
+
+# 유튜브가 적재된 사례 지역. 일별 원자료는 이 지역만 받는다 (전 지역 일별은 240만 행)
+CASE_REGIONS = ["48310", "12130", "47940", "51210", "51750", "51810"]
+
+QUERIES = {
+    "dim_region": "select region_id, region_name, sido_code, region_type, is_synthetic from dim_region",
+    # 전 지역 일별 검색지수·외지인 방문자 — 신호 임계값을 사례 지역이 아니라 전국 분포에서 정하기 위한 것
+    "daily_all": """
+        select region_id, observed_date, metric, value
+        from fact_signal
+        where observed_date >= '2022-12-01'
+          and (metric = 'interest_naver' or (metric = 'realization_visitors' and segment = 'external'))
+    """,
+    "daily_case": f"""
+        select region_id, observed_date, metric, segment, value
+        from fact_signal
+        where region_id in ({','.join(repr(r) for r in CASE_REGIONS)}) and observed_date >= '2022-01-01'
+    """,
+    "youtube_case": """
+        select video_id, region_id, source_region_name, keyword_text, published_at, window_month,
+               view_rank, title, channel_name, view_count, like_count, comment_count
+        from youtube_video
+    """,
+    "datalab_monthly_panel": "select * from datalab_monthly_panel",
+    "source_file": "select source_file_id, file_name, row_count, loaded_at, note from source_file",
+}
+
+
+def connect() -> pymysql.connections.Connection:
+    load_dotenv(ROOT / ".env")
+    missing = [k for k in ("DB_HOST", "DB_USER", "DB_PASSWORD") if not os.getenv(k)]
+    if missing:
+        sys.exit(f".env에 {', '.join(missing)}가 없다 (.env.example 참고)")
+    return pymysql.connect(
+        host=os.environ["DB_HOST"],
+        port=int(os.getenv("DB_PORT", "3306")),
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        database=os.getenv("DB_NAME", "tour_earlywarning"),
+        # 서버가 SSL을 요구한다 (Require). 인증서 검증은 서버가 자체 서명이라 끈다
+        ssl={"check_hostname": False, "verify_mode": ssl.CERT_NONE},
+        connect_timeout=15,
+        read_timeout=600,
+        charset="utf8mb4",
+    )
+
+
+def main() -> None:
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    conn = connect()
+    manifest = {"exported_at": datetime.now().astimezone().replace(microsecond=0).isoformat(), "tables": {}}
+    with conn.cursor() as cur:
+        for name, sql in QUERIES.items():
+            cur.execute(sql)
+            columns = [c[0] for c in cur.description]
+            df = pd.DataFrame(cur.fetchall(), columns=columns)
+            path = OUT_DIR / f"{name}.csv"
+            df.to_csv(path, index=False, encoding="utf-8")
+            manifest["tables"][name] = {"rows": len(df), "file": path.name}
+            print(f"{name:<24} {len(df):>9,}행 → {path.relative_to(ROOT)}")
+    conn.close()
+    (OUT_DIR / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,65 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/precedent.schema.json",
+  "title": "precedent — 유사 지역 선례 카드",
+  "description": "같은 공간 유형에서 같은 신호를 겪은 다른 지역이 무엇을 했고 어떻게 됐는가. 매뉴얼 p.46 '사례 공유'에 대응.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "cases"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "matched_for": {
+          "type": "object",
+          "description": "선례를 고른 기준",
+          "properties": {
+            "spatial_type": { "$ref": "_envelope.schema.json#/definitions/spatial_type" },
+            "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
+            "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" }
+          }
+        },
+        "cases": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["case_id", "region_name", "year", "situation", "spatial_type", "actions", "outcome", "source"],
+            "properties": {
+              "case_id": { "type": "string", "pattern": "^PC-\\d{3}$" },
+              "region_name": { "type": "string" },
+              "year": { "type": "integer", "minimum": 2015, "maximum": 2030 },
+              "situation": { "type": "string", "minLength": 10, "description": "어떤 신호·상황이었는가" },
+              "spatial_type": { "$ref": "_envelope.schema.json#/definitions/spatial_type" },
+              "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
+              "actions": {
+                "type": "array",
+                "minItems": 1,
+                "items": { "type": "string" },
+                "description": "실제 시행한 조치"
+              },
+              "outcome": {
+                "type": "object",
+                "description": "결과. 수치가 없으면 없다고 명시한다 — 추정치를 지어내지 않는다.",
+                "required": ["summary"],
+                "properties": {
+                  "summary": { "type": "string" },
+                  "metric": { "type": "string" },
+                  "before": { "type": "number" },
+                  "after": { "type": "number" },
+                  "unit": { "type": "string" },
+                  "measured": { "type": "boolean", "description": "false면 공개 수치가 없는 정성 사례" }
+                }
+              },
+              "similarity": {
+                "$ref": "_envelope.schema.json#/definitions/ratio",
+                "description": "현재 상황과의 유사도. 산출 방식은 caveat에 적는다."
+              },
+              "source": { "$ref": "_envelope.schema.json#/definitions/source" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
