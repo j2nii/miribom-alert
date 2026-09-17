@@ -38,15 +38,23 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
         </span>
       </div>
 
-      <div style={{ display: "flex", gap: 24, marginBottom: 12, fontSize: 14 }}>
-        <div>
-          혼잡도 단계 <strong>{d.congestion_level}</strong> / 5
+      {/* agents 브랜치 계약 변경: congestion_level·density는 실데이터에서 둘 다
+          없을 수 있다 (혼잡도 미측정 지역/시점 등) -- 항목별로 있을 때만 표시. */}
+      {(d.congestion_level != null || d.density) && (
+        <div style={{ display: "flex", gap: 24, marginBottom: 12, fontSize: 14, flexWrap: "wrap" }}>
+          {d.congestion_level != null && (
+            <div>
+              혼잡도 단계 <strong>{d.congestion_level}</strong> / 5
+            </div>
+          )}
+          {d.density && (
+            <div>
+              밀도 <strong>{d.density.value}</strong> {d.density.unit}
+              {d.density.slope_corrected ? " (경사 보정됨)" : ""}
+            </div>
+          )}
         </div>
-        <div>
-          밀도 <strong>{d.density.value}</strong> {d.density.unit}
-          {d.density.slope_corrected ? " (경사 보정됨)" : ""}
-        </div>
-      </div>
+      )}
 
       <p style={{ fontSize: 14 }}>{d.basis}</p>
 
