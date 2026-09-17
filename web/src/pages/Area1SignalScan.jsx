@@ -7,6 +7,7 @@ import CrossValidationLights from "../components/area1-signal-scan/CrossValidati
 import ForecastChart from "../components/area1-signal-scan/ForecastChart.jsx";
 import HotspotRanking from "../components/area1-signal-scan/HotspotRanking.jsx";
 import VisitorProfileCard from "../components/area1-signal-scan/VisitorProfileCard.jsx";
+import LifecyclePanel from "../components/area0-dashboard/LifecyclePanel.jsx";
 
 export default function Area1SignalScan({ region, onRegionChange }) {
   const signalStatus = useRegionData("signal_status", region);
@@ -42,13 +43,21 @@ export default function Area1SignalScan({ region, onRegionChange }) {
         <p className="section-title">3중 교차검증 신호등</p>
         <DataState
           result={signalStatus}
-          render={({ envelope }) => (
-            <>
-              <CrossValidationLights signalStatusData={envelope.data} />
-              <SourceBadge envelope={envelope} />
-              <CaveatNote envelope={envelope} />
-            </>
-          )}
+          render={({ envelope }) =>
+            // 충주처럼 alert_level/cross_validation 스키마가 아니라 생애주기
+            // 스키마(lifecycle_stage 등)인 지역은 CrossValidationLights가
+            // 기대하는 필드(특히 agreement)가 아예 없어 그대로 넘기면
+            // 크래시한다(흰 화면). Area0Dashboard.jsx와 같은 기준으로 분기.
+            envelope.data.alert_level ? (
+              <>
+                <CrossValidationLights signalStatusData={envelope.data} />
+                <SourceBadge envelope={envelope} />
+                <CaveatNote envelope={envelope} />
+              </>
+            ) : (
+              <LifecyclePanel envelope={envelope} />
+            )
+          }
         />
       </div>
 
