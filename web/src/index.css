@@ -418,10 +418,15 @@ body {
 .source-badge__details ul {
   margin: 6px 0 0;
   padding-left: 16px;
-  max-height: 1.8em;
+  height: 18px;
   overflow-y: auto;
   font-size: 12px;
-  line-height: 1.5;
+  line-height: 18px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.source-badge__details ul::-webkit-scrollbar {
+  display: none;
 }
 .source-badge__details li {
   margin-bottom: 4px;
