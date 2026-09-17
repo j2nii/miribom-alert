@@ -39,22 +39,20 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
       </div>
 
       {/* agents 브랜치 계약 변경: congestion_level·density는 실데이터에서 둘 다
-          없을 수 있다 (혼잡도 미측정 지역/시점 등) -- 항목별로 있을 때만 표시. */}
-      {(d.congestion_level != null || d.density) && (
-        <div style={{ display: "flex", gap: 24, marginBottom: 12, fontSize: 14, flexWrap: "wrap" }}>
-          {d.congestion_level != null && (
-            <div>
-              혼잡도 단계 <strong>{d.congestion_level}</strong> / 5
-            </div>
-          )}
-          {d.density && (
-            <div>
-              밀도 <strong>{d.density.value}</strong> {d.density.unit}
-              {d.density.slope_corrected ? " (경사 보정됨)" : ""}
-            </div>
-          )}
+          없을 수 있다 (혼잡도 미측정 지역/시점 등). congestion_level의
+          스키마 주석은 "화면은 '미측정'으로 표시"라고 명시하므로 숨기지
+          않고 그대로 드러낸다 -- density는 그런 지시가 없어 있을 때만 표시. */}
+      <div style={{ display: "flex", gap: 24, marginBottom: 12, fontSize: 14, flexWrap: "wrap" }}>
+        <div>
+          혼잡도 단계 <strong>{d.congestion_level != null ? `${d.congestion_level} / 5` : "미측정"}</strong>
         </div>
-      )}
+        {d.density && (
+          <div>
+            밀도 <strong>{d.density.value}</strong> {d.density.unit}
+            {d.density.slope_corrected ? " (경사 보정됨)" : ""}
+          </div>
+        )}
+      </div>
 
       <p style={{ fontSize: 14 }}>{d.basis}</p>
 

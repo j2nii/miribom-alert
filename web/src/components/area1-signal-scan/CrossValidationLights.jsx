@@ -1,9 +1,14 @@
 import ConfidenceBox from "../common/ConfidenceBox.jsx";
 
-// agents 브랜치 계약 변경: cross_validation[].value/threshold가 null일 수
-// 있다 (측정 불가한 신호) -- 그대로 보간하면 "null%p"처럼 표시되므로 감싼다.
-function formatMetric(value, unit) {
-  return value != null ? `${value}${unit}` : "측정 안 됨";
+// agents 브랜치 계약 변경: cross_validation[].value가 null일 수 있다 (측정
+// 불가한 신호) -- 그대로 보간하면 "null%p"처럼 표시되므로 감싼다. 스키마는
+// 이때 missing_reason에 구체적 사유를 담으므로, 있으면 그걸 쓴다.
+function formatValue(s) {
+  if (s.value != null) return `${s.value}${s.unit}`;
+  return s.missing_reason || "측정 안 됨";
+}
+function formatThreshold(s) {
+  return s.threshold != null ? `${s.threshold}${s.unit}` : "-";
 }
 
 // The 3-way cross-validation traffic light (D-05): 관심(SNS 언급량) ->
@@ -18,8 +23,7 @@ export default function CrossValidationLights({ signalStatusData }) {
         matchedCount={agreement.exceeded_count}
         totalCount={agreement.total}
         lines={signals.map(
-          (s) =>
-            `${s.signal} ${formatMetric(s.value, s.unit)} (임계 ${formatMetric(s.threshold, s.unit)}, ${s.trend}, ${s.exceeded ? "초과" : "미달"})`
+          (s) => `${s.signal} ${formatValue(s)} (임계 ${formatThreshold(s)}, ${s.trend}, ${s.exceeded ? "초과" : "미달"})`
         )}
         note="1/3 초과 시 관심→주의, 2/3 시 주의→경계, 3/3 시 경계→심각으로 승격합니다(단계적 승격 규칙, D-05). 서로 출처가 다른 지표만 독립 신호로 센다."
       />
@@ -51,7 +55,7 @@ export default function CrossValidationLights({ signalStatusData }) {
               <div style={{ color: "var(--ink-soft)" }}>{s.provider}</div>
             </div>
             <div style={{ fontSize: 13, textAlign: "right" }}>
-              {formatMetric(s.value, s.unit)} / 임계 {formatMetric(s.threshold, s.unit)}
+              {formatValue(s)} / 임계 {formatThreshold(s)}
               <div style={{ color: "var(--ink-soft)" }}>{s.trend}</div>
             </div>
           </div>

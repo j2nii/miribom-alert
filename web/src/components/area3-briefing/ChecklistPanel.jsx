@@ -1,7 +1,10 @@
 import { useState } from "react";
 import ManualRefCite from "../common/ManualRefCite.jsx";
 
-const PHASE_ORDER = ["오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"];
+// agents 브랜치 계약 변경: "사전(예보 대응)"이 기존 4단계 앞에 추가됐다. 이
+// 목록에 없는 phase 값을 가진 항목은 byPhase의 필터에서 조용히 빠지므로(에러
+// 없이 화면에서 사라짐), 새 phase가 생길 때마다 여기도 같이 넓혀야 한다.
+const PHASE_ORDER = ["사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"];
 const PAGE_SIZE = 5;
 
 export default function ChecklistPanel({ checklistData }) {
@@ -16,7 +19,10 @@ export default function ChecklistPanel({ checklistData }) {
   return (
     <div>
       <div className="info-box">
-        이 조건으로 매칭됨 — 경보 {matched_for.alert_level} · 혼잡도 {matched_for.congestion_level} ·{" "}
+        {/* signal_status.congestion_level처럼 matched_for.congestion_level도
+            혼잡도 미측정 지역/시점에서는 생략될 수 있다. */}
+        이 조건으로 매칭됨 — 경보 {matched_for.alert_level} · 혼잡도{" "}
+        {matched_for.congestion_level != null ? matched_for.congestion_level : "미측정"} ·{" "}
         {matched_for.spatial_type} · {matched_for.content_type}
         {matched_for.profile_tags?.length > 0 && <> · {matched_for.profile_tags.join(", ")}</>}
       </div>
