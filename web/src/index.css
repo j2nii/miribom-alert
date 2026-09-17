@@ -399,6 +399,8 @@ body {
   font-weight: 700;
   border-radius: 999px;
   padding: 2px 9px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .source-tag-real {
   background: var(--teal-tint-bg);
@@ -412,16 +414,9 @@ body {
   cursor: pointer;
   color: var(--ink-soft);
 }
-/* Opening this used to push the whole panel taller by however many sources
-   existed (3+ for AI-answer citations, unbounded). Capping the list's own
-   height and letting the rest scroll keeps that bounded and small -- give it
-   enough room for ~3 short lines so the common case (1-2 sources) needs no
-   scrolling at all, and only long lists scroll. */
 .source-badge__details ul {
   margin: 6px 0 0;
   padding-left: 16px;
-  max-height: 4.5em;
-  overflow-y: auto;
   font-size: 12px;
   line-height: 1.5;
 }
