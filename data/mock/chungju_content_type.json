@@ -1,0 +1,53 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "충주시 유튜브 콘텐츠(예시)",
+      "provider": "샘플 데이터 (역할4 수기 작성)",
+      "retrieved_at": "2026-09-12",
+      "note": "실측 데이터 아님 — agent②(콘텐츠 분류)의 공식 산출물이 아니다"
+    }
+  ],
+  "period": {
+    "start": "2026-01-01",
+    "end": "2026-09-01",
+    "granularity": "월"
+  },
+  "caveat": [
+    "예시 데이터. 공식 agent② 산출물이 아니다.",
+    "이 파일은 9종 공식 스키마의 실계약 대상이 아니며, 충주가 실제 지원 지역이 되면 agent②로 다시 산출해야 한다."
+  ],
+  "data": {
+    "region": {
+      "code": "27110",
+      "name": "충주시"
+    },
+    "items": [
+      {
+        "video_id": "sample-chungju-001",
+        "title": "충주맨 시청 홍보 영상",
+        "channel": "충주시",
+        "published_at": "2026-02-14",
+        "view_count": 8200000,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.9,
+        "evidence": "지자체 공무원 캐릭터가 직접 출연해 홍보하는 밈 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "sample-chungju-002",
+        "title": "충주맨 밈 모음 리액션",
+        "channel": "여러 채널(파생 콘텐츠)",
+        "published_at": "2026-03-05",
+        "view_count": 3100000,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.82,
+        "evidence": "원본 캐릭터를 재편집한 2차 창작 반응 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      }
+    ]
+  }
+}
