@@ -1,6 +1,6 @@
 {
   "_mock": true,
-  "generated_at": "2026-09-16T23:42:47+09:00",
+  "generated_at": "2026-09-20T18:31:56+09:00",
   "source": [
     {
       "name": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼",
@@ -11,14 +11,14 @@
     {
       "name": "한국관광 데이터랩 월별 패널 (SNS 언급량, 내비게이션 검색건수)",
       "provider": "한국관광공사 — 팀 DB datalab_monthly_panel",
-      "retrieved_at": "2026-09-16",
+      "retrieved_at": "2026-09-20",
       "url": "https://datalab.visitkorea.or.kr/",
       "note": "적재 2026-09-15. 전월 대비 증가율 − 같은 달 전국(canonical 지역) 중앙값"
     },
     {
       "name": "지역별 방문자수 일별 (외지인)",
       "provider": "한국관광공사 data.go.kr 15101972 — 팀 DB fact_signal",
-      "retrieved_at": "2026-09-16",
+      "retrieved_at": "2026-09-20",
       "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값, 임계 초과 7일 지속 (agents/signals.py)"
     },
     {
@@ -29,8 +29,8 @@
     }
   ],
   "period": {
-    "start": "2026-07-31",
-    "end": "2026-07-31",
+    "start": "2026-08-31",
+    "end": "2026-08-31",
     "granularity": "일"
   },
   "caveat": [
@@ -48,7 +48,7 @@
       "name": "거제시"
     },
     "matched_for": {
-      "alert_level": "주의",
+      "alert_level": "관심",
       "spatial_type": "실외 공간 가치 체류 중심형",
       "content_type": "예능·방송 노출형",
       "profile_tags": [
@@ -59,114 +59,12 @@
     },
     "items": [
       {
-        "id": "CL-026",
-        "phase": "사전(예보 대응)",
-        "action": "집중시간대 분산, 구역·동선 분산, 퇴장 안내·유도 강화, 축제 콘텐츠 재배치",
-        "owner": "운영주관부서",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [
-          "실외 공간 가치 체류 중심형"
-        ],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 13,
-          "section": "II. 기획·설계 및 준비 > 대상지 유형 분류 및 결정 > 관광지 유형 분류 4",
-          "quote": "관리: 집중시간대 분산, 구역·동선 분산, 퇴장 안내·유도 강화, 축제 콘텐츠 재배치"
-        },
-        "match_reason": "집중시간대 분산 및 구역·동선 분산으로 유입 급증형에 직접 대응",
-        "status": "발동",
-        "relevance": "핵심",
-        "rank": 1
-      },
-      {
-        "id": "CL-046",
-        "phase": "사전(예보 대응)",
-        "action": "선제 자원 배치: 안내물·안전펜스·임시 대기공간·우회 루트 안내 사전 배치",
-        "owner": "운영주관부서",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 20,
-          "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ② 사전 예보 기반 운영 프리셋 설정(선제 대응)",
-          "quote": "선제 자원 배치: 안내물·안전펜스·임시 대기공간·우회 루트 안내 사전 배치"
-        },
-        "match_reason": "선제 자원 배치로 유입 급증형 및 병목 정체형에 직접 대응",
-        "status": "발동",
-        "relevance": "핵심",
-        "rank": 2
-      },
-      {
-        "id": "CL-047",
-        "phase": "사전(예보 대응)",
-        "action": "교통주차 연계 준비: 주차 유입 조절, 퇴장 분산 안내 등 시나리오 사전 준비",
-        "owner": "운영주관부서",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 20,
-          "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ② 사전 예보 기반 운영 프리셋 설정(선제 대응)",
-          "quote": "교통주차 연계 준비: 주차 유입 조절, 퇴장 분산 안내 등 시나리오 사전 준비"
-        },
-        "match_reason": "교통주차 연계 준비로 유입 급증형 대비 주차 관리",
-        "status": "발동",
-        "relevance": "핵심",
-        "rank": 3
-      },
-      {
-        "id": "CL-044",
-        "phase": "사전(예보 대응)",
-        "action": "일/주간 혼잡 예보 반영: 예상 피크 시간·구역·이동 파동",
-        "owner": "관광지 혼잡도 운영관리 총괄 관리자",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 20,
-          "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ② 사전 예보 기반 운영 프리셋 설정(선제 대응)",
-          "quote": "일/주간 혼잡 예보 반영: 예상 피크 시간·구역·이동 파동"
-        },
-        "match_reason": "일/주간 혼잡 예보 반영으로 유입 급증형 대비 사전 준비",
-        "status": "발동",
-        "relevance": "관련",
-        "rank": 4
-      },
-      {
-        "id": "CL-045",
-        "phase": "사전(예보 대응)",
-        "action": "운영 모드 정의: 일반/강화(우천·야간·대형행사)/비상 모드 전환 기준 설정",
-        "owner": "관광지 혼잡도 운영관리 총괄 관리자",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 20,
-          "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ② 사전 예보 기반 운영 프리셋 설정(선제 대응)",
-          "quote": "운영 모드 정의: 일반/강화(우천·야간·대형행사)/비상 모드 전환 기준 설정"
-        },
-        "match_reason": "운영 모드 정의는 매일 수행하는 공통 절차",
-        "status": "발동",
-        "relevance": "일반",
-        "rank": 5
-      },
-      {
         "id": "CL-004",
         "phase": "오전(준비)",
         "action": "현장 관리인력 배치 (구역별 근무자 위치 확인)",
         "owner": "운영주관부서(현장 운영관리요원)",
         "priority": "높음",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -175,10 +73,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 오전(준비)",
           "quote": "현장 관리인력 배치 / 구역별 근무자 위치 확인"
         },
-        "match_reason": "구역별 현장 관리인력 배치로 유입 급증형 및 병목 정체형에 직접 대응",
+        "match_reason": "유입 급증 및 병목 정체 예상에 따라 현장 인력 배치 필요",
         "status": "발동",
         "relevance": "핵심",
-        "rank": 6
+        "rank": 1
       },
       {
         "id": "CL-003",
@@ -186,7 +84,7 @@
         "action": "금일 예상 방문객 확인 (예측 모델)",
         "owner": "관광지 혼잡도 운영관리 총괄 관리자",
         "priority": "높음",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -195,10 +93,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 오전(준비)",
           "quote": "금일 예상 방문객 확인 / 예측 모델"
         },
-        "match_reason": "유입 급증형 대응을 위한 금일 예상 방문객 확인",
+        "match_reason": "예능·방송 노출형 콘텐츠 비중 높아 유입 급증 예상에 대비한 예측 모델 활용",
         "status": "발동",
         "relevance": "관련",
-        "rank": 7
+        "rank": 2
       },
       {
         "id": "CL-018",
@@ -206,7 +104,7 @@
         "action": "익일 운영 계획 수립 (날씨/이벤트 반영)",
         "owner": "운영주관부서",
         "priority": "높음",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -215,10 +113,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 마감(평가)",
           "quote": "익일 운영 계획 수립 / 날씨 / 이벤트 반영"
         },
-        "match_reason": "익일 운영 계획 수립은 유입 급증형 대응을 위한 사전 준비",
+        "match_reason": "익일 운영 계획은 현재 혼잡 대응과 무관",
         "status": "발동",
-        "relevance": "관련",
-        "rank": 8
+        "relevance": "일반",
+        "rank": 3
       },
       {
         "id": "CL-041",
@@ -226,7 +124,7 @@
         "action": "권역/구역 담당 지정: 핵심 POI·병목 구간·우회 동선별 책임자 지정",
         "owner": "관광지 혼잡도 운영관리 총괄 관리자",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -235,10 +133,10 @@
           "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ① 상시 운영체계 구축 및 현장 역할 정렬",
           "quote": "권역/구역 담당 지정: 핵심 POI·병목 구간·우회 동선별 책임자 지정"
         },
-        "match_reason": "핵심 POI·병목 구간·우회 동선별 책임자 지정으로 병목 정체형에 직접 대응",
+        "match_reason": "핵심 POI·병목 구간 담당자 지정은 유입 급증 및 병목 정체 대응에 핵심",
         "status": "발동",
         "relevance": "핵심",
-        "rank": 9
+        "rank": 4
       },
       {
         "id": "CL-043",
@@ -246,7 +144,7 @@
         "action": "근무·배치 운영: 피크 시간대 증원 기준, 동선 유도 인력/안전요원 상시 배치표",
         "owner": "운영주관부서",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -255,10 +153,10 @@
           "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ① 상시 운영체계 구축 및 현장 역할 정렬",
           "quote": "근무·배치 운영: 피크 시간대 증원 기준, 동선 유도 인력/안전요원 상시 배치표"
         },
-        "match_reason": "피크 시간대 증원 기준으로 유입 급증형 대비 인력 배치",
+        "match_reason": "피크 시간대 증원·동선 유도 인력 배치는 유입 급증 및 병목 정체 대응에 핵심",
         "status": "발동",
-        "relevance": "관련",
-        "rank": 10
+        "relevance": "핵심",
+        "rank": 5
       },
       {
         "id": "CL-040",
@@ -266,7 +164,7 @@
         "action": "운영조직 구성: 상황실(관제)–현장팀(안내·안전·교통)–시설/주차측 역할 구분",
         "owner": "관광지 혼잡도 운영관리 총괄 관리자",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -275,10 +173,10 @@
           "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ① 상시 운영체계 구축 및 현장 역할 정렬",
           "quote": "운영조직 구성: 상황실(관제)–현장팀(안내·안전·교통)–시설/주차측 역할 구분"
         },
-        "match_reason": "운영조직 구성은 매일 수행하는 공통 절차",
+        "match_reason": "예보 대응을 위한 조직 구성은 유입 급증 및 병목 정체 대비에 필요",
         "status": "발동",
-        "relevance": "일반",
-        "rank": 11
+        "relevance": "관련",
+        "rank": 6
       },
       {
         "id": "CL-042",
@@ -286,7 +184,7 @@
         "action": "연락·보고 체계 표준화: 무전/메신저 채널, 보고 주기, 상향 보고 규칙",
         "owner": "관광지 혼잡도 운영관리 총괄 관리자",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -295,10 +193,10 @@
           "section": "II. 기획·설계 및 준비 > 관광지 혼잡도 운영관리 시나리오 > ① 상시 운영체계 구축 및 현장 역할 정렬",
           "quote": "연락·보고 체계 표준화: 무전/메신저 채널, 보고 주기, 상향 보고 규칙"
         },
-        "match_reason": "연락·보고 체계 표준화는 매일 수행하는 공통 절차",
+        "match_reason": "연락 체계 표준화는 유입 급증 및 병목 정체 상황 시 신속한 대응을 지원",
         "status": "발동",
-        "relevance": "일반",
-        "rank": 12
+        "relevance": "관련",
+        "rank": 7
       },
       {
         "id": "CL-001",
@@ -306,7 +204,7 @@
         "action": "시스템 정상 작동 확인 (서버/네트워크)",
         "owner": "협업 및 지원부서(데이터·IT)",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -315,10 +213,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 오전(준비)",
           "quote": "시스템 정상 작동 확인 / 서버 / 네트워크"
         },
-        "match_reason": "시스템과 무관한 매일 공통 점검 절차",
+        "match_reason": "시스템과 무관한 일상 점검 절차로 현재 혼잡 대응과 직접 연관되지 않음",
         "status": "발동",
         "relevance": "일반",
-        "rank": 13
+        "rank": 8
       },
       {
         "id": "CL-002",
@@ -326,7 +224,7 @@
         "action": "CCTV 및 센서 상태 점검 (오작동 기기 즉시 보고)",
         "owner": "협업 및 지원부서(데이터·IT)",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -335,10 +233,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 오전(준비)",
           "quote": "CCTV 및 센서 상태 점검 / 오작동 기기 즉시 보고"
         },
-        "match_reason": "CCTV 및 센서 상태 점검은 매일 수행하는 공통 절차",
+        "match_reason": "CCTV·센서 점검은 일상 점검이며 혼잡 상황 대응과 직접 연관되지 않음",
         "status": "발동",
         "relevance": "일반",
-        "rank": 14
+        "rank": 9
       },
       {
         "id": "CL-005",
@@ -346,7 +244,7 @@
         "action": "실시간 혼잡 단계 기록 (대시보드 모니터링)",
         "owner": "관광지 혼잡도 운영관리 총괄 관리자",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -355,10 +253,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 운영 중(모니터링)",
           "quote": "실시간 혼잡 단계 기록 / 대시보드 모니터링"
         },
-        "match_reason": "실시간 혼잡 단계 기록을 통해 상황 변화를 감시",
+        "match_reason": "실시간 혼잡 단계 기록은 유입 급증 및 병목 정체 상황 파악에 필요",
         "status": "발동",
         "relevance": "관련",
-        "rank": 15
+        "rank": 10
       },
       {
         "id": "CL-006",
@@ -366,7 +264,7 @@
         "action": "주요 핫스팟 영상 확인",
         "owner": "관광지 혼잡도 운영관리 총괄 관리자",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -375,50 +273,10 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 운영 중(모니터링)",
           "quote": "주요 핫스팟 영상 확인"
         },
-        "match_reason": "주요 핫스팟 영상 확인으로 혼잡 상황 파악",
+        "match_reason": "핫스팟 영상 확인은 유입 급증 및 병목 정체 예상에 활용",
         "status": "발동",
         "relevance": "관련",
-        "rank": 16
-      },
-      {
-        "id": "CL-015",
-        "phase": "마감(평가)",
-        "action": "일일 방문객 및 혼잡도 요약",
-        "owner": "운영주관부서",
-        "priority": "보통",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 50,
-          "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 마감(평가)",
-          "quote": "일일 방문객 및 혼잡도 요약"
-        },
-        "match_reason": "일일 방문객 및 혼잡도 요약은 매일 수행하는 공통 절차",
-        "status": "발동",
-        "relevance": "일반",
-        "rank": 17
-      },
-      {
-        "id": "CL-016",
-        "phase": "마감(평가)",
-        "action": "대응 조치 효과성 분석 (KPI 점검)",
-        "owner": "운영주관부서",
-        "priority": "보통",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 50,
-          "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 마감(평가)",
-          "quote": "대응 조치 효과성 분석 / KPI 점검"
-        },
-        "match_reason": "대응 조치 효과성 분석은 매일 수행하는 공통 절차",
-        "status": "발동",
-        "relevance": "일반",
-        "rank": 18
+        "rank": 11
       },
       {
         "id": "CL-017",
@@ -426,7 +284,7 @@
         "action": "특이사항 및 민원 정리",
         "owner": "운영주관부서",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
@@ -435,100 +293,72 @@
           "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 마감(평가)",
           "quote": "특이사항 및 민원 정리"
         },
-        "match_reason": "특이사항 및 민원 정리는 매일 수행하는 공통 절차",
+        "match_reason": "특이사항·민원 정리는 부정 감성 영상 등 민원 대응에 활용",
+        "status": "발동",
+        "relevance": "관련",
+        "rank": 12
+      },
+      {
+        "id": "CL-015",
+        "phase": "마감(평가)",
+        "action": "일일 방문객 및 혼잡도 요약",
+        "owner": "운영주관부서",
+        "priority": "보통",
+        "alert_level": "관심",
+        "spatial_type": [],
+        "profile_tags": [],
+        "manual_ref": {
+          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
+          "page": 50,
+          "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 마감(평가)",
+          "quote": "일일 방문객 및 혼잡도 요약"
+        },
+        "match_reason": "일일 요약은 상황 종료 후 평가 절차로 현재 혼잡 대응과 무관",
         "status": "발동",
         "relevance": "일반",
-        "rank": 19
+        "rank": 13
       },
       {
-        "id": "CL-030",
-        "phase": "운영 중(모니터링)",
-        "action": "출입구 혼잡 단계 상승 감지 시 유입 속도 조절 / 안내 인력 배치 및 대기 안내 강화 / 인접 대체 구역·시간대 분산 유도",
-        "owner": "운영주관부서(현장 운영관리요원)",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 39,
-          "section": "III. 실시간 모니터링 및 대응 > 실시간 혼잡도 대응 > 상황별 즉각 대응 > 유입 급증형 혼잡",
-          "quote": "유입 급증형 혼잡 · 출입구 혼잡 단계 상승 감지 시 유입 속도 조절 / 안내 인력 배치 및 대기 안내 강화 / 인접 대체 구역·시간대 분산 유도"
-        },
-        "match_reason": "혼잡도 3단계 이상 관측 시 유입 속도 조절 및 안내 인력 배치",
-        "status": "대기",
-        "relevance": "핵심",
-        "standby_condition": "혼잡도 3단계 이상 관측 시",
-        "situation_type": [
-          "유입 급증형"
-        ],
-        "rank": 20
-      },
-      {
-        "id": "CL-031",
-        "phase": "운영 중(모니터링)",
-        "action": "병목 지점 인력 집중 배치 / 일방통행·우회동선 임시 적용 / 체류 유발 요소(포토존·노점 등) 조정",
-        "owner": "운영주관부서(현장 운영관리요원)",
-        "priority": "높음",
-        "alert_level": "주의",
-        "spatial_type": [],
-        "profile_tags": [],
-        "manual_ref": {
-          "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 39,
-          "section": "III. 실시간 모니터링 및 대응 > 실시간 혼잡도 대응 > 상황별 즉각 대응 > 병목 정체형 혼잡",
-          "quote": "병목 정체형 혼잡 · 병목 지점 인력 집중 배치 / 일방통행·우회동선 임시 적용 / 체류 유발 요소(포토존·노점 등) 조정"
-        },
-        "match_reason": "혼잡도 3단계 이상 관측 시 병목 지점 인력 집중 배치",
-        "status": "대기",
-        "relevance": "핵심",
-        "standby_condition": "혼잡도 3단계 이상 관측 시",
-        "situation_type": [
-          "병목 정체형"
-        ],
-        "rank": 21
-      },
-      {
-        "id": "CL-033",
-        "phase": "운영 중(모니터링)",
-        "action": "현장 안내 및 상황 설명 강화 / 혼잡 원인 및 해소 예상 시간 안내 / 민원 발생 구역 중심 운영 보완",
-        "owner": "운영주관부서(현장 운영관리요원)",
+        "id": "CL-016",
+        "phase": "마감(평가)",
+        "action": "대응 조치 효과성 분석 (KPI 점검)",
+        "owner": "운영주관부서",
         "priority": "보통",
-        "alert_level": "주의",
+        "alert_level": "관심",
         "spatial_type": [],
         "profile_tags": [],
         "manual_ref": {
           "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
-          "page": 39,
-          "section": "III. 실시간 모니터링 및 대응 > 실시간 혼잡도 대응 > 상황별 즉각 대응 > 민원 급증형 혼잡",
-          "quote": "민원 급증형 혼잡 · 현장 안내 및 상황 설명 강화 / 혼잡 원인 및 해소 예상 시간 안내 / 민원 발생 구역 중심 운영 보완"
+          "page": 50,
+          "section": "부록 - 일일 운영 실무 가이드(체크리스트) > 마감(평가)",
+          "quote": "대응 조치 효과성 분석 / KPI 점검"
         },
-        "match_reason": "민원 발생 구역 중심 운영 보완은 현재 혼잡 상황과 직접 연관되지 않음",
-        "status": "대기",
+        "match_reason": "KPI 점검은 사후 평가이며 현재 혼잡 대응과 직접 연관되지 않음",
+        "status": "발동",
         "relevance": "일반",
-        "standby_condition": "혼잡도 3단계 이상 관측 시",
-        "situation_type": [
-          "민원 급증형"
-        ],
-        "rank": 22
+        "rank": 14
       }
     ],
-    "excluded_count": 13,
+    "excluded_count": 21,
     "assessment": {
       "situation_types": [
         {
           "type": "유입 급증형",
-          "evidence": "예능·방송 노출형 콘텐츠 비중이 63%로 높아 짧은 기간에 수요가 급증할 가능성이 있음"
+          "evidence": "예능·방송 노출형 콘텐츠 비중 63.27%로 급증 예상, SNS·내비게이션 언급량 증가 추세"
         },
         {
           "type": "병목 정체형",
-          "evidence": "매미성 진입 계단 구간이 반복 언급되고 체류 유발 요소(포토존·노점) 조정 필요"
+          "evidence": "순대리아·매미성·외도 보타니아 등 동일 POI 반복 언급, 매미성 진입 계단 구간 병목 정보"
         }
       ],
       "out_of_scope": [
         {
           "issue": "바가지 요금 논란",
           "evidence": "\"원이 이름에 먹칠 No!\" 거제 바가지, '확답' 듣고 왔습니다(리센느 전담기자가 직접 물어봄)"
+        },
+        {
+          "issue": "상권 쇠퇴·빈 건물 증가",
+          "evidence": "바다의 금강산? 거제도 해금강 마을, 호텔도 횟집도 파리만 날린다."
         }
       ]
     },

@@ -1,14 +1,13 @@
 """3중 교차검증 판정 — data/prod/signal_status*.json을 실데이터로 만든다 (규칙 처리, LLM 미사용).
 
 신호 (v3 회의안 A, 설계결정 D-13)
-- 관심: SNS 언급량 — 전월 대비 증가율에서 같은 달 전국 중앙값을 뺀 초과분(%p)
+- 관심: SNS 언급량 — 전년 동월 대비 증가율에서 같은 달 전국 중앙값을 뺀 초과분(%p)
 - 의도: 내비게이션 검색건수 — 같은 방식
 - 실현: 외지인 방문자수(일별) — 전년 동요일 대비 배율의 7일 중앙값이 7일간 유지된 수준의 월중 최고치.
   임계 이상이면 그 달에 7일 연속 초과가 있었다는 뜻이다 (D-12와 같은 규칙)
 
-관심·의도는 데이터랩 월별 패널이 12개월뿐이라 전년 대비를 낼 수 없어 전월 대비를 쓴다.
-전국 중앙값을 빼는 것은 명절·계절처럼 모든 지역이 같이 움직이는 변동을 지우기 위해서다
-(2025-10 내비 검색은 추석으로 전국 중앙값이 +87%였다).
+09.20: 패널이 2020-01까지 확장돼 전년 동월 대비로 바꿨다(그 전에는 12개월뿐이라 전월 대비를 썼다).
+전년 대비가 계절성을 지우고, 전국 중앙값을 빼서 명절 이동·전국 공통 변동까지 지운다.
 
 경보 단계는 D-05 규칙을 첫 달부터 차례로 적용한다:
 상향은 한 달에 한 단계, 하향은 현 단계 요건 미달이 2개월 연속일 때 한 단계.
@@ -40,10 +39,11 @@ CASE_REGIONS = ["48310", "51750", "12130", "47940", "51210", "51810"]
 
 MONTHLY_PERCENTILE = 0.90   # 주의 단계는 민감하게 (D-05) — 월 단위 표본이 작아 99백분위는 쓰지 않는다
 TREND_BAND = 0.05
+HISTORY_MONTHS = 24         # 경보 이력으로 실을 개월 수 (판정 자체는 첫 달부터 이어서 계산)
 
 PANEL_SIGNALS = [
-    ("관심", "sns_mentions", "SNS 언급량 전월 대비 증가율(전국 중앙값 대비 초과분)", "한국관광공사(데이터랩 소셜미디어)"),
-    ("의도", "navigation_searches", "내비게이션 검색건수 전월 대비 증가율(전국 중앙값 대비 초과분)", "한국관광공사(데이터랩 내비게이션)"),
+    ("관심", "sns_mentions", "SNS 언급량 전년 동월 대비 증가율(전국 중앙값 대비 초과분)", "한국관광공사(데이터랩 소셜미디어)"),
+    ("의도", "navigation_searches", "내비게이션 검색건수 전년 동월 대비 증가율(전국 중앙값 대비 초과분)", "한국관광공사(데이터랩 내비게이션)"),
 ]
 REALIZATION_SIGNAL = "외지인 방문자수 전년 동요일 대비 배율(7일 중앙값이 7일간 유지된 수준)"
 REALIZATION_PROVIDER = "한국관광공사 지역별 방문자수(data.go.kr 15101972)"
@@ -80,7 +80,7 @@ def load_panel() -> tuple[pd.DataFrame, dict]:
     panel = panel.dropna(subset=["canonical_region_id"]).sort_values(["canonical_region_id", "period_start"])
     thresholds = {}
     for _, col, _, _ in PANEL_SIGNALS:
-        panel[f"{col}_mom"] = panel.groupby("canonical_region_id")[col].pct_change(fill_method=None)
+        panel[f"{col}_mom"] = panel.groupby("canonical_region_id")[col].pct_change(12, fill_method=None)
         national = panel.groupby("period_start")[f"{col}_mom"].transform("median")
         panel[f"{col}_exc"] = panel[f"{col}_mom"] - national
         thresholds[col] = round(float(panel[f"{col}_exc"].dropna().quantile(MONTHLY_PERCENTILE)) * 100, 1)
@@ -113,7 +113,7 @@ def monthly_signals(panel: pd.DataFrame, thresholds: dict, frames: SignalFrames,
     for _, row in rows.iterrows():
         month = row["period_start"]
         if pd.isna(row["sns_mentions_mom"]) and pd.isna(row["navigation_searches_mom"]):
-            continue  # 첫 달은 전월이 없다
+            continue  # 전년 같은 달이 없는 구간
         signals = []
         for stage, col, label, provider in PANEL_SIGNALS:
             exc = row[f"{col}_exc"]
@@ -199,7 +199,7 @@ def basis_sentence(region_name: str, month: pd.Timestamp, history: list[dict], s
 def build(region: str, region_name: str, panel: pd.DataFrame, thresholds: dict, frames: SignalFrames,
           meta: dict) -> dict:
     months = monthly_signals(panel, thresholds, frames, region)
-    history = apply_d05(months)
+    history = apply_d05(months)[-HISTORY_MONTHS:]
     current, last = history[-1], months[-1]
     signals = last["signals"]
     exceeded = sum(s["exceeded"] for s in signals)
@@ -232,17 +232,17 @@ def build(region: str, region_name: str, panel: pd.DataFrame, thresholds: dict, 
     data["manual_ref"] = MANUAL_REF
 
     caveat = [
-        ("월별 패널이 2025-08~2026-07 12개월뿐이라 SNS 언급량·내비게이션 검색은 전년 대비를 낼 수 없다. "
-        "전월 대비 증가율에서 같은 달 전국 중앙값을 빼 명절·계절처럼 전국이 같이 움직이는 변동을 줄였으나, "
-        "지역 고유의 계절성(해안 지역의 여름 등)은 남는다."),
-        (f"관심·의도 임계는 2025-09~2026-07 전국 {int(MONTHLY_PERCENTILE * 100)}백분위다. 지난 달 판정(history)에도 "
+        ("관심·의도는 전년 동월 대비 증가율에서 같은 달 전국 중앙값을 뺀 값이다. 전년 대비가 계절성을, "
+        "전국 중앙값을 빼는 것이 명절 이동·전국 공통 변동을 지운다 (09.20 패널이 2020-01까지 확장돼 "
+        "전월 대비에서 전년 대비로 바꿨다)."),
+        (f"관심·의도 임계는 패널 전 기간 전국 {int(MONTHLY_PERCENTILE * 100)}백분위다. 지난 달 판정(history)에도 "
         "그 뒤 데이터가 반영된 임계를 썼다(표본 내 판정) — 백테스트 성과로 쓰려면 역할2가 시점별 임계로 다시 계산해야 한다."),
         ("실현 신호는 데이터랩 패널의 전년 대비 방문자 증감률 대신 일별 외지인 방문자수를 썼다. "
         "패널의 해당 열은 3,108행 중 539행에만 값이 있다. 일별 판정 규칙은 D-12와 같다(7일 지속)."),
         "혼잡도 단계는 실측이 없어 비워 두었다. 에이전트③은 현장 조치를 모두 '대기'로 둔다(D-07).",
         "시군구 단위 신호라 해수욕장·점포 같은 지점 쏠림은 보이지 않는다(에이전트① 거제·영월 사례 참조).",
         f"데이터랩 패널의 최신 월이 {data['as_of'][:7]}이라 판정 기준일이 조회일({meta['exported_at'][:10]})보다 늦다. 실시간 경보가 아니라 월 단위 사후 판정이다.",
-        "관광지는 명절·휴가철 증가 폭이 전국 평균보다 커서, 전국 중앙값을 빼도 10월(추석)·여름에 관심·의도 신호가 넘는 경우가 있다.",
+        f"경보 이력은 최근 {HISTORY_MONTHS}개월만 싣는다. 경보 단계 자체는 패널 첫 달부터 D-05 규칙을 이어서 적용한 결과다.",
     ]
     if any(s.get("_missing") for s in signals):
         caveat.append("이번 달 패널 값이 비어 있는 신호는 미달로 처리했다.")
