@@ -10,6 +10,7 @@ dependencies = [
     "pandas>=2.0",
     "pymysql>=1.2.0",
     "scikit-learn>=1.7.2",
+    "statsmodels>=0.15.0",
 ]
 
 [project.optional-dependencies]
