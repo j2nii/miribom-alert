@@ -6,11 +6,16 @@
 
 ```bash
 uv run python analysis/src/forecast/build_panel.py      # 1. DB → 분석 패널 (먼저 실행)
+uv run python analysis/src/forecast/build_external.py   # 1-2. DB → 데이터랩 월간·근거기사·바이럴 키워드
 uv run python analysis/src/forecast/baseline.py         # 2. 예측 사다리 (--horizon 1 도 가능)
 uv run python analysis/src/forecast/models.py           # 3. 모델 계열 비교
 uv run python analysis/src/forecast/detect.py           # 4. 급증 탐지와 검색 선행성
 uv run python analysis/src/forecast/review_checks.py    # 5. 전면 검토 (누출·위약·기저율·민감도)
-uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 4장
+uv run python analysis/src/forecast/ablation.py         # 5-2. 추가 데이터 기여도 (씨앗·위약·붓스트랩)
+uv run python analysis/src/forecast/detect_ablation.py  # 5-3. 추가 데이터로 조기경보가 되는가
+uv run python analysis/src/forecast/evidence_check.py   # 5-4. 근거 기사를 입력으로 쓸 수 있는가
+uv run python analysis/src/forecast/compare_pipelines.py# 5-5. 수영님 450건과 대조 · 명절 정렬 재검
+uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6장
 ```
 
 `build_panel.py`는 `.env`의 DB 계정을 씁니다. 나머지는 `data/interim/panel_daily.csv`만 있으면 오프라인으로 돕니다.
@@ -24,12 +29,18 @@ uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 4
 | `models.py` | Ridge·GBM 3종·지역별·ETS·SARIMAX 비교 | `model_comparison.json` |
 | `detect.py` | 급증 사건 추출(잔차·전년대비), 검색 신호의 적중률·기저율·상승도 | `detection_summary.json` |
 | `review_checks.py` | 결과를 믿어도 되는지 검사 5종 | 콘솔 출력 |
-| `figures.py` | 그림 4장 | `docs/submission/figures/` |
+| `build_external.py` | 데이터랩 월간·근거기사·바이럴 키워드 내려받기 | `datalab_monthly.csv` 외 |
+| `ablation.py` | 블록별 기여도. 씨앗 잡음·전진후진·붓스트랩·위약 대조군 | `ablation_h7.json` |
+| `detect_ablation.py` | 월 단위 조기경보 실험(AUC·상승도) | `detect_ablation.json` |
+| `evidence_check.py` | 근거 기사 사용 가능성 판정 | `evidence_check.json` |
+| `compare_pipelines.py` | 수영님 파이프라인과 대조, 명절 정렬 재검 | `pipeline_comparison.json` |
+| `figures.py` | 그림 6장 | `docs/submission/figures/` |
 
 `baseline.py`의 `build_features`·`SPLITS`는 다른 스크립트들이 공통으로 가져다 씁니다. 분할이나 지연 규칙을 바꾸려면 여기만 고치면 됩니다.
 
 ## 결과 문서
 
-- `docs/작업기록_0922.md` — **이것만 보면 전체 파악됨**
+- `docs/분석_검증_추가데이터_0924.md` — **추가 데이터 검증의 결론과 정정 사항 (최신)**
+- `docs/작업기록_0922.md` — 9/22까지의 전체 파악
 - `docs/분석_누출점검표.md` — 어떤 변수를 왜 썼는가·안 썼는가
 - `docs/분석_결과_예측사다리.md` · `docs/분석_결과_탐지와모델비교.md`
