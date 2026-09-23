@@ -1,14 +1,29 @@
-"""에이전트② 분류 결과를 data/prod/content_type.json으로 만든다.
+"""에이전트② 분류 결과를 data/prod/content_type*.json으로 만든다.
 
-분류 자체는 agents/prompts/agent2_content_type.md 프롬프트로 수행하고,
-이 스크립트는 그 판정 결과를 원본 수집 데이터와 조인해 스키마 형식으로 내보낸다.
+거제(48310, 기본 지역)는 RESULTS(수동 분류, "리센느 원이" 사례로 다른 문서에도
+구체 인용된 기록)를 그대로 동결해서 쓴다 — 다시 돌리면 다른 영상 집합이 잡혀
+기존 서술이 깨진다.
 
-RESULTS의 값은 프롬프트 실행 결과다. 재실행 시 이 표를 교체한다.
+나머지 5개 사례 지역(여수·울릉·속초·영월·인제)은 agents/prompts/agent2_content_type.md를
+agents/llm_client.py로 실제 호출해 분류한다. 원래 하드코딩 RESULTS_OTHER dict였던
+부분을 이걸로 교체했다(프로젝트가 "현재 최대 기술부채"로 명시해뒀던 부분 —
+docs/meeting-notes/UI/프론트구조_기능조사_및_에이전트연동계획.md 참고). agent3_match.py/
+agent5_briefing.py와 같은 패턴: LLM은 판정(유형·신뢰도·근거·언급지점·감성·zone_signal)만
+하고, video_id/title/channel/published_at/view_count 등 정적 필드는 코드가 원본에서
+그대로 채운다(D-08).
+
+입력은 DB 스냅샷(youtube_case.csv, description/tags 없음)이 아니라 collection/
+youtube_collect.py로 재수집한 원본을 쓴다 — DB의 youtube_video 테이블 자체에
+description/tags 컬럼이 없어서(팀 공유용 기록: docs/j2nii_진행상황.md §23),
+프롬프트가 요구하는 입력(제목·설명·태그)을 DB로는 채울 수 없다.
 
 사용법:
-    uv run python agents/agent2_apply.py
+    uv run python collection/youtube_collect.py --region 여수   # 지역별 재수집, 필요시
+    uv run python agents/agent2_apply.py --provider upstage
+    uv run python agents/agent2_apply.py --dump-prompt          # LLM 호출 없이 요청만 저장
 """
 
+import argparse
 import json
 import sys
 from collections import Counter
@@ -16,10 +31,23 @@ from datetime import datetime
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
+sys.stderr.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+sys.path.insert(0, str(ROOT / "agents"))
+
+from validate_data import validate_payload  # noqa: E402
+from common import load_prompt  # noqa: E402
+from llm_client import LLMError, complete_json  # noqa: E402
+from jsonschema import Draft7Validator  # noqa: E402
+
 RAW_DIR = ROOT / "data" / "raw" / "youtube"
-OUT = ROOT / "data" / "prod" / "content_type.json"
+PROD = ROOT / "data" / "prod"
+RUNS_DIR = ROOT / "agents" / "runs"
+OUT = PROD / "content_type.json"
+DEFAULT_REGION = "48310"
+PROMPT_PATH = ROOT / "agents" / "prompts" / "agent2_content_type.md"
 
 PROMPT_VERSION = "agent2_content_type_v1.1"
 MODEL = "claude-opus-5"
@@ -30,6 +58,22 @@ CONFIDENCE_FLOOR = 0.6
 # RESULTS가 판정한 수집본. 최신 파일을 자동으로 고르면 다른 수집본(예: 220일치)과
 # 조인되어 결과가 조용히 바뀌므로 고정한다. 재분류할 때 함께 바꾼다.
 RAW_FILE = "거제_20260912_1320.json"
+
+CONTENT_TYPES = [
+    "예능·방송 노출형", "맛집형", "포토스팟형", "체험·액티비티형", "축제·이벤트형",
+    "자연경관형", "드라마·영화촬영지형", "코스·일정형", "관광무관",
+]
+
+# 재수집한 원본 파일(agents/prompts/agent2_content_type.md로 실제 LLM 분류할 지역).
+# RAW_FILE과 같은 이유로 고정한다 — 재수집이 매번 다른 시각의 영상 집합을 낼 수 있다.
+OTHER_RAW_FILES = {
+    "12130": ("여수시", "여수_20260924_0118.json"),
+    "47940": ("울릉군", "울릉_20260924_0118.json"),
+    "51210": ("속초시", "속초_20260924_0118.json"),
+    "51750": ("영월군", "영월_20260924_0119.json"),
+    "51810": ("인제군", "인제_20260924_0119.json"),
+}
+TOP_N_OTHER = 50
 
 # 수요 쏠림/이탈 신호 (설계결정 D-02).
 # 관광무관으로 분류된 영상도 신호는 가질 수 있다 — 집계에서 빠지는 것과
@@ -108,7 +152,34 @@ RESULTS = {
 }
 
 
-def main() -> None:
+def summarize(items: list[dict]) -> tuple[list[dict], list[dict]]:
+    counted = [i for i in items if i["confidence"] >= CONFIDENCE_FLOOR and i["content_type"] != "관광무관"]
+    by_type: dict[str, list] = {}
+    for item in counted:
+        by_type.setdefault(item["content_type"], []).append(item)
+    summary = [
+        {
+            "content_type": ctype,
+            "count": len(group),
+            "ratio": round(len(group) / len(counted), 4),
+            "total_views": sum(i["view_count"] for i in group),
+        }
+        for ctype, group in sorted(by_type.items(), key=lambda kv: -sum(i["view_count"] for i in kv[1]))
+    ]
+    return counted, summary
+
+
+def zone_signals(items: list[dict]) -> dict:
+    return {
+        "핫존": sum(1 for i in items if i.get("zone_signal") == "핫존"),
+        "데드존": sum(1 for i in items if i.get("zone_signal") == "데드존"),
+        "데드존_지점": sorted({
+            poi for i in items if i.get("zone_signal") == "데드존" for poi in i["poi_mentioned"]
+        }),
+    }
+
+
+def build_geoje() -> None:
     raw_path = RAW_DIR / RAW_FILE
     raw = json.loads(raw_path.read_text(encoding="utf-8"))
 
@@ -137,20 +208,7 @@ def main() -> None:
             item["zone_signal"] = ZONE_SIGNALS[video["video_id"]]
         items.append(item)
 
-    counted = [i for i in items if i["confidence"] >= CONFIDENCE_FLOOR and i["content_type"] != "관광무관"]
-    by_type: dict[str, list] = {}
-    for item in counted:
-        by_type.setdefault(item["content_type"], []).append(item)
-
-    summary = [
-        {
-            "content_type": ctype,
-            "count": len(group),
-            "ratio": round(len(group) / len(counted), 4),
-            "total_views": sum(i["view_count"] for i in group),
-        }
-        for ctype, group in sorted(by_type.items(), key=lambda kv: -sum(i["view_count"] for i in kv[1]))
-    ]
+    counted, summary = summarize(items)
 
     payload = {
         "_mock": False,
@@ -181,13 +239,7 @@ def main() -> None:
             "items": items,
             "summary": summary,
             "unclassified_count": len(items) - len(counted),
-            "zone_signals": {
-                "핫존": sum(1 for i in items if i.get("zone_signal") == "핫존"),
-                "데드존": sum(1 for i in items if i.get("zone_signal") == "데드존"),
-                "데드존_지점": sorted({
-                    poi for i in items if i.get("zone_signal") == "데드존" for poi in i["poi_mentioned"]
-                }),
-            },
+            "zone_signals": zone_signals(items),
         },
     }
 
@@ -209,6 +261,218 @@ def main() -> None:
     print(f"\n쏠림/이탈 신호: 핫존 {zones['핫존']}건 · 데드존 {zones['데드존']}건")
     if zones["데드존_지점"]:
         print(f"  데드존 지목 지점(분산 후보): {', '.join(zones['데드존_지점'])}")
+
+
+def output_schema(video_ids: list[str]) -> dict:
+    # video_id를 enum으로 묶어 존재하지 않는 항목을 만들거나 빠뜨릴 수 없게 한다 (D-08)
+    def obj(props: dict, required: list[str] | None = None) -> dict:
+        return {"type": "object", "properties": props, "required": required or list(props), "additionalProperties": False}
+
+    judgment = obj({
+        "video_id": {"type": "string", "enum": video_ids},
+        "content_type": {"type": "string", "enum": CONTENT_TYPES},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence": {"type": "string", "minLength": 5},
+        "poi_mentioned": {"type": "array", "items": {"type": "string"}},
+        "sentiment": {"type": "string", "enum": ["긍정", "중립", "부정"]},
+        "zone_signal": {"type": "string", "enum": ["핫존", "데드존"]},
+    }, required=["video_id", "content_type", "confidence", "evidence", "poi_mentioned", "sentiment"])
+    return obj({"judgments": {"type": "array", "items": judgment}})
+
+
+def schema_errors(data: dict, schema: dict) -> list[str]:
+    return [e.message for e in Draft7Validator(schema).iter_errors(data)]
+
+
+# 한 번에 50건을 다 판정시키면 solar-pro3가 스키마는 지키면서도(구조 오류는 없음)
+# 배열 일부 항목을 그냥 빠뜨린다 — max_tokens을 늘리거나 배치를 줄여도 가끔 재현된다.
+# "빠진 것만 다시 물어본다"를 스키마가 완전할 때까지 반복하는 게 재시도보다 안정적이다.
+BATCH_SIZE = 20
+MAX_ROUNDS = 4
+
+
+def classify_batch(region_name: str, videos: list[dict], args, prompt_version: str, system: str) -> dict:
+    by_id = {v["video_id"]: v for v in videos}
+    pending = list(by_id)
+    judgments: dict[str, dict] = {}
+    model_info = None
+    replayed = False
+
+    for round_no in range(1, MAX_ROUNDS + 1):
+        subset = [by_id[vid] for vid in pending]
+        user = json.dumps({
+            "region": region_name,
+            "videos": [
+                {k: v[k] for k in ("video_id", "title", "channel", "published_at", "description", "tags",
+                                    "view_count", "comment_count") if k in v}
+                for v in subset
+            ],
+        }, ensure_ascii=False, indent=1)
+        schema = output_schema(pending)
+        try:
+            result = complete_json(system, user, schema, provider=args.provider, model=args.model,
+                                   base_url=args.base_url, response_path=args.response,
+                                   max_tokens=16000, reasoning_effort="low")
+        except LLMError as e:
+            sys.exit(f"LLM 호출 실패({region_name}): {e}")
+        model_info = (result.model, result.provider)
+        replayed = result.provider.startswith("replay")
+
+        errs = schema_errors(result.data, schema)
+        if errs:
+            sys.exit(f"LLM 응답이 스키마를 어겼다({region_name}, {round_no}회차): {errs[:3]}")
+        if not replayed:
+            stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            log = RUNS_DIR / f"agent2_{region_name}_{stamp}_{round_no}.json"
+            log.write_text(json.dumps({"prompt_version": prompt_version, "provider": result.provider,
+                                       "model": result.model, "user": user, "response": result.data},
+                                       ensure_ascii=False, indent=2), encoding="utf-8")
+
+        for j in result.data["judgments"]:
+            judgments.setdefault(j["video_id"], j)  # 중복 응답 시 첫 판정을 쓴다
+        pending = [vid for vid in pending if vid not in judgments]
+        if not pending or replayed:
+            break
+        print(f"  {region_name} {round_no}회차: {len(judgments)}/{len(by_id)}건 판정, {len(pending)}건 재요청")
+
+    if pending:
+        sys.exit(f"LLM이 {MAX_ROUNDS}회 재요청 후에도 판정을 못 채웠다({region_name}): {pending}")
+
+    return {"judgments": judgments, "model": model_info[0], "provider": model_info[1]}
+
+
+def build_other(region: str, region_name: str, args) -> dict | None:
+    filename = OTHER_RAW_FILES[region][1]
+    raw_path = RAW_DIR / filename
+    if not raw_path.exists():
+        print(f"[건너뜀] {filename}이 없다 — collection/youtube_collect.py --region {region_name[:2]}로 재수집 필요")
+        return None
+    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+
+    # 재수집은 "오늘로부터 최근 90일"이라 signal_status 등 다른 실측 계약(데이터랩 8월분까지만
+    # 공개돼 있어 as_of가 그 이전에 멈춰 있음)보다 최신 영상까지 잡힌다. 같은 지역 화면에서
+    # "8월 기준 경보" 옆에 "9월 콘텐츠"가 뜨는 시점 불일치를 막기 위해, signal_status의
+    # as_of 이후 업로드분은 분류 대상에서 제외한다(하드코딩 아님 — as_of가 갱신되면 자동으로 따라간다).
+    signal_path = PROD / f"signal_status_{region}.json"
+    as_of = json.loads(signal_path.read_text(encoding="utf-8"))["data"]["as_of"]
+    all_videos = raw["videos"]
+    eligible = [v for v in all_videos if v["published_at"] <= as_of]
+    excluded_recent = len(all_videos) - len(eligible)
+
+    videos = sorted(eligible, key=lambda v: -v["view_count"])[:TOP_N_OTHER]
+    video_ids = [v["video_id"] for v in videos]
+
+    system, prompt_version = load_prompt(PROMPT_PATH)
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+
+    if args.dump_prompt:
+        stamp = datetime.now().strftime("%Y%m%d_%H%M")
+        user = json.dumps({"region": region_name, "videos": videos}, ensure_ascii=False, indent=1)
+        path = RUNS_DIR / f"agent2_request_{region}_{stamp}.json"
+        path.write_text(json.dumps({"prompt_version": prompt_version, "system": system, "user": user,
+                                   "schema": output_schema(video_ids)}, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"요청 저장: {path.relative_to(ROOT)} ({region_name}, {len(videos)}건, 배치 크기 {BATCH_SIZE})")
+        return None
+
+    judgments: dict[str, dict] = {}
+    model_info = None
+    for i in range(0, len(videos), BATCH_SIZE):
+        batch = videos[i:i + BATCH_SIZE]
+        result = classify_batch(region_name, batch, args, prompt_version, system)
+        judgments.update(result["judgments"])
+        model_info = (result["model"], result["provider"])
+
+    by_id = {v["video_id"]: v for v in videos}
+    items = []
+    for video_id in video_ids:
+        video, j = by_id[video_id], judgments[video_id]
+        item = {
+            "video_id": video_id,
+            "title": video["title"],
+            "channel": video["channel"],
+            "published_at": video["published_at"],
+            "view_count": video["view_count"],
+            "like_count": video["like_count"],
+            "comment_count": video["comment_count"],
+            "content_type": j["content_type"],
+            "confidence": j["confidence"],
+            "evidence": j["evidence"],
+            "poi_mentioned": j["poi_mentioned"],
+            "sentiment": j["sentiment"],
+        }
+        if j.get("zone_signal"):
+            item["zone_signal"] = j["zone_signal"]
+        items.append(item)
+
+    counted, summary = summarize(items)
+    return {
+        "_mock": False,
+        "generated_at": datetime.now().astimezone().replace(microsecond=0).isoformat(),
+        "source": [
+            {
+                "name": "YouTube Data API v3",
+                "provider": "Google",
+                "retrieved_at": raw["collected_at"][:10],
+                "note": f"검색어 {', '.join(raw['queries'])} / 최근 {raw['period_days']}일 업로드분 {raw['count']}건 중 "
+                        f"{as_of} 이전 업로드 {len(eligible)}건 중 조회수 상위 {len(items)}건 분류",
+            }
+        ],
+        "period": {
+            "start": min(i["published_at"] for i in items),
+            "end": max(i["published_at"] for i in items),
+            "granularity": "일",
+        },
+        "caveat": [
+            f"영상은 signal_status 기준일(as_of={as_of}) 이전 업로드분만 포함했다 — 다른 실측 계약(signal_status/"
+            f"visitor_profile/hotspots)과 시점을 맞추기 위함이다. 이후 업로드된 {excluded_recent}건은 제외했다.",
+            f"수집된 영상 중 조회수 상위 {TOP_N_OTHER}건만 분류했다(기준일 이전 {len(eligible)}건 중). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+            "조회수는 수집 시점 기준이며 이후 계속 변동한다.",
+            "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+            "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+            "분류는 제목·설명·태그 텍스트만으로 수행했으며 영상 내용을 시청해 검증하지 않았다.",
+        ],
+        "data": {
+            "region": {"code": region, "name": region_name},
+            "model": {"name": model_info[0], "provider": model_info[1], "prompt_version": prompt_version},
+            "items": items,
+            "summary": summary,
+            "unclassified_count": len(items) - len(counted),
+            "zone_signals": zone_signals(items),
+        },
+    }
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="에이전트② 콘텐츠 유형 분류")
+    parser.add_argument("--provider", choices=["anthropic", "upstage", "openai", "replay"],
+                        help="기본: LLM_PROVIDER, 없으면 .env에 있는 키로 선택")
+    parser.add_argument("--model")
+    parser.add_argument("--base-url", help="openai 백엔드 주소")
+    parser.add_argument("--response", type=Path, help="replay 백엔드가 읽을 응답 파일")
+    parser.add_argument("--dump-prompt", action="store_true", help="LLM을 호출하지 않고 요청만 저장")
+    args = parser.parse_args()
+
+    if (RAW_DIR / RAW_FILE).exists():
+        build_geoje()
+    else:
+        print(f"[건너뜀] 거제: {RAW_FILE}이 없다 (data/raw/youtube는 gitignore 대상 — 기존 data/prod/content_type.json 유지)")
+
+    for region, (region_name, _) in OTHER_RAW_FILES.items():
+        payload = build_other(region, region_name, args)
+        if payload is None:
+            continue
+        errors = validate_payload("content_type", payload)
+        if errors:
+            sys.exit(f"[스키마 실패] {region}: {errors[:3]}")
+        out_path = PROD / f"content_type_{region}.json"
+        out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        d = payload["data"]
+        print(f"\n{region_name:<5} {len(d['items'])}건 분류 (집계 {len(d['items']) - d['unclassified_count']}건) → data/prod/{out_path.name}")
+        for row in d["summary"][:3]:
+            print(f"  {row['content_type']:<16} {row['count']:>2}건  조회수 {row['total_views']:>10,}")
+        zones = d["zone_signals"]
+        if zones["핫존"] or zones["데드존"]:
+            print(f"  쏠림/이탈 신호: 핫존 {zones['핫존']}건 · 데드존 {zones['데드존']}건")
 
 
 if __name__ == "__main__":
