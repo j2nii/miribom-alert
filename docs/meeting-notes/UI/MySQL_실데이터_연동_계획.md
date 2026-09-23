@@ -1,6 +1,16 @@
 # MySQL 실데이터 연동 계획 (tour_earlywarning DB)
 
-> 2026-09-20 작성 · 2026-09-23 갱신(공식 사용설명서 대조, 메인 사례 변경, 성능 문제로 아키텍처 변경)
+> 2026-09-20 작성 · 2026-09-23 갱신(공식 사용설명서 대조, 메인 사례 변경, 성능 문제로 아키텍처 변경) · 2026-09-23 최종 수정(아래 참고)
+
+## [최종 결론] 이 문서의 라이브 API/생성 스크립트 방식은 폐기됨 — `agents/` 파이프라인 결과물 사용으로 전환
+
+이 문서 본문(아래)은 `web/api/signal-status.js`(라이브 API, 성능 문제로 폐기) → `web/scripts/generate-signal-status.mjs`(1회 생성 스크립트)로 이어진 조사·구현 과정을 그대로 남겨둔 것이다. **최종적으로는 이 스크립트도 폐기했다** — `data/prod/`를 확인해보니 `agents/judge_signal_status.py`(월 단위 관심·의도·실현 3중 교차검증, D-05/D-12/D-13 규칙 그대로 구현, `history` 포함)와 `agents/agent1_timeline.py`가 **이미 영월(`signal_status_51750.json`)·거제(`signal_status.json`) 실측 산출물을 만들어둔 상태**였다. 우리 스크립트(일별 네이버 검색 z-score 기반, 관심·의도·실현 정의와 안 맞음, history 없음)와 역할이 완전히 겹치면서 오히려 프로젝트의 실제 판정 기준과는 덜 맞았기 때문에, **`web/api/_lib/db.js`/`referenceDate.js`/`web/scripts/generate-signal-status.mjs`와 우리가 만든 두 JSON 파일을 전부 삭제**하고 `web/src/data/manifest.js`/`dataManifest.js`가 `agents/` 산출물(`/prod/signal_status.json`, `/prod/signal_status_51750.json`, `/prod/timeline.json`, `/prod/timeline_51750.json`, `/prod/checklist.json`)을 직접 가리키도록 되돌렸다.
+
+**교훈**: `data/prod/`에 이미 뭐가 있는지 먼저 확인하고 시작했어야 했다 — MySQL에 직접 연결하는 게 가능하다고 해서 그게 이 프로젝트의 "정본 생성 경로"라는 뜻은 아니었다. `agents/` 폴더가 이미 DB→JSON 변환을 전담하는 공식 파이프라인이었다.
+
+MySQL 접속 정보(SSL 필수 등)와 DB 구조 조사 내용(§ 이하) 자체는 여전히 유효한 조사 기록이라 남겨둔다.
+
+---
 
 ## Context
 
@@ -76,9 +86,13 @@ DB가 동결되어 값이 바뀌지 않으므로, 요청마다 조회할 필요�
 - `youtube_video` 실데이터가 있는 6개 지역(거제·여수·울릉·속초·영월·인제) 중 영월/거제 조합은 확정. `content_type`을 다음 라운드에서 실데이터로 전환할 때 이 목록을 그대로 활용 가능.
 - PDF가 새로 소개한 `vw_final_anomaly_analysis`(에피소드 단위 450건, 축제·날씨·근거 연결)는 `precedent`/`timeline` 계약의 "콘텐츠 확산→방문 급증" 앞 2단계만 실데이터화가 가능하나, 두 계약의 핵심인 "실제 조치"와 "효과"는 이 DB에 없는 데이터라 이번 라운드에서는 보류(mock 유지)하기로 결정함.
 
-## 검증 방법
+## 검증 방법 (최종 — agents/ 산출물 기준)
 
-- `data/prod/yeongwol_signal_status.json`/`geoje_signal_status.json`이 `data/schema/signal_status.schema.json`을 만족하는지 확인(완료 — `_mock:false`, `cross_validation` 3건, `agreement`/`escalation`/`basis` 포함).
-- 화면(AREA0/AREA1)에서 영월/거제 선택 시 배지가 "실측"으로 바뀌는지 확인.
-- 기존 mock 전용 지역(충주)과 signal_status 이외 8개 계약은 그대로 동작하는지 회귀 확인.
-- `naver_interest`를 화면에 표시할 때 절대 검색량이 아니라 "상대 지수/증감률"로 표현되는지 확인(PDF 지침).
+- `data/prod/signal_status.json`(거제)/`signal_status_51750.json`(영월)/`timeline.json`(거제)/`timeline_51750.json`(영월)이 각각의 스키마를 만족하는지 확인(이미 agents/ 스크립트가 생성한 상태 — 재검증만).
+- 화면(AREA0/AREA1)에서 영월/거제 선택 시 signal_status·timeline 배지가 "실측"으로 바뀌는지 확인. `checklist`는 agent3 산출물(`/prod/checklist.json`)을 쓰지만 그 안의 `_mock`이 여전히 true라 배지는 "샘플"로 뜨는 게 정상(§checklist 참고).
+- 기존 mock 전용 지역(충주)과 나머지 계약(forecast/visitor_profile/hotspots/precedent/before_after)은 그대로 동작하는지 회귀 확인.
+- `naver_interest`류 상대지수를 절대값처럼 표현하지 않는지는 이제 agents/ 판정 로직(관심/의도/실현, %p·배 단위)의 책임 — 우리 쪽 표현 규칙은 더 이상 적용 안 됨.
+
+## 24시간 자동 재수집 관련 — 책임 주체 변경
+
+위 "향후 24시간 자동 재수집 대응" 절은 우리가 만든(현재는 삭제된) `generate-signal-status.mjs` 기준으로 쓴 것이라 더 이상 그대로 적용되지 않는다. 실제로 매일 재실행이 필요해질 대상은 `agents/judge_signal_status.py`(및 `agent1_timeline.py` 등 나머지 파이프라인)이며, 이건 우리(프론트)가 아니라 해당 스크립트 담당자의 자동화 범위다. 다만 "REFERENCE_DATE를 동적으로 구해야 한다"는 원칙 자체는 여전히 유효하다 — `judge_signal_status.py` 쪽에도 비슷한 하드코딩이 있다면 같이 확인이 필요하다.
