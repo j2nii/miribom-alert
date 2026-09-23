@@ -1,55 +1,34 @@
 # MySQL 실데이터 연동 계획 (tour_earlywarning DB)
 
-> 2026-09-20 작성
+> 2026-09-20 작성 · 2026-09-23 갱신(공식 사용설명서 대조, 메인 사례 변경, 성능 문제로 아키텍처 변경)
 
 ## Context
 
-지금까지 `web/`의 9개 데이터 계약(`data/schema/*.json`)은 전부 정적 mock JSON(`data/mock/*.json`)으로 구현돼 있었다. 이번에 실제로 데이터가 적재된 MySQL 서버(`tour_earlywarning`, 관리자는 별도 팀원)에 연결이 확인됐고, DB 관리자로부터 테이블 구조 설명도 받았다. 목표는 이 실데이터로 최소 일부 화면(우선 `signal_status`, 잠재적으로 `content_type`)을 mock에서 실측으로 전환하는 것.
+`web/`의 9개 데이터 계약(`data/schema/*.json`)은 전부 정적 mock JSON(`data/mock/*.json`)으로 구현돼 있었다. 실제로 데이터가 적재된 MySQL 서버(`tour_earlywarning`)에 연결이 확인됐고, 분석팀의 공식 사용설명서(`docs/meeting-notes/DB/관광바이럴조기경보DB사용설명서.pdf`, 데이터 동결 2026-09-22)도 확보했다. 목표는 이 실데이터로 `signal_status` 화면을 mock에서 실측으로 전환하는 것 — 이번 라운드는 `signal_status`만, 나머지 8개 계약은 다음 이터레이션.
 
-접속 검증 완료 사항 (이미 실행함, 코드 변경 아님):
-- 서버는 `SSL Required` 계정이라, `mysql2`로 연결 시 `ssl: { rejectUnauthorized: false }` 옵션이 반드시 필요함 (없으면 IP/자격증명이 맞아도 `ER_ACCESS_DENIED_ERROR`가 남 — 실제로 이 문제로 한참 헤맸음).
-- `mysql2` 패키지는 `web/package.json`에 이미 설치됨.
-- `web/.env`에 `MYSQL_HOST/PORT/USER/PASSWORD/DATABASE` 값이 이미 채워져 있고 접속 확인됨. `MYSQL_SSL=true` 플래그를 추가하고 코드에서 이 값을 읽게 만들 예정.
-- 직접 `information_schema.COLUMNS` 조회 + 관리자 설명을 종합해 43개 테이블/뷰의 구조를 파악함.
+## 접속 정보
 
-## 관리자 설명 vs 직접 조회 결과 비교
+- Host `103.218.161.72:3306`, DB `tour_earlywarning`, **SSL 필수(Require)** — `mysql2` 연결 시 `ssl: { rejectUnauthorized: false }` 없으면 자격증명이 맞아도 `ER_ACCESS_DENIED_ERROR`가 난다(비밀번호 문제로 착각하기 쉬우니 주의).
+- 팀 계정은 `SELECT`/`SHOW VIEW` 권한만 있다(원본 적재·수집은 동결, 읽기 전용).
+- `web/.env`에 `MYSQL_HOST/PORT/USER/PASSWORD/DATABASE/SSL=true` 설정, `web/api/_lib/db.js`가 커넥션 풀을 관리한다.
 
-관리자가 "주요 분석 테이블"로 짚어준 건 `dim_region`, `fact_signal`, `youtube_video`, `datalab_monthly_panel` 4개 + 보조 테이블(`region_alias`, `source_file`, `stg_region_master/scope`, `event`, `event_point`, `crawl_run`, `crawl_checkpoint`, `raw_payload`)이다. 실제 DB에는 이 외에도 **이상탐지/근거수집 파이프라인 전체가 별도로 존재한다** — `anomaly_detection_config`(+`_v2`), `anomaly_candidate_snapshot_v3`, `vw_anomaly_analysis_explained/ready/unresolved`, `vw_anomaly_candidate_context`, `vw_anomaly_episode_*`, `vw_daily_anomaly_candidates/features/scored`, `event_evidence_*`, `analysis_calendar`, `special_calendar_day` 등 약 20개. 관리자 설명에는 이 그룹이 전혀 언급되지 않았다.
+## 데이터 동결과 가상 기준시점
 
-이 뷰들은 이미 `naver_z`, `visitor_z`, `anomaly_score`, `is_viral_candidate`, threshold 값(`naver_z_threshold` 등)까지 계산되어 있어서 — 내용상 우리 `signal_status` 계약의 `alert_level`/교차검증 개념과 거의 그대로 맞아떨어진다. 확인 결과 이 값들은 실제 적재된 `fact_signal` 데이터를 기반으로 계산된 것이 맞으므로(관리자가 단순히 설명에서 빠뜨린 것으로 판단), **재사용하기로 결정**했다 — 읽기 전용 조회이므로 브랜치/팀 경계를 침범하지 않는다.
+PDF §11: "2026년 후반 값은 프로젝트 기준 시점보다 미래 날짜를 포함할 수 있다" — 이건 수집 지연이 아니라 **공모전용으로 의도된 동결**이다. 화면의 "오늘/현재"는 실제 벽시계 시각이 아니라 **고정된 가상 기준시점(`2026-08-14`)**을 쓴다 — `web/api/_lib/referenceDate.js`의 `REFERENCE_DATE` 상수.
 
-그 외 작은 차이점: `fact_signal`에 관리자가 언급 안 한 `source_region_id`(varchar(20), MUL) 컬럼이 실제로 존재하나, 확인 결과 236만 건 전부 `region_id`와 동일(`diff 0`)이라 실무적으로는 무시하고 `region_id`만 쓰면 된다.
+> 팀 계획상 **5일 뒤(대략 2026-09-28) 부터 24시간 주기로 데이터가 재수집될 예정**이다. 그때는 `REFERENCE_DATE`를 하드코딩 상수 대신 `SELECT MAX(observed_date) FROM vw_daily_core_signal`로 동적 조회하도록 바꾸고, 아래 생성 스크립트를 매일 실행하는 스케줄러(GitHub Actions 등)를 얹으면 된다 — 스크립트 자체나 프론트 코드는 손댈 필요 없음(자세한 내용은 "향후 24시간 자동 재수집 대응" 절 참고).
 
-## 9개 데이터 계약과의 매핑
+## 메인 사례: 영월(대비 사례: 거제)
 
-| 계약 | DB 대응 여부 | 비고 |
-|---|---|---|
-| `signal_status` | 가능 | `vw_daily_anomaly_scored` 하나로 원값+판정 다 해결 (아래 참고) |
-| `content_type` | 부분 가능 | `youtube_video`(6개 지역, 6,338건 원본 메타데이터만 있음). "핫존/데드존" 같은 우리 분류 라벨은 DB에 없음 → 우리가 직접 분류 로직을 얹어야 함 |
-| `forecast` | 불가 | 대응 테이블 없음, mock 유지 |
-| `visitor_profile` | 불가 | 대응 테이블 없음, mock 유지 (단 `fact_signal`/`vw_daily_core_signal`의 local/external/foreign 구성비는 아주 거친 수준으로 제공) |
-| `hotspots` | 불가 | 대응 테이블 없음, mock 유지 |
-| `checklist` / `precedent` / `before_after` / `timeline` | 불가 | 대응 테이블 없음(`event`/`event_point`도 현재 비어 있음), mock 유지 |
+PDF §13 "팀 작업 권장 순서"의 마지막 항목("영월 주 사례와 거제 대비 사례 시각화")과 일치하는 방향으로, **영월을 메인 실데이터 사례, 거제를 대비 사례**로 확정했다 — 거제는 총량(유튜브 조회수 7.45억, 영월 대비 훨씬 큼)은 크지만, 영월은 신호 자체는 뜨되 총량은 작은 사례로 대비시킨다.
 
-## 지역 매핑 확인 결과
-
-- `youtube_video`에 데이터가 있는 6개 지역: 거제시(`48310`), 여수시(`12130`), 울릉군(`47940`), 속초시(`51210`), 영월군(`51750`), 인제군(`51810`).
-- `dim_region`에 거제시=`48310`, 충주시=`43130` 둘 다 존재.
+- 영월군 `region_id = 51750`, 거제시 `region_id = 48310` (둘 다 `dim_region`/`youtube_video`에 실데이터 존재 확인).
 - `fact_signal.region_id`와 `source_region_id`는 현재 전부 동일 — 구분 불필요.
-- **결론: 거제(`geoje` → DB `region_id='48310'`)가 `signal_status`와 `content_type` 둘 다 실데이터 전환 가능한 유일한 지역.** 충주는 원래 기획상 "스키마 독립적 참고 사례"라 실데이터 전환 대상이 아니었던 지역과 일치하므로 그대로 mock 유지.
-- **지역 우선순위: 거제부터 시작.**
+- 이번 라운드는 두 지역 다 `signal_status`만 실데이터로 전환. 나머지 8개 계약은 지역명이 "거제"로 하드코딩된 기존 목업을 그대로 재사용하면 화면 지역명이 어긋나므로, 영월은 `chungju`와 같은 방식으로 "unsupported"(파일 없음) 처리했다.
 
-## `vw_daily_anomaly_scored`로 단순화 (D-05 기준)
+## `signal_status` 매핑: `vw_daily_anomaly_scored`
 
-**중요한 정정**: 처음엔 `anomaly_candidate_snapshot_v3`가 "지역별 현재 상태 1행"이라고 가정했는데, 실제로 조회해보니 **틀렸다.** 이 테이블은 "임계 초과한 날만" 골라 담은 과거 이벤트 로그다 (거제 3년치 중 딱 40일만 존재, 최근 항목이 2026-07-01). 매일 빠짐없이 기록되는 게 아니라서, 여기서 "최신 행"을 뽑으면 훨씬 예전의 스파이크가 "현재 상태"인 것처럼 잘못 표시된다.
-
-대신 `vw_daily_anomaly_scored`(지역×전체 날짜, 301,416행)를 쓴다 — 이 뷰 하나에 원값과 판정이 전부 들어있다:
-- 원값: `naver_interest`, `visitors_external/local/foreign`, `youtube_sample_videos/views`
-- 판정: `naver_z`, `visitor_z`, `is_interest_spike_current`, `is_demand_spike_current`, `is_viral_candidate`, `anomaly_score`, `naver_z_threshold`, `visitor_z_threshold`
-
-실제로 거제 최신 날짜(2026-08-13, DB 적재 데이터의 최신 시점)를 조회해보면 세 플래그 전부 0(평상시)이었다 — `anomaly_candidate_snapshot_v3`의 "최근 후보일 2026-07-01"과는 다른, 올바른 "현재" 값이다.
-
-`docs/설계결정.md` D-05 — 경보 등급은 "3개 신호 중 몇 개가 임계 초과했는가"로 정의돼 있다:
+`docs/설계결정.md` D-05 — 경보 등급은 "3개 독립 신호 중 몇 개가 임계 초과했는가"로 정의된다:
 
 | 전이 | 조건 |
 |---|---|
@@ -58,32 +37,48 @@
 | 경계 → 심각 | 3개 신호 중 3개 초과 또는 혼잡도 단계 5 실측 |
 | 하향 | 2회 연속 관측에서 미달일 때만 1단계 내림 (깜빡임 방지) |
 
-`is_interest_spike_current`/`is_demand_spike_current`/`is_viral_candidate` 3개 불리언이 정확히 이 "3개 신호"다 ("혼잡도 단계 5 실측" OR 조건은 DB에 대응 데이터가 없어 제외).
+`vw_daily_anomaly_scored`의 `is_interest_spike_current`/`is_demand_spike_current`/`is_viral_candidate` 3개 불리언이 정확히 이 "3개 신호"에 대응한다("혼잡도 단계 5 실측" OR 조건은 실측 센서 데이터가 없어 제외). 이 뷰 하나에 원값(`naver_interest`, `visitors_external/local/foreign`)과 판정(z-score, threshold, 플래그)이 전부 들어있어, 최근 90일을 한 번에 조회해 최신 1행으로 등급을 산출하고 나머지로 하향 판단·트렌드를 구성한다.
 
-**단순화된 설계**: `vw_daily_anomaly_scored`에서 region_id로 최근 N일(예: 90일)을 한 번에 조회 →
-- 가장 최근 날짜 1행 → 3개 불리언 true 개수 → D-05 표로 `alert_level` 산출, `naver_z`/`visitor_z`/`anomaly_score`/원값은 판정 근거로 노출.
-- 나머지 과거 행들 → D-05 "하향 2회 연속 미달" 판단 + `TrendChart`용 추이 데이터.
+**주의**: `anomaly_candidate_snapshot_v3`/`vw_daily_anomaly_candidates`는 "임계 초과한 날만" 골라 담은 과거 이벤트 로그이지 "현재 상태"가 아니다 (거제 3년치 중 40일만 존재, 최근 항목이 2026-07-01). 여기서 최신 행을 뽑으면 훨씬 예전 스파이크가 현재 상태처럼 잘못 표시된다 — 반드시 지역×전체 날짜가 다 있는 `vw_daily_anomaly_scored`를 써야 한다.
 
-별도로 `vw_daily_core_signal`이나 `anomaly_candidate_snapshot_v3`/`vw_daily_anomaly_candidates`를 조회할 필요가 없다 — 뷰 하나로 끝난다.
+## 아키텍처 변경: 라이브 API 대신 1회 생성한 정적 파일
 
-**데이터 최신성 주의**: DB에 적재된 데이터의 최신일이 2026-08-13인데, 오늘(구현 시점)은 2026-09-20이다 — **5주 이상 차이가 난다.** 이건 접속/코드 문제가 아니라 원본 수집 주기 문제로 보인다. 화면에 "현재 상태"라고 표시할 때 실제로는 "8/13 기준"이라는 걸 `caveat`/`period`에 명시해야 하고, 이 수집 주기(며칠에 한 번 갱신되는지)는 관리자에게 확인이 필요하다.
+**처음 계획은 `web/api/signal-status.js` 서버리스 함수가 요청마다 DB를 조회하는 방식이었으나, 실제로 구현하며 성능 문제를 발견해 폐기했다.**
 
-## 구현 방향
+`vw_daily_anomaly_scored`는 지역 하나로 필터링해도 **180초 이상** 걸린다(반면 `vw_daily_core_signal`은 244ms, `fact_signal`은 67ms로 정상 — 이 뷰만 유독 느리다. 아마 지역 필터를 걸기 전에 228개 지역×3년치 전체에 대해 윈도우 함수 기반 baseline/z-score를 다 계산한 뒤 걸러내는 구조로 추정). 이건 Vercel 서버리스 함수의 실행 제한 시간을 훌쩍 넘겨 배포 즉시 타임아웃이 나는 수준이다.
 
-1. **`web/api/_lib/db.js` 신규**: `mysql2/promise` 커넥션 풀 모듈. `MYSQL_HOST/PORT/USER/PASSWORD/DATABASE/SSL` 환경변수 사용, `ssl: process.env.MYSQL_SSL === "true" ? { rejectUnauthorized: false } : undefined`. 서버리스 특성상 모듈 스코프에 풀을 한 번만 생성해 재사용.
-2. **새 서버리스 엔드포인트**: `loadData.js`는 정적 JSON을 `fetch`하는 구조라 DB 조회를 직접 못 함 → `web/api/signal-status.js` 라우트 신규, region을 쿼리 파라미터로 받아 DB 조회 결과를 기존 envelope 포맷(`{_mock:false, source, period, caveat, data}`)으로 변환해 반환.
-3. **어댑터 함수**: `web/api/_lib/adapters/signalStatus.js` — `vw_daily_anomaly_scored`에서 region_id로 최근 N일 조회 후 위 "단순화된 설계"대로 envelope 생성.
-4. **매니페스트 갱신**: `web/src/data/manifest.js`/`web/api/_lib/dataManifest.js`에 거제의 `signal_status` 항목을 `kind: "db"`(또는 기존 `"real"`)로 전환. region 키(`geoje`) ↔ DB `region_id`(`48310`) 매핑 상수 추가.
-5. **env/문서**: `web/.env.example`에 `MYSQL_SSL=true` 안내 추가, Vercel 프로젝트 환경변수에도 `MYSQL_*` 전체(SSL 포함) 등록 필요함을 안내.
-6. **임시 파일 정리**: 조사용으로 만든 `web/_inspect_schema_local.mjs`는 구현 착수 시 삭제.
+DB가 동결되어 값이 바뀌지 않으므로, 요청마다 조회할 필요가 없다는 점에 착안해 **1회 추출 → 정적 JSON 커밋** 방식으로 바꿨다:
 
-## 남은 확인 사항 (구현 중 조사)
+- `web/scripts/generate-signal-status.mjs` — 영월/거제 각각에 대해 `vw_daily_anomaly_scored`를 조회(느려도 배치 스크립트라 상관없음, 실제로 영월 162초·거제 132초 걸렸다)해 envelope을 만들고 `data/prod/{region}_signal_status.json`으로 저장.
+- `web/src/data/manifest.js`/`web/api/_lib/dataManifest.js`가 이 파일을 `kind: "real"`로 가리킴 — agent②의 `content_type.json`과 완전히 같은 패턴(정적 실측 파일).
+- `loadData.js`/컴포넌트 쪽은 아무 변경도 필요 없다 — DB 조회든 정적 파일이든 URL 하나 fetch하는 건 동일하기 때문.
 
-- 원본 데이터 수집/적재 주기 — 최신일이 2026-08-13으로 오늘 대비 5주 이상 뒤처져 있음. 관리자에게 갱신 주기 확인 필요 (화면에 "OO일 기준" 문구를 정확히 넣기 위함).
+생성된 결과: 영월·거제 둘 다 기준일(2026-08-14) 기준 `alert_level: "관심"`(3개 신호 모두 미달, 평상시 상태).
+
+## 향후 24시간 자동 재수집 대응 (5일 뒤 예정)
+
+수정 비용은 낮은 편이다. 지금 구조가 이미 자동화에 유리하게 짜여 있다 — 이유는:
+
+- DB 조회 로직이 라이브 API가 아니라 독립된 스크립트(`generate-signal-status.mjs`)로 분리돼 있다. 나중에 자동화한다는 건 "이 스크립트를 사람이 손으로 한 번 돌리는 대신 스케줄러가 대신 돌리게" 하는 것뿐이라, 스크립트 자체는 손댈 필요가 거의 없다.
+- 결과물(`data/prod/*_signal_status.json`)의 모양과 그걸 읽는 쪽(`manifest.js`)은 수동 생성이든 자동 생성이든 완전히 동일하다. 프론트/매니페스트 코드는 나중에 하나도 안 건드린다.
+
+실제로 바꿔야 할 건 딱 두 가지뿐이다:
+
+1. `REFERENCE_DATE` 하드코딩(`"2026-08-14"`) → `SELECT MAX(observed_date) FROM vw_daily_core_signal`로 매번 동적으로 구하는 방식 — 파일 하나, 몇 줄 수정.
+2. 이 스크립트를 매일 실행해주는 트리거 하나 추가 — GitHub Actions 같은 곳에 "하루 한 번 이 스크립트 실행 → 결과 JSON 커밋/배포" 워크플로 파일 하나만 새로 얹으면 된다. 기존 코드를 고치는 게 아니라 위에 얹는 것.
+
+즉 지금처럼 정적 파일로 마무리해도 나중에 "새로 짜야 하는" 부분은 없고, "지금 안 만든 자동화 트리거만 나중에 추가"하는 정도라 이 순서(지금 정적 → 나중에 자동화)가 합리적이다. 5일 뒤로 예정돼 있다면 그때 가서 위 두 가지만 처리하면 된다.
+
+`vw_daily_anomaly_scored`가 여전히 느린 문제는 매일 도는 배치라면 몇 분 정도는 괜찮지만, 데이터가 계속 쌓이면 더 느려질 수 있어 분석팀에 성능 이슈로 공유해두면 좋다.
+
+## 남은 확인 사항
+
+- `youtube_video` 실데이터가 있는 6개 지역(거제·여수·울릉·속초·영월·인제) 중 영월/거제 조합은 확정. `content_type`을 다음 라운드에서 실데이터로 전환할 때 이 목록을 그대로 활용 가능.
+- PDF가 새로 소개한 `vw_final_anomaly_analysis`(에피소드 단위 450건, 축제·날씨·근거 연결)는 `precedent`/`timeline` 계약의 "콘텐츠 확산→방문 급증" 앞 2단계만 실데이터화가 가능하나, 두 계약의 핵심인 "실제 조치"와 "효과"는 이 DB에 없는 데이터라 이번 라운드에서는 보류(mock 유지)하기로 결정함.
 
 ## 검증 방법
 
-- 로컬에서 `vercel dev`로 새 API 라우트 호출 → 응답이 `data/schema/signal_status.schema.json`을 만족하는지 확인.
-- 응답의 `_mock`이 `false`, `source`에 `tour_earlywarning.fact_signal`(또는 사용한 뷰 이름) 명시되는지 확인.
-- 화면(AREA0/AREA1)에서 거제 선택 시 배지가 "실측"으로 바뀌는지 확인.
-- 기존 mock 전용 지역(충주 등)은 그대로 동작하는지 회귀 확인.
+- `data/prod/yeongwol_signal_status.json`/`geoje_signal_status.json`이 `data/schema/signal_status.schema.json`을 만족하는지 확인(완료 — `_mock:false`, `cross_validation` 3건, `agreement`/`escalation`/`basis` 포함).
+- 화면(AREA0/AREA1)에서 영월/거제 선택 시 배지가 "실측"으로 바뀌는지 확인.
+- 기존 mock 전용 지역(충주)과 signal_status 이외 8개 계약은 그대로 동작하는지 회귀 확인.
+- `naver_interest`를 화면에 표시할 때 절대 검색량이 아니라 "상대 지수/증감률"로 표현되는지 확인(PDF 지침).
