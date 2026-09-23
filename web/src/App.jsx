@@ -13,7 +13,7 @@ import Area4Performance from "./pages/Area4Performance.jsx";
 // exactly one .panel, same as the reference demo (not one panel per
 // sub-feature).
 export default function App() {
-  const [region, setRegion] = useState("geoje");
+  const [region, setRegion] = useState("yeongwol");
 
   return (
     <div className="app">
@@ -40,8 +40,9 @@ export default function App() {
         </section>
       </div>
       <footer className="app-footer">
-        이 화면은 목업/실데이터가 혼재된 데모입니다. 거제시는 9종 데이터 스키마(실측 content_type 포함)를,
-        나머지 지역은 예시 데이터를 반영했습니다. 값 옆의 배지로 출처와 목업 여부를 항상 확인하세요.
+        이 화면은 목업/실데이터가 혼재된 데모입니다. 거제시는 9종 데이터 스키마(실측 signal_status·timeline·
+        content_type 포함)를 모두 반영했고, 영월군은 실측 신호 상태·타임라인(signal_status·timeline)을 중심으로
+        한 메인 사례이며 나머지 항목은 준비 전입니다. 값 옆의 배지로 출처와 목업 여부를 항상 확인하세요.
       </footer>
     </div>
   );

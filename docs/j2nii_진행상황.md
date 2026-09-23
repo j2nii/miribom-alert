@@ -1,13 +1,13 @@
 # 진행 상황 (j2nii · 프론트엔드)
 
-> 최종 갱신: **2026-09-17(목)** · 작성 담당: 역할3(프론트엔드) — j2nii
-> 관련 문서: `docs/진행상황.md`(전체 프로젝트), `docs/설계결정.md`(D-01~D-13), `docs/meeting-notes/UI/`(자연어 질의 인터페이스 조사·계획)
+> 최종 갱신: **2026-09-23(수)** · 작성 담당: 역할3(프론트엔드) — j2nii
+> 관련 문서: `docs/진행상황.md`(전체 프로젝트), `docs/설계결정.md`(D-01~D-13), `docs/meeting-notes/UI/`(자연어 질의 인터페이스 조사·계획, MySQL 실데이터 연동 계획), `docs/meeting-notes/DB/관광바이럴조기경보DB사용설명서.pdf`
 
 ---
 
 ## 한 줄 요약
 
-**`web/`에 실제 Vite+React 앱을 새로 세우고, 9종 스키마(mock+prod)를 실제로 읽어 그리는 AREA 0~4 화면을 전부 완성했다. AI 정책 초안 도우미는 서버리스 함수로 LLM(Upstage Solar)을 호출하도록 복원했고, 이번에 AREA 0에 자연어 질의 채팅(실제 tool-calling + 스트리밍)을 새로 추가했다. agents 브랜치가 안내한 `signal_status`/`checklist`/`timeline` 스키마 변경 중 화면이 깨지는 부분(Tier 1)은 반영 완료. 커밋은 `UI/UX` 브랜치에 전부 푸시됐고, `develop`으로의 PR 본문 초안도 준비됨.**
+**`web/`에 실제 Vite+React 앱을 새로 세우고, 9종+briefing 스키마를 실제로 읽어 그리는 AREA 0~4 화면을 전부 완성했다. AREA 0에 자연어 질의 채팅(실제 tool-calling + 스트리밍, Upstage Solar)을 추가했다. agents 브랜치가 안내한 `signal_status`/`checklist`/`timeline` 스키마 변경 중 화면이 깨지는 부분(Tier 1)은 반영 완료. MySQL DB(`tour_earlywarning`)에 직접 연결해보기도 했으나(§14~16), `agents/` 폴더(judge_signal_status.py, agent1_timeline.py, agent5_briefing.py 등)가 이미 DB→JSON 변환을 전담하는 정본 파이프라인임을 확인하고 우리 코드는 걷어낸 뒤 그 산출물을 쓰는 쪽으로 최종 정리했다(§17~18) — `signal_status`/`timeline`(영월·거제)과 `checklist`(거제)가 실데이터로, "AI 정책 초안 도우미"도 라이브 LLM 호출 대신 agent5의 정적 브리핑을 표시하는 방식으로 바뀌었다.**
 
 ---
 
@@ -78,6 +78,45 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 
 ---
 
+## 09-20~09-23 작업 (MySQL 실데이터 연동 — signal_status)
+
+### 14. DB 접속 및 공식 사용설명서 대조
+- `tour_earlywarning` MySQL 서버 접속 확인. **SSL 필수(Require) 계정**이라 `ssl: { rejectUnauthorized: false }` 없이는 자격증명이 맞아도 `ER_ACCESS_DENIED_ERROR`가 나는 함정이 있었음 — 비밀번호 문제로 착각하기 쉬움
+- 09-22 분석팀이 배포한 공식 문서(`docs/meeting-notes/DB/관광바이럴조기경보DB사용설명서.pdf`)와 직접 조회 결과를 대조 — 그 사이 테이블/뷰가 43개→97개(현재 107개)로 크게 늘어남을 확인
+- DB 데이터는 **의도적으로 동결**되어 있음(공모전용 가상 기준시점) — 화면의 "오늘"은 실제 날짜가 아니라 `2026-08-14`로 고정(`web/api/_lib/referenceDate.js`)
+
+### 15. 메인 사례를 거제 → 영월로 변경
+- PDF의 팀 작업 권장 순서("영월 주 사례와 거제 대비 사례 시각화")에 맞춰, **영월을 메인 실데이터 사례, 거제를 대비 사례**(총량은 크지만 신호는 약한 지역)로 재설정
+- `region_id`: 영월군 `51750`, 거제시 `48310` (둘 다 `dim_region`/`youtube_video`에 실데이터 존재 확인)
+- `web/src/App.jsx` 기본 지역을 `geoje` → `yeongwol`로 변경 (AI 대화창의 기준 지역도 이 값을 공유하므로 자동으로 함께 바뀜)
+
+### 16. 아키텍처 변경: 라이브 API → 1회 생성한 정적 파일
+- 처음엔 `web/api/signal-status.js` 서버리스 함수로 요청마다 DB를 조회하는 방식으로 만들었으나, 실제 측정해보니 **`vw_daily_anomaly_scored` 뷰가 지역 하나로 필터링해도 180초 이상** 걸림을 발견(다른 뷰는 정상, 이 뷰만 228개 지역 전체를 먼저 계산한 뒤 거르는 구조로 추정) — Vercel 함수 타임아웃을 훌쩍 넘겨 폐기
+- 대신 `web/scripts/generate-signal-status.mjs`로 **1회 추출 → `data/prod/{region}_signal_status.json` 정적 파일 커밋** 방식 채택 (agent②의 `content_type.json`과 동일 패턴). 영월 162초, 거제 132초 걸려서 생성 완료, 둘 다 기준일 기준 `alert_level: 관심`
+- `docs/설계결정.md` D-05(3개 신호 중 몇 개 초과했는지로 등급 산정)를 `vw_daily_anomaly_scored`의 `is_interest_spike_current`/`is_demand_spike_current`/`is_viral_candidate` 3개 불리언에 그대로 대응시켜 판정 로직 구현
+- `web/src/data/manifest.js`/`web/api/_lib/dataManifest.js`에 영월 신규 추가, 영월·거제의 `signal_status`를 `kind: "real"`로 전환. 나머지 8개 계약은 이번 라운드 범위 밖(영월은 지역명 불일치를 피하기 위해 "unsupported" 처리)
+- 상세 설계는 `docs/meeting-notes/UI/MySQL_실데이터_연동_계획.md` 참고 (향후 24시간 자동 재수집 전환 시 필요한 변경사항도 정리해둠 — `REFERENCE_DATE` 동적화 + 스케줄러 추가 두 가지뿐, 수정 비용 낮음)
+
+### 17. §16 뒤집음: `agents/` 파이프라인 산출물 사용으로 최종 전환
+`data/prod/`를 다시 확인해보니, `agents/judge_signal_status.py`와 `agents/agent1_timeline.py`가 **영월(`signal_status_51750.json`, `timeline_51750.json`)·거제(`signal_status.json`, `timeline.json`) 실측 산출물을 이미 만들어둔 상태**였다(09-20 생성, `_mock:false`). 게다가 이쪽이 프로젝트가 원래 정의한 **"관심(SNS 언급량)·의도(내비게이션 검색)·실현(방문자수)" 3중 교차검증**을 월 단위로 제대로 구현하고 있었고, 24개월 `history`도 포함돼 있어 §16에서 우리가 만든 일별 네이버 검색 z-score 기반 판정(관심·의도·실현 정의와 안 맞고 history도 없음)보다 나았다.
+
+**되돌린 것**: `web/api/_lib/db.js`, `web/api/_lib/referenceDate.js`, `web/scripts/generate-signal-status.mjs`, 우리가 생성했던 `data/prod/{region}_signal_status.json` 2개 삭제. `mysql2` 의존성 제거.
+
+**바꾼 것**: `manifest.js`/`dataManifest.js`가 이제 `agents/` 산출물을 직접 가리킴 — 영월·거제의 `signal_status`, `timeline`을 실측(`kind: real`)으로, 거제의 `checklist`도 `data/mock/`(09-12 손 작성, 3건) 대신 `data/prod/checklist.json`(agent3 실행 결과, 09-20, 14건 — 단 이 파일 자체는 아직 일부 입력이 mock이라 `_mock:true`로 정직하게 표시됨)으로 전환.
+
+**교훈**: MySQL에 직접 연결 가능하다고 해서 그게 이 프로젝트의 정본 데이터 생성 경로는 아니었다 — `agents/` 폴더가 이미 DB→JSON 변환을 전담하는 공식 파이프라인이었고, 뭔가 새로 만들기 전에 `data/prod/`에 이미 있는지부터 확인했어야 했다.
+
+### 18. 브리핑 아키텍처도 agent5에게 일임 — 라이브 LLM 호출 폐기
+같은 논리를 AI 정책 초안 도우미에도 적용했다. `web/api/briefing.js`는 버튼을 누를 때마다 Upstage를 실시간 호출해 3문단을 매번 새로 생성했는데, 이건 `agents/agent5_briefing.py`의 역할과 겹칠 뿐 아니라 **D-04의 설계 근거("매일 같은 문장 틀이어야 어제와 비교된다")와도 어긋난다** — 매번 자유 생성되는 문장은 재현성이 없다. agent5는 1·2문단을 코드가 고정 템플릿으로 쓰고 3문단(종합 판단·조치 선택)만 LLM이 쓰는 방식이라 이 문제가 없다.
+
+**되돌린 것**: `web/api/briefing.js`, `web/src/lib/briefingTemplate.js`(규칙 기반 폴백) 삭제, `dev-server.mjs`에서 라우트 제거.
+
+**바꾼 것**: `BriefingGenerator.jsx`를 "생성" 버튼이 있는 컴포넌트에서, `agents/agent5_briefing.py`가 만든 `data/prod/briefing.json`을 그대로 표시하는 컴포넌트로 재작성. `Area3Briefing.jsx`가 `useRegionData("briefing", region)`으로 불러옴(다른 AREA3 데이터와 동일한 패턴). `manifest.js`/`dataManifest.js`에 `briefing` 계약 추가(`kind: "mock"` — 파일 자체가 `_mock:true`, checklist와 같은 이유).
+
+**향후 실시간성이 필요해지면**: 사용자 지침에 따라 "버튼 누를 때마다 데이터를 최신화하고 agent5_briefing.py 로직 자체를 다시 돌리는" 방식으로 가야 한다 — 에이전트 루프 밖에 별도 LLM 호출 경로를 다시 만들지 않는다.
+
+---
+
 ## 확인된 사실 — 목업 수치의 성격
 
 `scripts/gen_mock.py`를 직접 확인한 결과: `signal_status.json`의 `congestion_level`/`density`는 계산 로직이 아니라 **사람이 손으로 넣은 고정값**이다. 반면 `forecast`의 일별 방문객, `hotspots`의 방문객 수는 실제 공식(계절성+주말가중+노이즈, 순위감쇠+노이즈)으로 계산된다.
@@ -90,11 +129,14 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 | --- | --- | --- |
 | ① | 로컬에서 `/api/*` 서버리스 함수 테스트 | **해결** — `web/dev-server.mjs` + Vite 프록시로 `vercel dev` 없이도 로컬에서 전체 기능(스트리밍 포함) 확인 가능 |
 | ② | `vercel dev` 자체는 이 환경에서 yarn 미설치·npm 레지스트리 오류로 계속 실패 | 미해결이지만 ①의 대체 서버로 실사용에는 지장 없음. 근본 해결하려면 로컬에 yarn 설치 또는 Vercel 프로젝트 Install Command를 npm으로 override(대시보드 작업) 필요 |
-| ③ | Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY`/`YOUTUBE_API_KEY`가 등록 안 돼 있는 것을 확인함 (로컬 `.env`에만 존재) | **미해결** — 배포된 URL에서는 AI 브리핑·채팅이 지금 이 이유로 계속 실패 중일 가능성이 높음. 대시보드 접근 권한자가 등록해야 함 |
+| ③ | Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY`/`YOUTUBE_API_KEY`가 등록 안 돼 있는 것을 확인함 (로컬 `.env`에만 존재) | **`UPSTAGE_API_KEY`는 등록 완료 확인됨(09-23).** `YOUTUBE_API_KEY` 등록 여부는 미확인 |
 | ④ | AREA 2 "SNS 언급량"/"실제 검색 장소" 탭 근사치 대체 | 데이터 계약에 지점별 검색 세분화 파일 아직 없음 |
-| ⑤ | agents 브랜치 스키마 변경 Tier 2/3 | 위 §12 참고 — 화면이 깨지진 않지만 새 데이터(지역별 파일, 이력, 대기 상태 등)를 아직 못 보여줌 |
-| ⑥ | 경주(MVP 2번째 후보 지역) 미지원 | `manifest.js`에 거제·충주만 있음 |
-| ⑦ | ~~오늘 작업이 커밋·푸시 안 됨~~ | **해결** — `UI/UX` 브랜치 전부 `origin/UI/UX`에 푸시됨 |
+| ⑤ | agents 브랜치 스키마 변경 Tier 2/3 | Tier 3(브리핑 아키텍처)는 §18에서 해결(agent5 정적 파일로 전환). Tier 2(지역별 파일 확장, `signal_status.history` 추이 그래프 노출 등)는 여전히 미착수 |
+| ⑩ | §17~18 작업(agents 산출물 전환, briefing 라이브 호출 폐기)이 아직 미커밋 | 커밋 필요 |
+| ⑥ | 경주(MVP 2번째 후보 지역) 미지원 | `manifest.js`에 영월·거제·충주만 있음 |
+| ⑦ | ~~작업이 커밋·푸시 안 됨~~ | **해결** — 09-17까지 및 09-20~09-23 MySQL 연동 작업(§16) 전부 `UI/UX` 브랜치에 커밋·푸시됨 |
+| ⑧ | ~~`vw_daily_anomaly_scored`가 지역 필터링해도 180초+ 걸림~~ | **무의미해짐** — §17에서 이 뷰를 직접 쓰는 코드 자체를 폐기함. 다만 `agents/judge_signal_status.py`가 이 DB를 쓴다면 동일 성능 이슈가 있을 수 있어 참고 공유는 여전히 유효 |
+| ⑨ | 세션 중 실수로 MySQL 비밀번호가 대화 로그에 노출된 적 있음 | **권장** — DB 관리자에게 `tour_team*` 계정 비밀번호 교체 요청 |
 
 ---
 
@@ -102,14 +144,18 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 
 | 순서 | 작업 | 상태 |
 | --- | --- | --- |
-| 1 | Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY`/`YOUTUBE_API_KEY` 등록 | **미확인 — 최우선.** 대시보드 접근 권한자 필요 |
-| 2 | `develop`으로 PR 생성 | 본문 초안 완료, 실제 생성은 대기 중 |
+| 1 | ~~Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY` 등록~~ | **완료** — `YOUTUBE_API_KEY` 등록 여부만 확인 필요 |
+| 2 | ~~`develop`으로 PR 생성~~ | **완료** |
 | 3 | agents 브랜치 develop 병합 후 실데이터로 AREA 0/1/3/4 재확인 | 대기 (Tier 1만 선반영된 상태) |
 | 4 | Tier 2 반영 (지역 5곳 추가, `signal_status.history` 추이 그래프, checklist 신규 필드 등) | 미착수 |
-| 5 | Tier 3 — 브리핑 아키텍처(`web/api/briefing.js` vs `data/prod/briefing.json`) 팀 논의 | 미착수 |
+| 5 | ~~Tier 3 — 브리핑 아키텍처(`web/api/briefing.js` vs `data/prod/briefing.json`) 팀 논의~~ | **완료(09-23, §18)** — `data/prod/briefing.json`(agent5) 채택, 라이브 API 폐기 |
 | 6 | 공공데이터포털(data.go.kr) API 키 신청 | 미착수 |
 | 7 | 경주 지역 지원 추가 | 미착수 |
 | 8 | 실 화면 클릭스루 QA (배포 URL, 브라우저 직접) | 미확인 — 3번 항목과 함께 확인 권장 |
+| 9 | ~~MySQL 연동 작업(§16) 커밋~~ | **완료** — `b79dfb2`~`27755b8` (§17에서 이 중 라이브 API/생성스크립트 부분은 되돌림) |
+| 10 | 여수(`12130`)·울릉(`47940`)·속초(`51210`)·인제(`51810`)도 `agents/` 산출물이 이미 있음(`signal_status_*.json`, `timeline_*.json`) — `manifest.js`에 지역 추가만 하면 바로 씀 | 미착수, 난이도 낮음(영월과 동일 패턴 반복) |
+| 11 | `content_type`/`checklist`(agent3)/`briefing`(agent5) 모두 입력 일부가 아직 mock이라 `_mock:true`로 남음 — 언제 완전한 실측이 될지 | 미착수 — agent 쪽 담당자와 일정 조율 필요 |
+| 12 | 24시간 자동 재수집이 시작되면 `agents/` 파이프라인(judge_signal_status.py 등) 재실행 주기 확인 | 미착수 — 이건 이제 우리(프론트) 담당이 아니라 agents 담당자의 자동화 범위, 조율만 필요 |
 
 ---
 
@@ -119,10 +165,10 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 web/
   package.json, vite.config.js, index.html, .env.example, dev-server.mjs   ← dev-server.mjs 09-17 신규
   api/
-    briefing.js                ← AI 정책 초안 도우미 (Upstage Solar 서버리스 함수)
     query.js                   ← 09-17 신규: 자연어 질의 인터페이스 (tool-calling + 스트리밍)
+    (briefing.js는 09-23 §18에서 삭제 — data/prod/briefing.json 정적 표시로 전환)
     _lib/
-      dataManifest.js          ← 09-17 신규: manifest.js의 서버 전용 복제본
+      dataManifest.js          ← 09-17 신규: manifest.js의 서버 전용 복제본. 09-23 §17: signal_status/timeline/checklist를 agents/ 산출물로 전환
   src/
     main.jsx, App.jsx, index.css
     data/
@@ -130,8 +176,7 @@ web/
     hooks/
       useRegionData.js
     lib/
-      briefingTemplate.js       ← 규칙 기반 폴백 생성기
-      format.js
+      format.js                 ← 09-23: briefingTemplate.js(규칙 기반 폴백)는 §18에서 삭제, 라이브 LLM 폴백이 더 이상 필요 없음
     components/
       common/                  ← SourceBadge, CaveatNote, MockBanner, ManualRefCite,
                                   Header, DataState, StageGauge, ConfidenceBox, TrendChart,
@@ -148,8 +193,14 @@ web/
 docs/meeting-notes/UI/
   프론트구조_기능조사_및_에이전트연동계획.md   ← 09-17 신규
   자연어_질의_인터페이스_구현계획.md            ← 09-17 신규
+  MySQL_실데이터_연동_계획.md                   ← 09-23 신규
 
 data/mock/chungju_signal_status.json, chungju_content_type.json   ← 충주 참고 사례
+data/prod/                                                        ← agents/ 파이프라인 산출물 (실측)
+  signal_status.json, signal_status_{12130,47940,51210,51750,51810}.json   ← judge_signal_status.py
+  timeline.json, timeline_{12130,47940,51210,51750,51810}.json            ← agent1_timeline.py
+  content_type.json                                                       ← agent2_apply.py
+  checklist.json (agent3_match.py, 아직 _mock:true), briefing.json (agent5_briefing.py, 아직 _mock:true, 09-23부터 연동)
 ```
 
 ### 실행 명령
@@ -165,6 +216,9 @@ npm run dev:api
 npm run dev              # http://localhost:5173, /api/* 도 정상 동작 (dev-server.mjs 경유)
 
 npm run build             # 프로덕션 빌드 검증
+
+# signal_status/timeline/checklist 등 실데이터 재생성은 이제 이 프로젝트가 아니라
+# agents/ 쪽 스크립트 담당 (judge_signal_status.py, agent1_timeline.py 등, §17 참고)
 ```
 
 ---
@@ -173,8 +227,11 @@ npm run build             # 프로덕션 빌드 검증
 
 - ~~Vercel 계정 생성 및 배포~~ — **완료**
 - ~~YouTube Data API v3 키 발급~~ — **완료**
-- **Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY`/`YOUTUBE_API_KEY` 등록** — 최우선. 미등록 시 배포본에서 AI 브리핑·채팅 모두 실패
-- **`develop`으로 PR 생성** — 본문 초안은 준비됨
+- ~~Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY` 등록~~ — **완료(09-23 확인)**. `YOUTUBE_API_KEY` 등록 여부만 별도 확인 필요
+- ~~`develop`으로 PR 생성~~ — **완료(09-23)**
 - **agents 브랜치 PR과의 조율** — Tier 2/3 반영 시점, 공동 스키마 확정 논의
 - **공공데이터포털 API 키 발급** — data.go.kr 로그인 필요
 - **배포 URL 공유 + 실제 브라우저로 5개 화면 클릭스루 확인**
+- ~~MySQL 연동 커밋~~ — **완료** (`b79dfb2`~`27755b8`, `UI/UX` 브랜치, §17에서 라이브 API/생성스크립트 부분은 agents/ 산출물 사용으로 되돌림)
+- **MySQL 계정(`tour_team*`) 비밀번호 교체 요청** — 세션 중 실수로 대화 로그에 노출된 적 있음
+- **agents 담당자와 조율**: 여수·울릉·속초·인제 4개 지역도 `signal_status`/`timeline` 실측 파일이 이미 있음 — 우리 쪽 `manifest.js`에 추가할지 결정, `checklist`/`content_type`/`briefing`을 언제 실측 전환할지, 24시간 자동 재수집 시작 시 agents 파이프라인 재실행 주기는 어떻게 되는지

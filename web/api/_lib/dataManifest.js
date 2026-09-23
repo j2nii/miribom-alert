@@ -6,18 +6,24 @@
 const USE_PROD = process.env.VITE_USE_PROD === "true";
 
 export const REGION_MANIFEST = {
+  yeongwol: {
+    // agents/judge_signal_status.py, agents/agent1_timeline.py 실측 산출물.
+    signal_status: { url: "/prod/signal_status_51750.json", kind: "real" },
+    timeline: { url: "/prod/timeline_51750.json", kind: "real" },
+  },
   geoje: {
-    signal_status: { url: "/mock/signal_status.json", kind: "mock" },
+    signal_status: { url: "/prod/signal_status.json", kind: "real" },
     forecast: { url: "/mock/forecast.json", kind: "mock" },
     visitor_profile: { url: "/mock/visitor_profile.json", kind: "mock" },
     hotspots: { url: "/mock/hotspots.json", kind: "mock" },
     content_type: USE_PROD
       ? { url: "/prod/content_type.json", kind: "real" }
       : { url: "/mock/content_type.json", kind: "mock" },
-    checklist: { url: "/mock/checklist.json", kind: "mock" },
+    checklist: { url: "/prod/checklist.json", kind: "mock" },
     precedent: { url: "/mock/precedent.json", kind: "mock" },
     before_after: { url: "/mock/before_after.json", kind: "mock" },
-    timeline: { url: "/mock/timeline.json", kind: "mock" },
+    timeline: { url: "/prod/timeline.json", kind: "real" },
+    briefing: { url: "/prod/briefing.json", kind: "mock" },
   },
   chungju: {
     signal_status: { url: "/mock/chungju_signal_status.json", kind: "mock" },
