@@ -35,11 +35,9 @@ loadEnvFile(path.join(ROOT, ".env"));
 loadEnvFile(path.join(ROOT, ".env.local"));
 
 const { default: queryHandler } = await import(pathToFileURL(path.join(ROOT, "api", "query.js")).href);
-const { default: briefingHandler } = await import(pathToFileURL(path.join(ROOT, "api", "briefing.js")).href);
 
 const ROUTES = {
   "/api/query": queryHandler,
-  "/api/briefing": briefingHandler,
 };
 
 const server = http.createServer(async (req, res) => {

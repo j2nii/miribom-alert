@@ -9,10 +9,9 @@ import PrecedentCards from "../components/area3-briefing/PrecedentCards.jsx";
 import BriefingGenerator from "../components/area3-briefing/BriefingGenerator.jsx";
 
 export default function Area3Briefing({ region }) {
-  const signalStatus = useRegionData("signal_status", region);
-  const forecast = useRegionData("forecast", region);
   const checklist = useRegionData("checklist", region);
   const precedent = useRegionData("precedent", region);
+  const briefing = useRegionData("briefing", region);
   const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
 
   return (
@@ -20,7 +19,7 @@ export default function Area3Briefing({ region }) {
       <div className="panel-head">
         <p className="panel-eyebrow">AREA 3 · POLICY BRIEFING</p>
         <h2>정책 브리핑</h2>
-        <p className="panel-subtitle">매뉴얼 근거가 달린 대응 체크리스트와 선례, AI 초안 도우미입니다.</p>
+        <p className="panel-subtitle">매뉴얼 근거가 달린 대응 체크리스트와 선례, agent5가 생성한 정책 브리핑입니다.</p>
       </div>
 
       <MockBanner isMock={checklist.status === "ok" && checklist.envelope._mock} />
@@ -54,15 +53,16 @@ export default function Area3Briefing({ region }) {
       </div>
 
       <div className="section-block">
-        {signalStatus.status === "ok" && (
-          <BriefingGenerator
-            signalStatus={signalStatus.envelope}
-            forecast={forecast.status === "ok" ? forecast.envelope : null}
-            checklist={checklist.status === "ok" ? checklist.envelope : null}
-            region={region}
-            regionLabel={regionLabel}
-          />
-        )}
+        <DataState
+          result={briefing}
+          render={({ envelope }) => (
+            <>
+              <BriefingGenerator briefingData={envelope.data} regionLabel={regionLabel} />
+              <SourceBadge envelope={envelope} />
+              <CaveatNote envelope={envelope} />
+            </>
+          )}
+        />
       </div>
     </>
   );
