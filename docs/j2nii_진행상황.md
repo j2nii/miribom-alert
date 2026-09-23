@@ -95,7 +95,7 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 - 대신 `web/scripts/generate-signal-status.mjs`로 **1회 추출 → `data/prod/{region}_signal_status.json` 정적 파일 커밋** 방식 채택 (agent②의 `content_type.json`과 동일 패턴). 영월 162초, 거제 132초 걸려서 생성 완료, 둘 다 기준일 기준 `alert_level: 관심`
 - `docs/설계결정.md` D-05(3개 신호 중 몇 개 초과했는지로 등급 산정)를 `vw_daily_anomaly_scored`의 `is_interest_spike_current`/`is_demand_spike_current`/`is_viral_candidate` 3개 불리언에 그대로 대응시켜 판정 로직 구현
 - `web/src/data/manifest.js`/`web/api/_lib/dataManifest.js`에 영월 신규 추가, 영월·거제의 `signal_status`를 `kind: "real"`로 전환. 나머지 8개 계약은 이번 라운드 범위 밖(영월은 지역명 불일치를 피하기 위해 "unsupported" 처리)
-- 상세 설계는 `docs/meeting-notes/UI/MySQL_실데이터_연동_계획.md` 참고 (향후 24시간 자동 재수집 전환 시 필요한 변경사항도 정리해둠 — `REFERENCE_DATE` 동적화 + 스케줄러 추가 두 가지뿐, 수정 비용 낮음)
+- 상세 설계는 `docs/data-pipeline/UI_MySQL_실데이터_연동_계획.md` 참고 (향후 24시간 자동 재수집 전환 시 필요한 변경사항도 정리해둠 — `REFERENCE_DATE` 동적화 + 스케줄러 추가 두 가지뿐, 수정 비용 낮음)
 
 ### 17. §16 뒤집음: `agents/` 파이프라인 산출물 사용으로 최종 전환
 `data/prod/`를 다시 확인해보니, `agents/judge_signal_status.py`와 `agents/agent1_timeline.py`가 **영월(`signal_status_51750.json`, `timeline_51750.json`)·거제(`signal_status.json`, `timeline.json`) 실측 산출물을 이미 만들어둔 상태**였다(09-20 생성, `_mock:false`). 게다가 이쪽이 프로젝트가 원래 정의한 **"관심(SNS 언급량)·의도(내비게이션 검색)·실현(방문자수)" 3중 교차검증**을 월 단위로 제대로 구현하고 있었고, 24개월 `history`도 포함돼 있어 §16에서 우리가 만든 일별 네이버 검색 z-score 기반 판정(관심·의도·실현 정의와 안 맞고 history도 없음)보다 나았다.
@@ -114,6 +114,31 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 **바꾼 것**: `BriefingGenerator.jsx`를 "생성" 버튼이 있는 컴포넌트에서, `agents/agent5_briefing.py`가 만든 `data/prod/briefing.json`을 그대로 표시하는 컴포넌트로 재작성. `Area3Briefing.jsx`가 `useRegionData("briefing", region)`으로 불러옴(다른 AREA3 데이터와 동일한 패턴). `manifest.js`/`dataManifest.js`에 `briefing` 계약 추가(`kind: "mock"` — 파일 자체가 `_mock:true`, checklist와 같은 이유).
 
 **향후 실시간성이 필요해지면**: 사용자 지침에 따라 "버튼 누를 때마다 데이터를 최신화하고 agent5_briefing.py 로직 자체를 다시 돌리는" 방식으로 가야 한다 — 에이전트 루프 밖에 별도 LLM 호출 경로를 다시 만들지 않는다.
+
+## 09-23 작업 (`refactor/agents_db-full연동` 브랜치 — hotspots/visitor_profile/content_type 다지역 실측화)
+
+### 19. hotspots·visitor_profile 신규 에이전트 스크립트로 실측 전환
+계획 문서는 `docs/data-pipeline/agents_db_full연동_계획.md`. §17에서 확인한 대로 실측 여부를 전수 조사한 결과 `hotspots`/`visitor_profile`은 DB에 소스가 있는데 변환 스크립트가 없어서 목업이었다 — 이 둘을 채웠다.
+
+- `collection/db_export.py`에 `major_attraction_visitors_monthly`(관광지 단위 방문자수, `attraction_region_map`으로 canonical_region_id 조인), `datalab_detail_row`(성연령/거리/거주지/소비/동반유형 원자료, `data_group` 7종 + 사례 지역 필터)를 추가.
+- `agents/agent_hotspots.py` 신규: 지역당 상위 10곳 내외를 방문자수·전월 대비 증감률로 뽑는다. `spatial_type`(매뉴얼 p.13 4분류)은 DB에 없어 사람이 채운 소규모 룩업 테이블(`POI_SPATIAL_TYPE`)로 분류 — 분류가 없는 POI는 순위에서 제외했다(발명 금지). `coord`/`visitor_mix`/`congestion_level`/`bottleneck`은 이 DB로 못 구해 비웠다.
+- `agents/agent_visitor_profile.py` 신규: `datalab_detail_row`는 같은 항목도 여러 수집 시점(`query_start_month`~`query_end_month`)으로 중복 적재돼 있어 **가장 최근 구간만** 쓴다. DB 거리 구간(6개)·연령 구간(8개)·동반유형(9개)을 스키마 구간으로 재매핑했고(경계가 안 맞는 거리 구간은 폭 비례 분할), `spending`은 내국인 데이터에 금액 필드가 없어 외국인 소비 데이터(금액 있음)로 대체했다 — caveat에 명시. `total_visitors`는 `datalab_monthly_panel`(signal_status와 동일 소스)에서 가져왔다.
+- 6개 사례 지역(`CASE_REGIONS`) 전부 생성 확인 (`hotspots.json`/`hotspots_{region}.json`, `visitor_profile.json`/`visitor_profile_{region}.json`).
+
+### 20. content_type 5개 지역 확장 (표본 축소 명시)
+`agent2_apply.py`는 거제 하나만 처리했다(수집 원본 JSON이 지역당 1개 파일). 나머지 5개 지역은 그 원본이 없어(`data/raw/youtube/`는 gitignore 대상) DB 스냅샷(`youtube_case.csv`, 지역당 950~1500개)을 대신 쓰되, 전량 분류는 이번 범위를 벗어나 **조회수 상위 15개만** 분류했다(거제도 원래 "검색 결과 상위 영상만 수집"이었으므로 같은 성격의 표본 제한 — caveat에 명시). 분류는 제목·채널명·검색어 텍스트만으로 판정했다(설명·태그가 이 스냅샷엔 없음).
+
+지역별 특징: 울릉·속초는 "바가지 요금" 논란 뉴스가 조회수 상위권에 몰려 있어 데드존(수요 이탈) 신호가 다수 잡혔다. 영월은 단종 역사 다큐 채널이 상위권 다수라 관광무관 비중이 높았고, 인제는 검색어("인제")와 우연히 겹치는 무관 콘텐츠(중국 인재전쟁 다큐, 밈 애니메이션 등)가 상위권에 많았다.
+
+### 21. checklist 실측 전환, briefing은 여전히 목업(정상)
+`hotspots`/`visitor_profile`이 실측이 되자 `agent3_match.py`(거제, 단일 지역)를 재실행 — 입력 4개(signal_status/hotspots/visitor_profile/content_type)가 전부 실측이 돼 `checklist.json`의 `_mock`이 `true`→`false`로 바뀌었다. `agent5_briefing.py`도 재실행했으나 입력에 `forecast`(별도 브랜치 진행 중, 이번 범위 제외)가 포함돼 `briefing.json`은 의도대로 `_mock:true`로 남았다 — forecast 브랜치가 합쳐져야 완전한 실측이 된다.
+
+### 22. 재생성물의 DB 적재는 하지 않기로 결정
+계획 단계에서 "재생성되는 prod JSON을 DB에 적재해서 보관해야 하나"라는 논의가 있었다. 결론은 하지 않는 것 — 이 프로젝트는 추세/히스토리가 필요하면 매번 원천 DB에서 다시 계산하는 방식(`signal_status`의 `history[]`처럼)으로 이미 해결돼 있어 옛 JSON 버전 자체를 보존할 제품상 이유가 없고, `agents/` 파이프라인은 현재 읽기 전용으로만 DB에 접속해 쓰기 경로를 새로 만드는 비용이 크다. `data/mock/*.json`은 기존 관례대로(계약/폴백/토글 용도) 계속 유지하되 삭제하지 않는다.
+
+`_mock:false`로 새로 바뀐 파일: `data/prod/checklist.json`. 신규 생성: `hotspots*.json`(6개), `visitor_profile*.json`(6개), `content_type_{51750,12130,47940,51210,51810}.json`(5개). `data/mock/hotspots.json`/`visitor_profile.json`/`checklist.json`은 그대로 유지.
+
+**범위 밖**: `forecast`(별도 브랜치), `web/` 쪽 `manifest.js`/`dataManifest.js` 연동(산출물만 만드는 게 이번 브랜치 목표라 화면 반영은 별도 작업).
 
 ---
 

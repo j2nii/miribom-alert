@@ -1,0 +1,275 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:47:54+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google — 팀 DB youtube_case",
+      "retrieved_at": "2026-09-23",
+      "note": "지역명 검색어로 수집된 969건 중 조회수 상위 15건만 분류했다."
+    }
+  ],
+  "period": {
+    "start": "2025-06-12",
+    "end": "2026-07-23",
+    "granularity": "일"
+  },
+  "caveat": [
+    "수집된 영상 중 조회수 상위 15건만 분류했다(거제는 검색 결과 상위 수집이었고, 이 지역들은 DB 스냅샷 전체(969건)가 커서 상위 조회수 기준으로 추가 표본 제한을 뒀다). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+    "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·채널명·검색 키워드 텍스트만으로 수행했다(이 스냅샷에는 설명·태그가 없다) — 거제(RAW_FILE 기반)보다 근거가 더 제한적이다."
+  ],
+  "data": {
+    "region": {
+      "code": "12130",
+      "name": "여수시"
+    },
+    "model": {
+      "name": "claude-opus-5",
+      "provider": "Claude Code 세션(API 미경유)",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "UzOZm0lAaZM",
+        "title": "여수에서 귀여운윤지랑 소정이 쏘~~DIGIDI DIGIDI #춤추는곰돌의랜덤댄스 #dance #랜덤플레이댄스 #소정이의랜덤댄스 #춤추는곰돌 #DIGIDIDIGIDI",
+        "channel": "소정이의 랜덤댄스",
+        "published_at": "2026-07-23",
+        "view_count": 31441886,
+        "like_count": 295405,
+        "comment_count": 2271,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "랜덤댄스 챌린지 콘텐츠로 여수는 촬영 배경일 뿐 방문 정보가 없음",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "TAl2OpcSVJk",
+        "title": "[아름다운 해양 도시 여수] With us, YEOSU",
+        "channel": "힐링여수야",
+        "published_at": "2025-08-21",
+        "view_count": 6369105,
+        "like_count": 6,
+        "comment_count": 0,
+        "content_type": "자연경관형",
+        "confidence": 0.7,
+        "evidence": "'아름다운 해양 도시 여수'로 도시 경관 소개가 중심인 홍보 영상",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "llRpHE9r4HI",
+        "title": "1박2일 전설의 아기",
+        "channel": "esports KBS",
+        "published_at": "2026-02-04",
+        "view_count": 6228734,
+        "like_count": 63095,
+        "comment_count": 1247,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.85,
+        "evidence": "KBS '1박2일' 방영분으로 예능 프로그램 노출 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "KAbmaWvTHtU",
+        "title": "2인분 시켰는데 홀대에 &#39;왈칵&#39;…&#39;발칵&#39; 뒤집힌 여수시, 결국  / 연합뉴스 (Yonhapnews)",
+        "channel": "연합뉴스 Yonhapnews",
+        "published_at": "2025-07-17",
+        "view_count": 4264784,
+        "like_count": 49932,
+        "comment_count": 39873,
+        "content_type": "맛집형",
+        "confidence": 0.7,
+        "evidence": "특정 식당의 손님 응대 논란을 다룬 보도",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "kd18fTVCUL4",
+        "title": "현재 난리난 또간집 여수식당",
+        "channel": "콩자반",
+        "published_at": "2025-07-16",
+        "view_count": 4101975,
+        "like_count": 30087,
+        "comment_count": 3728,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.8,
+        "evidence": "'현재 난리난 또간집 여수식당'으로 방송 노출 후 화제가 된 식당을 다룸",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "MBYSq-fikyQ",
+        "title": "1박 2일 전설의 아기 ㅋㅋ",
+        "channel": "esports KBS",
+        "published_at": "2025-08-27",
+        "view_count": 4058731,
+        "like_count": 47390,
+        "comment_count": 642,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.8,
+        "evidence": "KBS '1박2일' 방영분(위 영상과 동일 소재)",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "N1LGDrTP8Jg",
+        "title": "여수 홍보",
+        "channel": "김선태",
+        "published_at": "2026-04-03",
+        "view_count": 3971699,
+        "like_count": 99985,
+        "comment_count": 15786,
+        "content_type": "코스·일정형",
+        "confidence": 0.55,
+        "evidence": "'여수 홍보'로 제목이 포괄적이며 여러 지점을 다루는 지역 홍보 영상으로 추정",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "zjHA1TjLoGI",
+        "title": "장인어른의 현지인 여수 맛집 대방출",
+        "channel": "탐구본능",
+        "published_at": "2025-06-12",
+        "view_count": 3877673,
+        "like_count": 58740,
+        "comment_count": 790,
+        "content_type": "맛집형",
+        "confidence": 0.85,
+        "evidence": "'장인어른의 현지인 여수 맛집 대방출'로 맛집 순회가 콘텐츠 전체",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "bAcN_uD2fxk",
+        "title": "여수 4개월 영아 학대 살해 부모 신상 공개!",
+        "channel": "이슈박사",
+        "published_at": "2026-03-03",
+        "view_count": 3165517,
+        "like_count": 28053,
+        "comment_count": 6167,
+        "content_type": "관광무관",
+        "confidence": 0.9,
+        "evidence": "영아 학대 사건을 다룬 사건·사고 보도로 방문 수요와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "FUuaRBz_-n8",
+        "title": "여수 섬 박람회가 돈을 펑펑 쓴 곳",
+        "channel": "뇌전구",
+        "published_at": "2026-05-08",
+        "view_count": 3164944,
+        "like_count": 45213,
+        "comment_count": 6618,
+        "content_type": "관광무관",
+        "confidence": 0.65,
+        "evidence": "'여수 섬 박람회가 돈을 펑펑 쓴 곳'으로 예산 집행을 비판하는 시사 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "G7gAzJn1Q_s",
+        "title": "풍자님을 불러준다며 1000만원을 받고 잠적한 사기 유튜버, 광고 대행사 (광고)",
+        "channel": "잇츠오니 ! (Eat's Oni )",
+        "published_at": "2025-09-26",
+        "view_count": 2688588,
+        "like_count": 35501,
+        "comment_count": 549,
+        "content_type": "관광무관",
+        "confidence": 0.7,
+        "evidence": "유튜버 사기·잠적 사건을 다룬 콘텐츠로 여수 방문 정보가 아님",
+        "poi_mentioned": [],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "MsM0jdfPxsY",
+        "title": "식신 정준하가 정중하게 고른 여수 맛집",
+        "channel": "정준하하하",
+        "published_at": "2026-02-16",
+        "view_count": 2637967,
+        "like_count": 9286,
+        "comment_count": 261,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.85,
+        "evidence": "'식신 정준하가 정중하게 고른 여수 맛집'으로 인물 추천이 선정 기준",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "kf77xjc8Mw0",
+        "title": "계속 되는 호통에 &quot;체할 것 같다&quot;...혼밥 손님 홀대한 여수 맛집 논란 [지금이뉴스]  / YTN",
+        "channel": "YTN",
+        "published_at": "2025-07-16",
+        "view_count": 2563910,
+        "like_count": 24392,
+        "comment_count": 13976,
+        "content_type": "맛집형",
+        "confidence": 0.65,
+        "evidence": "'혼밥 손님 홀대한 여수 맛집 논란' 보도(KAbmaWvTHtU와 같은 사건)",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "w0v35RJPesw",
+        "title": "여수 폐가에서 발견된 30대 남자 백골 미스테리, 50초 안에 설명하기",
+        "channel": "꽉TV",
+        "published_at": "2026-02-03",
+        "view_count": 2404309,
+        "like_count": 59771,
+        "comment_count": 871,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "폐가에서 백골 발견 사건을 다룬 미스터리 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "ImEdYn0xMc0",
+        "title": "여수 혼밥 손님, 직접 만났습니다. | 또간집",
+        "channel": "스튜디오 수제",
+        "published_at": "2025-07-19",
+        "view_count": 2385265,
+        "like_count": 28044,
+        "comment_count": 6574,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.75,
+        "evidence": "'또간집' 후속으로 혼밥 손님 논란 당사자를 직접 취재",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 5,
+        "ratio": 0.5556,
+        "total_views": 19412672
+      },
+      {
+        "content_type": "맛집형",
+        "count": 3,
+        "ratio": 0.3333,
+        "total_views": 10706367
+      },
+      {
+        "content_type": "자연경관형",
+        "count": 1,
+        "ratio": 0.1111,
+        "total_views": 6369105
+      }
+    ],
+    "unclassified_count": 6,
+    "zone_signals": {
+      "핫존": 0,
+      "데드존": 2,
+      "데드존_지점": []
+    }
+  }
+}

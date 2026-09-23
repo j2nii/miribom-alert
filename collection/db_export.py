@@ -50,6 +50,30 @@ QUERIES = {
     """,
     "datalab_monthly_panel": "select * from datalab_monthly_panel",
     "source_file": "select source_file_id, file_name, row_count, loaded_at, note from source_file",
+    # 관광지 단위 방문자 수 (에이전트 hotspots 입력). province/district 텍스트만 있어
+    # attraction_region_map으로 canonical_region_id까지 조인해서 내려받는다 (전량은
+    # 847,656행이라 사례 지역만 필터링).
+    "major_attraction_visitors_monthly": f"""
+        select m.canonical_region_id as region_id, a.attraction_name, a.visitor_type,
+               a.observed_month, a.visitor_count
+        from major_attraction_visitors_monthly a
+        join attraction_region_map m
+          on m.province_name = a.province_name and m.district_name = a.district_name
+        where m.canonical_region_id in ({','.join(repr(r) for r in CASE_REGIONS)})
+    """,
+    # 방문객 프로파일(성연령/거리/거주지/소비/동반유형) 원자료 (에이전트 visitor_profile 입력).
+    # data_group은 필요한 5개 범주만, 지역은 사례 지역만 필터링 (전량은 283만 행).
+    "datalab_detail_row": """
+        select row_key, source_region_code as region_id, source_region_name,
+               observed_month, query_start_month, query_end_month, data_group,
+               source_row_no, row_json
+        from datalab_detail_row
+        where data_group in (
+            '방문자 성연령별 분포', '거리별 방문자 분포', '방문자 거주지 분포',
+            '관광소비_내국인', '관광소비_외국인', '동반유형 키워드', '동반유형 언급량'
+        )
+        and source_region_code in ({regions})
+    """.format(regions=",".join(repr(r) for r in CASE_REGIONS)),
 }
 
 

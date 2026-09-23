@@ -1,9 +1,15 @@
-"""에이전트② 분류 결과를 data/prod/content_type.json으로 만든다.
+"""에이전트② 분류 결과를 data/prod/content_type*.json으로 만든다.
 
 분류 자체는 agents/prompts/agent2_content_type.md 프롬프트로 수행하고,
 이 스크립트는 그 판정 결과를 원본 수집 데이터와 조인해 스키마 형식으로 내보낸다.
 
 RESULTS의 값은 프롬프트 실행 결과다. 재실행 시 이 표를 교체한다.
+
+거제(48310, 기본 지역)는 기존처럼 수집 원본(data/raw/youtube/*.json, gitignore됨)을
+쓴다. 나머지 5개 사례 지역은 그 원본이 없어 DB 스냅샷(data/raw/db/youtube_case.csv)을
+쓰되, 지역당 950~1500개 영상 전체를 분류하는 건 이번 범위를 벗어나 **조회수 상위
+TOP_N_OTHER개만** 분류한다(거제도 원래 "검색 결과 상위 영상만 수집"이었으므로 같은
+성격의 표본 제한이다 — caveat에 명시).
 
 사용법:
     uv run python agents/agent2_apply.py
@@ -15,11 +21,22 @@ from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
+import pandas as pd
+
 sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
+
+from validate_data import validate_payload  # noqa: E402
+
 RAW_DIR = ROOT / "data" / "raw" / "youtube"
-OUT = ROOT / "data" / "prod" / "content_type.json"
+DB_DIR = ROOT / "data" / "raw" / "db"
+PROD = ROOT / "data" / "prod"
+OUT = PROD / "content_type.json"
+DEFAULT_REGION = "48310"
+OTHER_REGIONS = ["51750", "12130", "47940", "51210", "51810"]
+TOP_N_OTHER = 15
 
 PROMPT_VERSION = "agent2_content_type_v1.1"
 MODEL = "claude-opus-5"
@@ -108,7 +125,34 @@ RESULTS = {
 }
 
 
-def main() -> None:
+def summarize(items: list[dict]) -> tuple[list[dict], list[dict]]:
+    counted = [i for i in items if i["confidence"] >= CONFIDENCE_FLOOR and i["content_type"] != "관광무관"]
+    by_type: dict[str, list] = {}
+    for item in counted:
+        by_type.setdefault(item["content_type"], []).append(item)
+    summary = [
+        {
+            "content_type": ctype,
+            "count": len(group),
+            "ratio": round(len(group) / len(counted), 4),
+            "total_views": sum(i["view_count"] for i in group),
+        }
+        for ctype, group in sorted(by_type.items(), key=lambda kv: -sum(i["view_count"] for i in kv[1]))
+    ]
+    return counted, summary
+
+
+def zone_signals(items: list[dict]) -> dict:
+    return {
+        "핫존": sum(1 for i in items if i.get("zone_signal") == "핫존"),
+        "데드존": sum(1 for i in items if i.get("zone_signal") == "데드존"),
+        "데드존_지점": sorted({
+            poi for i in items if i.get("zone_signal") == "데드존" for poi in i["poi_mentioned"]
+        }),
+    }
+
+
+def build_geoje() -> None:
     raw_path = RAW_DIR / RAW_FILE
     raw = json.loads(raw_path.read_text(encoding="utf-8"))
 
@@ -137,20 +181,7 @@ def main() -> None:
             item["zone_signal"] = ZONE_SIGNALS[video["video_id"]]
         items.append(item)
 
-    counted = [i for i in items if i["confidence"] >= CONFIDENCE_FLOOR and i["content_type"] != "관광무관"]
-    by_type: dict[str, list] = {}
-    for item in counted:
-        by_type.setdefault(item["content_type"], []).append(item)
-
-    summary = [
-        {
-            "content_type": ctype,
-            "count": len(group),
-            "ratio": round(len(group) / len(counted), 4),
-            "total_views": sum(i["view_count"] for i in group),
-        }
-        for ctype, group in sorted(by_type.items(), key=lambda kv: -sum(i["view_count"] for i in kv[1]))
-    ]
+    counted, summary = summarize(items)
 
     payload = {
         "_mock": False,
@@ -181,13 +212,7 @@ def main() -> None:
             "items": items,
             "summary": summary,
             "unclassified_count": len(items) - len(counted),
-            "zone_signals": {
-                "핫존": sum(1 for i in items if i.get("zone_signal") == "핫존"),
-                "데드존": sum(1 for i in items if i.get("zone_signal") == "데드존"),
-                "데드존_지점": sorted({
-                    poi for i in items if i.get("zone_signal") == "데드존" for poi in i["poi_mentioned"]
-                }),
-            },
+            "zone_signals": zone_signals(items),
         },
     }
 
@@ -209,6 +234,192 @@ def main() -> None:
     print(f"\n쏠림/이탈 신호: 핫존 {zones['핫존']}건 · 데드존 {zones['데드존']}건")
     if zones["데드존_지점"]:
         print(f"  데드존 지목 지점(분산 후보): {', '.join(zones['데드존_지점'])}")
+
+
+# 나머지 5개 사례 지역 — youtube_case.csv 조회수 상위 TOP_N_OTHER개만 분류(제목/채널/검색어
+# 텍스트 기준, 설명·태그는 이 스냅샷에 없다). video_id: (유형, 신뢰도, 근거, 언급 지점, 감성, zone_signal|None)
+RESULTS_OTHER: dict[str, dict[str, tuple]] = {
+    "12130": {  # 여수
+        "UzOZm0lAaZM": ("관광무관", 0.75, "랜덤댄스 챌린지 콘텐츠로 여수는 촬영 배경일 뿐 방문 정보가 없음", [], "중립", None),
+        "TAl2OpcSVJk": ("자연경관형", 0.70, "'아름다운 해양 도시 여수'로 도시 경관 소개가 중심인 홍보 영상", [], "긍정", None),
+        "llRpHE9r4HI": ("예능·방송 노출형", 0.85, "KBS '1박2일' 방영분으로 예능 프로그램 노출 콘텐츠", [], "긍정", None),
+        "KAbmaWvTHtU": ("맛집형", 0.70, "특정 식당의 손님 응대 논란을 다룬 보도", [], "부정", "데드존"),
+        "kd18fTVCUL4": ("예능·방송 노출형", 0.80, "'현재 난리난 또간집 여수식당'으로 방송 노출 후 화제가 된 식당을 다룸", [], "긍정", None),
+        "MBYSq-fikyQ": ("예능·방송 노출형", 0.80, "KBS '1박2일' 방영분(위 영상과 동일 소재)", [], "긍정", None),
+        "N1LGDrTP8Jg": ("코스·일정형", 0.55, "'여수 홍보'로 제목이 포괄적이며 여러 지점을 다루는 지역 홍보 영상으로 추정", [], "긍정", None),
+        "zjHA1TjLoGI": ("맛집형", 0.85, "'장인어른의 현지인 여수 맛집 대방출'로 맛집 순회가 콘텐츠 전체", [], "긍정", None),
+        "bAcN_uD2fxk": ("관광무관", 0.90, "영아 학대 사건을 다룬 사건·사고 보도로 방문 수요와 무관", [], "중립", None),
+        "FUuaRBz_-n8": ("관광무관", 0.65, "'여수 섬 박람회가 돈을 펑펑 쓴 곳'으로 예산 집행을 비판하는 시사 콘텐츠", [], "부정", None),
+        "G7gAzJn1Q_s": ("관광무관", 0.70, "유튜버 사기·잠적 사건을 다룬 콘텐츠로 여수 방문 정보가 아님", [], "부정", None),
+        "MsM0jdfPxsY": ("예능·방송 노출형", 0.85, "'식신 정준하가 정중하게 고른 여수 맛집'으로 인물 추천이 선정 기준", [], "긍정", None),
+        "kf77xjc8Mw0": ("맛집형", 0.65, "'혼밥 손님 홀대한 여수 맛집 논란' 보도(KAbmaWvTHtU와 같은 사건)", [], "부정", "데드존"),
+        "w0v35RJPesw": ("관광무관", 0.85, "폐가에서 백골 발견 사건을 다룬 미스터리 콘텐츠", [], "중립", None),
+        "ImEdYn0xMc0": ("예능·방송 노출형", 0.75, "'또간집' 후속으로 혼밥 손님 논란 당사자를 직접 취재", [], "중립", None),
+    },
+    "47940": {  # 울릉 — 바가지·상권침체 논란이 상위권에 집중된 지역(데드존 신호 다수)
+        "K4Niws_6v3s": ("관광무관", 0.70, "제철 기술로 백화현상에 대응한 산업 기술을 다룬 콘텐츠", [], "중립", None),
+        "_lJeZzSpJiQ": ("관광무관", 0.75, "'다시는 안 볼 것처럼 장사하는 울릉도 주민들'로 바가지 여론을 다룬 비판 콘텐츠", [], "부정", "데드존"),
+        "eXNz7CXcrJ8": ("체험·액티비티형", 0.80, "'정신나갈거 같은 울릉도 체험'으로 체험형 활동이 소재", [], "긍정", None),
+        "MYA63ADIBH8": ("관광무관", 0.70, "'올해 완전히 망한 울릉도 근황'으로 상권 침체를 다룬 르포", [], "부정", "데드존"),
+        "DfKkgLEeCfs": ("관광무관", 0.75, "철강 부산물을 이용한 해양 기술을 다룬 산업 콘텐츠", [], "중립", None),
+        "9zafUsI9_UY": ("코스·일정형", 0.65, "실제 방문 브이로그로 방문 경험을 서술(부정적 반응 포함)", [], "부정", None),
+        "kIezWDJIPuU": ("관광무관", 0.75, "군 부대 근무 환경을 다룬 국방 관련 콘텐츠(케이블카는 군 시설용)", [], "중립", None),
+        "rFHd6c2N1-k": ("관광무관", 0.80, "'울릉도 여행 취소했다' 논란을 다룬 뉴스 보도", [], "부정", "데드존"),
+        "bSZ_sm6-Kls": ("예능·방송 노출형", 0.60, "예능인 방문 반응을 다룬 예능 클립", [], "긍정", None),
+        "CF7MuwLElhY": ("관광무관", 0.85, "'울릉도도 울고 갈 바가지'로 바가지 요금 논란을 다룬 보도", [], "부정", "데드존"),
+        "8RTLNqtFbbY": ("관광무관", 0.80, "화산 지질 연구를 다룬 과학 콘텐츠", [], "중립", None),
+        "FCX1FbO-J0o": ("관광무관", 0.60, "'울릉도까지 가실 필요 있나요?'로 방문 회의감을 표현한 숏폼", [], "부정", None),
+        "KQKyIiDkfO8": ("맛집형", 0.65, "'돌아버린 12만원어치 회'로 가격 불만을 다룬 맛집 콘텐츠", [], "부정", "데드존"),
+        "RsG_dENchcg": ("관광무관", 0.75, "제철 부산물 해양 투기 문제를 다룬 환경 콘텐츠", [], "부정", None),
+        "YcztpsSZ1PI": ("관광무관", 0.85, "'여수 이어 울릉도 취소' 바가지 논란 연쇄 보도", [], "부정", "데드존"),
+    },
+    "51210": {  # 속초
+        "Z37Pn3tWMq8": ("맛집형", 0.85, "-40도 철판 오레오 아이스크림 등 특정 디저트 메뉴를 다룬 맛집 콘텐츠", [], "긍정", None),
+        "raGhNxdrKao": ("예능·방송 노출형", 0.60, "코미디 채널 '숏박스'의 로드트립 소재 콩트", [], "긍정", None),
+        "UrrjvJyhTms": ("관광무관", 0.80, "'속초 언제 터지나 했어' 국민 분노 보도로 바가지 논란을 다룸", [], "부정", "데드존"),
+        "Nent_p64dUU": ("코스·일정형", 0.75, "'속초 민박집 사장님의 폭주 여행 가이드'로 현지인 추천 코스 구성", [], "긍정", None),
+        "MzhK0vZAZ3U": ("맛집형", 0.85, "팔도대게 판매 현장을 다룬 맛집 콘텐츠", ["팔도대게"], "긍정", None),
+        "VmY3B8PR-pI": ("맛집형", 0.80, "팔도대게 시리즈 콘텐츠(위 영상과 동일 점포)", ["팔도대게"], "긍정", None),
+        "wJcbEtlr608": ("맛집형", 0.85, "'지금 절대 놓치면 안되는 속초맛집 10곳'으로 맛집 목록형 콘텐츠", [], "긍정", None),
+        "i2L4YS3aG5I": ("관광무관", 0.75, "스탠드업 코미디 콘텐츠로 방문 정보가 아님", [], "중립", None),
+        "2dzGRua5lTw": ("코스·일정형", 0.75, "'5성급 호텔은 처음인 속초에서 노는법'으로 숙박·먹투어 일정 구성", [], "긍정", None),
+        "H7KPpCq6X_c": ("맛집형", 0.80, "팔도대게 시리즈 콘텐츠", ["팔도대게"], "긍정", None),
+        "TZIbfRhOA7M": ("맛집형", 0.75, "팔도대게 시리즈 콘텐츠", ["팔도대게"], "긍정", None),
+        "D2B_NaP4siM": ("관광무관", 0.85, "축구선수 밈을 다룬 스포츠 콘텐츠로 지역명은 말장난('겉바속초')", [], "중립", None),
+        "AwNCgOycSzk": ("맛집형", 0.80, "'100만원 넘게 쓰고 찾은 속초 레전드 맛집'으로 맛집 순회 콘텐츠", [], "긍정", None),
+        "_WA8KpiXV0k": ("체험·액티비티형", 0.65, "프라이빗 가족탕 온천 체험을 다룬 콘텐츠", [], "긍정", None),
+        "WlorhkQco-0": ("체험·액티비티형", 0.75, "설악워터피아 수영대회 참가 체험 콘텐츠", ["설악워터피아"], "긍정", None),
+    },
+    "51750": {  # 영월 — 단종 역사 서사 채널이 다수라 관광무관 비중이 높다(역사 교양 ≠ 방문 정보)
+        "0bQE4hA2U3w": ("관광무관", 0.85, "반려견 소재 브이로그로 영월은 태그로만 언급됨", [], "중립", None),
+        "dVh4TZRWfo4": ("관광무관", 0.60, "'단종의 묘는 어떻게 발견됐을까?' 역사 서사 콘텐츠로 방문 정보 없음", ["단종장릉"], "중립", None),
+        "1zxpr307R0U": ("관광무관", 0.65, "'고소당한 김삿갓계곡 근황'으로 법적 분쟁을 다룬 콘텐츠", ["김삿갓계곡"], "부정", None),
+        "FdEnIDAsejg": ("포토스팟형", 0.70, "'청령포에 배 타려고 끝없는 줄 서는 진짜 이유'로 실제 대기 혼잡 상황을 다룸", ["청령포"], "중립", "핫존"),
+        "xIIITdEZ-wk": ("관광무관", 0.60, "'정순왕후는 왜 영월에 가지 못했을까?' 역사 서사 콘텐츠", ["단종장릉"], "중립", None),
+        "7f_BAjPTGaQ": ("예능·방송 노출형", 0.60, "'나는 자연인이다' 계열 예능 콘텐츠(태그에 영월여행·고씨동굴)", ["고씨동굴"], "긍정", None),
+        "du7gz6izA1k": ("관광무관", 0.60, "'단종의 하루가 이랬습니다' 역사 서사 콘텐츠", ["단종장릉"], "중립", None),
+        "I7XmJzb8eas": ("코스·일정형", 0.70, "'영월을 롤러코스터로 관광하기'로 실제 관광 동선을 다룬 브이로그", [], "긍정", None),
+        "MYRixH2-eRc": ("관광무관", 0.60, "'유배지에서 단종은 밥은 어떻게 먹었을까?' 역사 서사 콘텐츠", ["청령포"], "중립", None),
+        "5PQ_ASG0vx0": ("관광무관", 0.65, "'이름조차 남기지 못한 단종의 궁녀들' 역사 서사 콘텐츠", [], "중립", None),
+        "TczOM_s1_Ak": ("포토스팟형", 0.65, "'청령포의 인기실감!'으로 현장 인기·체감 혼잡을 다룸", ["청령포"], "긍정", "핫존"),
+        "nxukV1yfvCA": ("맛집형", 0.85, "'요즘 핫한 영월 여행' 현지인 맛집 풀코스로 맛집 순회가 콘텐츠 전체", [], "긍정", None),
+        "TKjoP9LyQgg": ("관광무관", 0.60, "'역사가 기록하지 못한 4개월 영월 사람들의 뜨거운 정' 역사 서사 콘텐츠", [], "중립", None),
+        "OviDUGVzyh0": ("관광무관", 0.60, "'17살에 끌려간 소년왕' 역사 서사 콘텐츠", [], "중립", None),
+        "hUy8-tFT3aY": ("관광무관", 0.85, "'파란 보석 5천만 톤 영월서 터졌다' 광물자원 발견을 다룬 경제 뉴스", [], "중립", None),
+    },
+    "51810": {  # 인제 — 검색어(인제)와 우연히 겹치는 무관 콘텐츠가 상위권 다수
+        "GI7k1QszJXU": ("관광무관", 0.60, "지역 밀착 브이로그로 방문 유발보다 인물 소재가 중심", [], "중립", None),
+        "qwNHoH_7B7M": ("관광무관", 0.60, "백담계곡 급류 안전 경고 영상으로 방문 유도가 아닌 위험 경고", ["백담계곡"], "부정", None),
+        "yE9-ENNbXsU": ("관광무관", 0.90, "중국 공대 인재 현황을 다룬 다큐멘터리로 인제와 무관(키워드 우연 일치)", [], "중립", None),
+        "toYQCP0Q-nc": ("관광무관", 0.85, "'인제프(INJEF)' 밈 애니메이션으로 지명과 무관한 콘텐츠", [], "중립", None),
+        "0-nPEj6euio": ("관광무관", 0.90, "중국 인재전쟁을 다룬 다큐멘터리로 인제와 무관", [], "중립", None),
+        "BF2hbsM7zOE": ("관광무관", 0.55, "내용을 특정할 수 없는 짧은 코멘트형 영상", [], "중립", None),
+        "OFkuwVC37Wo": ("예능·방송 노출형", 0.70, "방송인들의 인제 방문을 다룬 예능 콘텐츠", [], "긍정", None),
+        "VpCtHHQ8l88": ("코스·일정형", 0.55, "'인제 홍보'로 제목이 포괄적인 지역 홍보 영상", [], "긍정", None),
+        "RaXWtZFCOus": ("체험·액티비티형", 0.55, "인제스피디움으로 추정되는 서킷에서의 차량 테스트 콘텐츠", ["인제스피디움"], "중립", None),
+        "VkHG6Fl2_8w": ("자연경관형", 0.70, "'백담계곡은 아셔도 여기는 잘 모르실겁니다'로 숨은 경관 명소를 소개", [], "긍정", None),
+        "LxKhkNcmddM": ("관광무관", 0.80, "'그것이 알고싶다' 시사 프로그램의 실종 사건 소재", [], "중립", None),
+        "PO70p_-qbtM": ("관광무관", 0.75, "인제양양터널을 소재로 한 고속도로 인프라 상식 콘텐츠", [], "중립", None),
+        "wIl7jmVNPlk": ("관광무관", 0.85, "IQ 퀴즈 콘텐츠로 인제와 무관", [], "중립", None),
+        "S78Srg5cRJ8": ("예능·방송 노출형", 0.55, "가수의 인제 해병대 행사 참석을 다룬 예능성 콘텐츠", [], "긍정", None),
+        "hkcZ8YiZ_BM": ("체험·액티비티형", 0.75, "인제스피디움 서킷 주행 콘텐츠", ["인제스피디움"], "긍정", None),
+    },
+}
+
+
+def build_other(region: str, region_name: str, cases: "pd.DataFrame") -> dict | None:
+    results = RESULTS_OTHER.get(region)
+    if not results:
+        return None
+    g = cases[cases["region_id"] == region].drop_duplicates(subset=["video_id"])
+    top = g.sort_values("view_count", ascending=False).head(TOP_N_OTHER)
+
+    items = []
+    for _, video in top.iterrows():
+        verdict = results.get(video["video_id"])
+        if verdict is None:
+            continue
+        content_type, confidence, evidence, pois, sentiment, zone = verdict
+        item = {
+            "video_id": video["video_id"],
+            "title": video["title"],
+            "channel": video["channel_name"],
+            "published_at": str(video["published_at"])[:10],
+            "view_count": int(video["view_count"]) if pd.notna(video["view_count"]) else 0,
+            "like_count": int(video["like_count"]) if pd.notna(video["like_count"]) else 0,
+            "comment_count": int(video["comment_count"]) if pd.notna(video["comment_count"]) else 0,
+            "content_type": content_type,
+            "confidence": confidence,
+            "evidence": evidence,
+            "poi_mentioned": pois,
+            "sentiment": sentiment,
+        }
+        if zone:
+            item["zone_signal"] = zone
+        items.append(item)
+    if not items:
+        return None
+
+    counted, summary = summarize(items)
+    return {
+        "_mock": False,
+        "generated_at": datetime.now().astimezone().replace(microsecond=0).isoformat(),
+        "source": [
+            {
+                "name": "YouTube Data API v3",
+                "provider": "Google — 팀 DB youtube_case",
+                "retrieved_at": datetime.now().astimezone().strftime("%Y-%m-%d"),
+                "note": f"지역명 검색어로 수집된 {len(g)}건 중 조회수 상위 {len(items)}건만 분류했다.",
+            }
+        ],
+        "period": {
+            "start": min(i["published_at"] for i in items),
+            "end": max(i["published_at"] for i in items),
+            "granularity": "일",
+        },
+        "caveat": [
+            f"수집된 영상 중 조회수 상위 {TOP_N_OTHER}건만 분류했다(거제는 검색 결과 상위 수집이었고, "
+            f"이 지역들은 DB 스냅샷 전체({len(g)}건)가 커서 상위 조회수 기준으로 추가 표본 제한을 뒀다). "
+            "소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+            "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다.",
+            "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+            "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+            "분류는 제목·채널명·검색 키워드 텍스트만으로 수행했다(이 스냅샷에는 설명·태그가 없다) — "
+            "거제(RAW_FILE 기반)보다 근거가 더 제한적이다.",
+        ],
+        "data": {
+            "region": {"code": region, "name": region_name},
+            "model": {"name": MODEL, "provider": PROVIDER, "prompt_version": PROMPT_VERSION},
+            "items": items,
+            "summary": summary,
+            "unclassified_count": len(items) - len(counted),
+            "zone_signals": zone_signals(items),
+        },
+    }
+
+
+def main() -> None:
+    if (RAW_DIR / RAW_FILE).exists():
+        build_geoje()
+    else:
+        print(f"[건너뜀] {RAW_FILE}이 없다 (data/raw/youtube는 gitignore 대상 — 기존 data/prod/content_type.json 유지)")
+
+    cases = pd.read_csv(DB_DIR / "youtube_case.csv", dtype={"region_id": str})
+    regions = pd.read_csv(DB_DIR / "dim_region.csv", dtype={"region_id": str}).set_index("region_id")["region_name"]
+    for region in OTHER_REGIONS:
+        payload = build_other(region, regions[region], cases)
+        if payload is None:
+            print(f"\n{regions[region]:<5} 분류 결과 없음 — 건너뜀")
+            continue
+        errors = validate_payload("content_type", payload)
+        if errors:
+            sys.exit(f"[스키마 실패] {region}: {errors[:3]}")
+        out_path = PROD / f"content_type_{region}.json"
+        out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        d = payload["data"]
+        print(f"\n{regions[region]:<5} {len(d['items'])}건 분류 (집계 {len(d['items']) - d['unclassified_count']}건) → data/prod/{out_path.name}")
+        for row in d["summary"][:3]:
+            print(f"  {row['content_type']:<16} {row['count']:>2}건  조회수 {row['total_views']:>10,}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,290 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:47:54+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google — 팀 DB youtube_case",
+      "retrieved_at": "2026-09-23",
+      "note": "지역명 검색어로 수집된 958건 중 조회수 상위 15건만 분류했다."
+    }
+  ],
+  "period": {
+    "start": "2025-03-14",
+    "end": "2026-07-09",
+    "granularity": "일"
+  },
+  "caveat": [
+    "수집된 영상 중 조회수 상위 15건만 분류했다(거제는 검색 결과 상위 수집이었고, 이 지역들은 DB 스냅샷 전체(958건)가 커서 상위 조회수 기준으로 추가 표본 제한을 뒀다). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+    "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·채널명·검색 키워드 텍스트만으로 수행했다(이 스냅샷에는 설명·태그가 없다) — 거제(RAW_FILE 기반)보다 근거가 더 제한적이다."
+  ],
+  "data": {
+    "region": {
+      "code": "51210",
+      "name": "속초시"
+    },
+    "model": {
+      "name": "claude-opus-5",
+      "provider": "Claude Code 세션(API 미경유)",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "Z37Pn3tWMq8",
+        "title": "속초에서 줄서먹는?? 영하 -40도 철판에 급속으로 얼려먹는 오레오 아이스크림!",
+        "channel": "푸디런 FoodieRun",
+        "published_at": "2025-04-30",
+        "view_count": 22740378,
+        "like_count": 319737,
+        "comment_count": 1080,
+        "content_type": "맛집형",
+        "confidence": 0.85,
+        "evidence": "-40도 철판 오레오 아이스크림 등 특정 디저트 메뉴를 다룬 맛집 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "raGhNxdrKao",
+        "title": "야 속초까지 얼마나 남았냐?",
+        "channel": "숏박스",
+        "published_at": "2026-03-06",
+        "view_count": 4698268,
+        "like_count": 32573,
+        "comment_count": 3203,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.6,
+        "evidence": "코미디 채널 '숏박스'의 로드트립 소재 콩트",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "UrrjvJyhTms",
+        "title": "&quot;속초 언제 터지나 했어&quot; 한번 불 붙자..국민 분노 심상치 않다 #뉴스다 / JTBC News",
+        "channel": "JTBC News",
+        "published_at": "2025-08-08",
+        "view_count": 4677892,
+        "like_count": 30666,
+        "comment_count": 15944,
+        "content_type": "관광무관",
+        "confidence": 0.8,
+        "evidence": "'속초 언제 터지나 했어' 국민 분노 보도로 바가지 논란을 다룸",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "Nent_p64dUU",
+        "title": "속초 민박집 사장님의 폭주 여행 가이드",
+        "channel": "탐구본능",
+        "published_at": "2025-05-31",
+        "view_count": 3729675,
+        "like_count": 40675,
+        "comment_count": 472,
+        "content_type": "코스·일정형",
+        "confidence": 0.75,
+        "evidence": "'속초 민박집 사장님의 폭주 여행 가이드'로 현지인 추천 코스 구성",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "MzhK0vZAZ3U",
+        "title": "팔도대게 오신 손님에게는 진정한 가격으로 모십니다 ㅎㅎ  #속초대게 #팔도대게 #대게 #속초팔도대게 #대게맛집",
+        "channel": "속초돌쇠티비",
+        "published_at": "2026-04-29",
+        "view_count": 3718435,
+        "like_count": 8367,
+        "comment_count": 232,
+        "content_type": "맛집형",
+        "confidence": 0.85,
+        "evidence": "팔도대게 판매 현장을 다룬 맛집 콘텐츠",
+        "poi_mentioned": [
+          "팔도대게"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "VmY3B8PR-pI",
+        "title": "다시 한 번 보세요  #속초대게 #팔도대게 #대게 #속초팔도대게 #대게맛집",
+        "channel": "속초돌쇠티비",
+        "published_at": "2026-04-15",
+        "view_count": 3455770,
+        "like_count": 9910,
+        "comment_count": 348,
+        "content_type": "맛집형",
+        "confidence": 0.8,
+        "evidence": "팔도대게 시리즈 콘텐츠(위 영상과 동일 점포)",
+        "poi_mentioned": [
+          "팔도대게"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "wJcbEtlr608",
+        "title": "지금 절대 놓치면 안되는 속초맛집 10곳",
+        "channel": "맛관부",
+        "published_at": "2025-03-26",
+        "view_count": 3208019,
+        "like_count": 28688,
+        "comment_count": 295,
+        "content_type": "맛집형",
+        "confidence": 0.85,
+        "evidence": "'지금 절대 놓치면 안되는 속초맛집 10곳'으로 맛집 목록형 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "i2L4YS3aG5I",
+        "title": "이발소 #standupcomedy #이상준 #이상준쇼 #속초 #조명가게",
+        "channel": "이상준쇼",
+        "published_at": "2026-03-11",
+        "view_count": 3139664,
+        "like_count": 24863,
+        "comment_count": 218,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "스탠드업 코미디 콘텐츠로 방문 정보가 아님",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "2dzGRua5lTw",
+        "title": "5성급 호텔은 처음인 속초에서 노는법(with. 먹투어)",
+        "channel": "방곡방곡",
+        "published_at": "2025-03-14",
+        "view_count": 2746941,
+        "like_count": 34007,
+        "comment_count": 380,
+        "content_type": "코스·일정형",
+        "confidence": 0.75,
+        "evidence": "'5성급 호텔은 처음인 속초에서 노는법'으로 숙박·먹투어 일정 구성",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "H7KPpCq6X_c",
+        "title": "이제알텐테...  #속초대게 #팔도대게 #대게 #속초팔도대게 #대게맛집",
+        "channel": "속초돌쇠티비",
+        "published_at": "2026-04-22",
+        "view_count": 2653984,
+        "like_count": 7384,
+        "comment_count": 198,
+        "content_type": "맛집형",
+        "confidence": 0.8,
+        "evidence": "팔도대게 시리즈 콘텐츠",
+        "poi_mentioned": [
+          "팔도대게"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "TZIbfRhOA7M",
+        "title": "그니까 적당히 뺐어먹어야지  #속초대게 #팔도대게 #대게 #속초팔도대게 #대게맛집",
+        "channel": "속초돌쇠티비",
+        "published_at": "2026-04-24",
+        "view_count": 2434333,
+        "like_count": 13038,
+        "comment_count": 106,
+        "content_type": "맛집형",
+        "confidence": 0.75,
+        "evidence": "팔도대게 시리즈 콘텐츠",
+        "poi_mentioned": [
+          "팔도대게"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "D2B_NaP4siM",
+        "title": "EPL 괴물 바이킹 부자는 &#39;겉바속초&#39; 그 자체였다 #홀란드 #엘링홀란드 #홀란드아빠 #축구부자 #EPL #맨시티 #축구쇼츠 #shorts",
+        "channel": "월드이츠유얼스",
+        "published_at": "2026-07-09",
+        "view_count": 2235708,
+        "like_count": 13450,
+        "comment_count": 381,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "축구선수 밈을 다룬 스포츠 콘텐츠로 지역명은 말장난('겉바속초')",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "AwNCgOycSzk",
+        "title": "100만원 넘게 쓰고 찾은 보법이 다른 속초 레전드 맛집 모음 #shorts #맛집",
+        "channel": "재슐랭가이드",
+        "published_at": "2025-07-26",
+        "view_count": 2000127,
+        "like_count": 22069,
+        "comment_count": 393,
+        "content_type": "맛집형",
+        "confidence": 0.8,
+        "evidence": "'100만원 넘게 쓰고 찾은 속초 레전드 맛집'으로 맛집 순회 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "_WA8KpiXV0k",
+        "title": "♨️ 5만원대 프라이빗 가족탕! 우리 가족끼리만 즐기는 온천??",
+        "channel": "빼뚜릭",
+        "published_at": "2025-12-08",
+        "view_count": 1942229,
+        "like_count": 7836,
+        "comment_count": 152,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.65,
+        "evidence": "프라이빗 가족탕 온천 체험을 다룬 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "WlorhkQco-0",
+        "title": "이제는 진짜 실력자들이 소문듣고 오는듯 ㅋ 이번에는 진짜 압도적인 실력을 가진 친구를 만났습니다.#설악워터피아 #수영대회 #속초 #워터파크 #여름휴가 #poolparty #dj",
+        "channel": "든든한MC / Fine thank U Andrew",
+        "published_at": "2025-08-14",
+        "view_count": 1859565,
+        "like_count": 12905,
+        "comment_count": 0,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.75,
+        "evidence": "설악워터피아 수영대회 참가 체험 콘텐츠",
+        "poi_mentioned": [
+          "설악워터피아"
+        ],
+        "sentiment": "긍정"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "맛집형",
+        "count": 7,
+        "ratio": 0.5833,
+        "total_views": 40211046
+      },
+      {
+        "content_type": "코스·일정형",
+        "count": 2,
+        "ratio": 0.1667,
+        "total_views": 6476616
+      },
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 1,
+        "ratio": 0.0833,
+        "total_views": 4698268
+      },
+      {
+        "content_type": "체험·액티비티형",
+        "count": 2,
+        "ratio": 0.1667,
+        "total_views": 3801794
+      }
+    ],
+    "unclassified_count": 3,
+    "zone_signals": {
+      "핫존": 0,
+      "데드존": 1,
+      "데드존_지점": []
+    }
+  }
+}

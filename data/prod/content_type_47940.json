@@ -1,0 +1,285 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:47:54+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google — 팀 DB youtube_case",
+      "retrieved_at": "2026-09-23",
+      "note": "지역명 검색어로 수집된 961건 중 조회수 상위 15건만 분류했다."
+    }
+  ],
+  "period": {
+    "start": "2025-05-20",
+    "end": "2026-08-20",
+    "granularity": "일"
+  },
+  "caveat": [
+    "수집된 영상 중 조회수 상위 15건만 분류했다(거제는 검색 결과 상위 수집이었고, 이 지역들은 DB 스냅샷 전체(961건)가 커서 상위 조회수 기준으로 추가 표본 제한을 뒀다). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+    "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·채널명·검색 키워드 텍스트만으로 수행했다(이 스냅샷에는 설명·태그가 없다) — 거제(RAW_FILE 기반)보다 근거가 더 제한적이다."
+  ],
+  "data": {
+    "region": {
+      "code": "47940",
+      "name": "울릉군"
+    },
+    "model": {
+      "name": "claude-opus-5",
+      "provider": "Claude Code 세션(API 미경유)",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "K4Niws_6v3s",
+        "title": "바다가 사막으로 변하자 포스코가 낸 미친 묘수",
+        "channel": "광끼",
+        "published_at": "2026-04-27",
+        "view_count": 6856290,
+        "like_count": 89040,
+        "comment_count": 3809,
+        "content_type": "관광무관",
+        "confidence": 0.7,
+        "evidence": "제철 기술로 백화현상에 대응한 산업 기술을 다룬 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "_lJeZzSpJiQ",
+        "title": "다시는 안 볼 것처럼 장사하는 울릉도 주민들",
+        "channel": "이슈파인더",
+        "published_at": "2025-08-25",
+        "view_count": 6825961,
+        "like_count": 84736,
+        "comment_count": 18966,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "'다시는 안 볼 것처럼 장사하는 울릉도 주민들'로 바가지 여론을 다룬 비판 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "eXNz7CXcrJ8",
+        "title": "정신나갈거 같은 울릉도 체험",
+        "channel": "콩자반",
+        "published_at": "2025-07-19",
+        "view_count": 5892855,
+        "like_count": 62463,
+        "comment_count": 5348,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.8,
+        "evidence": "'정신나갈거 같은 울릉도 체험'으로 체험형 활동이 소재",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "MYA63ADIBH8",
+        "title": "올해 완전히 망한 울릉도 근황",
+        "channel": "얘봐라",
+        "published_at": "2025-12-27",
+        "view_count": 5549531,
+        "like_count": 37335,
+        "comment_count": 5452,
+        "content_type": "관광무관",
+        "confidence": 0.7,
+        "evidence": "'올해 완전히 망한 울릉도 근황'으로 상권 침체를 다룬 르포",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "DfKkgLEeCfs",
+        "title": "철강 찌꺼기로 전 세계 해양학자들을 얼어붙게 만든 대한민국의 레전드 기술력",
+        "channel": "바로 대한민국",
+        "published_at": "2026-08-20",
+        "view_count": 4093628,
+        "like_count": 44654,
+        "comment_count": 1496,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "철강 부산물을 이용한 해양 기술을 다룬 산업 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "9zafUsI9_UY",
+        "title": "울릉도는 원래 이런 곳인가요?? 처음 갔는데 많이 당황스럽네요;;",
+        "channel": "꾸준 kkujun",
+        "published_at": "2025-07-19",
+        "view_count": 3983444,
+        "like_count": 61745,
+        "comment_count": 19273,
+        "content_type": "코스·일정형",
+        "confidence": 0.65,
+        "evidence": "실제 방문 브이로그로 방문 경험을 서술(부정적 반응 포함)",
+        "poi_mentioned": [],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "kIezWDJIPuU",
+        "title": "(300만뷰) [군금해1분] 전군 유일 케이블카 타고 출근하는 부대 #울릉도 #레이다 #준위",
+        "channel": "국방일보",
+        "published_at": "2026-04-27",
+        "view_count": 3203992,
+        "like_count": 13886,
+        "comment_count": 843,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "군 부대 근무 환경을 다룬 국방 관련 콘텐츠(케이블카는 군 시설용)",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "rFHd6c2N1-k",
+        "title": "&quot;울릉도 여행 취소했다&quot; 난리..군수 달려갔지만 &#39;활활&#39; [뉴스.zip/MBC뉴스]",
+        "channel": "MBCNEWS",
+        "published_at": "2025-07-27",
+        "view_count": 2945832,
+        "like_count": 28950,
+        "comment_count": 22057,
+        "content_type": "관광무관",
+        "confidence": 0.8,
+        "evidence": "'울릉도 여행 취소했다' 논란을 다룬 뉴스 보도",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "bSZ_sm6-Kls",
+        "title": "울릉도 유부녀에게 진짜 당황한 김제동 ㅋㅋ",
+        "channel": "진짜대한민국",
+        "published_at": "2026-05-12",
+        "view_count": 2893746,
+        "like_count": 32835,
+        "comment_count": 122,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.6,
+        "evidence": "예능인 방문 반응을 다룬 예능 클립",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "CF7MuwLElhY",
+        "title": "울릉도도 울고 갈 &#39;바가지&#39;..오죽하면 제보자 목소리가 &#39;덜덜&#39; #뉴스다 / JTBC News",
+        "channel": "JTBC News",
+        "published_at": "2025-08-29",
+        "view_count": 2769325,
+        "like_count": 14150,
+        "comment_count": 8795,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "'울릉도도 울고 갈 바가지'로 바가지 요금 논란을 다룬 보도",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "8RTLNqtFbbY",
+        "title": "[Pick 사이언스] &quot;땅속이 심상치 않다&quot; 한반도에서 화산 흔적 발견, 백두산보다 &#39;더 심각한 곳&#39;은 따로 있다? 우리가 몰랐던 한반도 &#39;불의 역사&#39; / YTN 사이언스",
+        "channel": "YTN 사이언스",
+        "published_at": "2026-02-13",
+        "view_count": 2737939,
+        "like_count": 14895,
+        "comment_count": 1006,
+        "content_type": "관광무관",
+        "confidence": 0.8,
+        "evidence": "화산 지질 연구를 다룬 과학 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "FCX1FbO-J0o",
+        "title": "&#39;울릉도까지 가실 필요 있나요?&#39;",
+        "channel": "네이쳐맨코리아",
+        "published_at": "2025-05-20",
+        "view_count": 2337652,
+        "like_count": 11073,
+        "comment_count": 823,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'울릉도까지 가실 필요 있나요?'로 방문 회의감을 표현한 숏폼",
+        "poi_mentioned": [],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "KQKyIiDkfO8",
+        "title": "울릉도의 돌아버린 12만원어치 회",
+        "channel": "숏프트",
+        "published_at": "2025-08-06",
+        "view_count": 2262418,
+        "like_count": 23706,
+        "comment_count": 4192,
+        "content_type": "맛집형",
+        "confidence": 0.65,
+        "evidence": "'돌아버린 12만원어치 회'로 가격 불만을 다룬 맛집 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "RsG_dENchcg",
+        "title": "&quot;쇳물 찌꺼기 버렸다고?&quot; 한국이 죽어가는 울릉도 바다에 쇳덩이를 던지자 벌어진 충격적인 일",
+        "channel": "지금들어봐",
+        "published_at": "2026-08-06",
+        "view_count": 2260994,
+        "like_count": 45530,
+        "comment_count": 818,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "제철 부산물 해양 투기 문제를 다룬 환경 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "YcztpsSZ1PI",
+        "title": "여수 이어 &quot;울릉도 취소&quot; 난리…&#39;모텔+식당&#39; 콤보로 당한 뒤 #뉴스다 / JTBC News",
+        "channel": "JTBC News",
+        "published_at": "2025-07-22",
+        "view_count": 2234375,
+        "like_count": 18369,
+        "comment_count": 14799,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "'여수 이어 울릉도 취소' 바가지 논란 연쇄 보도",
+        "poi_mentioned": [],
+        "sentiment": "부정",
+        "zone_signal": "데드존"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "체험·액티비티형",
+        "count": 1,
+        "ratio": 0.25,
+        "total_views": 5892855
+      },
+      {
+        "content_type": "코스·일정형",
+        "count": 1,
+        "ratio": 0.25,
+        "total_views": 3983444
+      },
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 1,
+        "ratio": 0.25,
+        "total_views": 2893746
+      },
+      {
+        "content_type": "맛집형",
+        "count": 1,
+        "ratio": 0.25,
+        "total_views": 2262418
+      }
+    ],
+    "unclassified_count": 11,
+    "zone_signals": {
+      "핫존": 0,
+      "데드존": 6,
+      "데드존_지점": []
+    }
+  }
+}

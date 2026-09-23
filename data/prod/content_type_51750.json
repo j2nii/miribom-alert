@@ -1,0 +1,297 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:47:54+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google — 팀 DB youtube_case",
+      "retrieved_at": "2026-09-23",
+      "note": "지역명 검색어로 수집된 958건 중 조회수 상위 15건만 분류했다."
+    }
+  ],
+  "period": {
+    "start": "2026-02-05",
+    "end": "2026-08-30",
+    "granularity": "일"
+  },
+  "caveat": [
+    "수집된 영상 중 조회수 상위 15건만 분류했다(거제는 검색 결과 상위 수집이었고, 이 지역들은 DB 스냅샷 전체(958건)가 커서 상위 조회수 기준으로 추가 표본 제한을 뒀다). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+    "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·채널명·검색 키워드 텍스트만으로 수행했다(이 스냅샷에는 설명·태그가 없다) — 거제(RAW_FILE 기반)보다 근거가 더 제한적이다."
+  ],
+  "data": {
+    "region": {
+      "code": "51750",
+      "name": "영월군"
+    },
+    "model": {
+      "name": "claude-opus-5",
+      "provider": "Claude Code 세션(API 미경유)",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "0bQE4hA2U3w",
+        "title": "진돗개가 모견을 만나자 보인 충격반응 #영월해리네",
+        "channel": "쇠나무아지트 - 역이민, 귀촌",
+        "published_at": "2026-02-17",
+        "view_count": 4884915,
+        "like_count": 47235,
+        "comment_count": 1223,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "반려견 소재 브이로그로 영월은 태그로만 언급됨",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "dVh4TZRWfo4",
+        "title": "단종의 묘는 어떻게 발견됐을까? #단종 #영월 #장릉 #조선역사 #강원도 #shorts",
+        "channel": "강원의 한 해",
+        "published_at": "2026-03-12",
+        "view_count": 3480657,
+        "like_count": 20303,
+        "comment_count": 834,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'단종의 묘는 어떻게 발견됐을까?' 역사 서사 콘텐츠로 방문 정보 없음",
+        "poi_mentioned": [
+          "단종장릉"
+        ],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "1zxpr307R0U",
+        "title": "드디어 고소당한 김삿갓계곡 근황",
+        "channel": "위험한 부동숏",
+        "published_at": "2026-08-30",
+        "view_count": 2579890,
+        "like_count": 29593,
+        "comment_count": 2205,
+        "content_type": "관광무관",
+        "confidence": 0.65,
+        "evidence": "'고소당한 김삿갓계곡 근황'으로 법적 분쟁을 다룬 콘텐츠",
+        "poi_mentioned": [
+          "김삿갓계곡"
+        ],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "FdEnIDAsejg",
+        "title": "지금 영월 청령포에 배 타려고 끝없는 줄 서는 진짜 이유",
+        "channel": "순삭킥",
+        "published_at": "2026-02-21",
+        "view_count": 2482616,
+        "like_count": 31629,
+        "comment_count": 978,
+        "content_type": "포토스팟형",
+        "confidence": 0.7,
+        "evidence": "'청령포에 배 타려고 끝없는 줄 서는 진짜 이유'로 실제 대기 혼잡 상황을 다룸",
+        "poi_mentioned": [
+          "청령포"
+        ],
+        "sentiment": "중립",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "xIIITdEZ-wk",
+        "title": "정순왕후는 왜 영월에 가지 못했을까? #단종 #영월 #장릉 #조선역사 #강원도 #shorts",
+        "channel": "강원의 한 해",
+        "published_at": "2026-03-20",
+        "view_count": 2473160,
+        "like_count": 16696,
+        "comment_count": 469,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'정순왕후는 왜 영월에 가지 못했을까?' 역사 서사 콘텐츠",
+        "poi_mentioned": [
+          "단종장릉"
+        ],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "7f_BAjPTGaQ",
+        "title": "사랑이다vs아니다, 여러분의 생각은? #shorts #윤택TV #오지객 #어디고 #나는자연인이다 #자연인 #영월 #왕과사는남자 #왕사남 #영월여행 #고씨동굴 #강원도여행 #반려견",
+        "channel": "윤택TV",
+        "published_at": "2026-05-01",
+        "view_count": 2050744,
+        "like_count": 25542,
+        "comment_count": 437,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.6,
+        "evidence": "'나는 자연인이다' 계열 예능 콘텐츠(태그에 영월여행·고씨동굴)",
+        "poi_mentioned": [
+          "고씨동굴"
+        ],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "du7gz6izA1k",
+        "title": "단종의 하루가 이랬습니다 | 영월 넉 달의 일상 #단종 #영월 #역사 #왕과사는남자",
+        "channel": "조선보고서",
+        "published_at": "2026-04-04",
+        "view_count": 1739824,
+        "like_count": 29263,
+        "comment_count": 339,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'단종의 하루가 이랬습니다' 역사 서사 콘텐츠",
+        "poi_mentioned": [
+          "단종장릉"
+        ],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "I7XmJzb8eas",
+        "title": "영월을 롤러코스터로 관광하기",
+        "channel": "ssestar",
+        "published_at": "2026-03-14",
+        "view_count": 1646404,
+        "like_count": 13426,
+        "comment_count": 1171,
+        "content_type": "코스·일정형",
+        "confidence": 0.7,
+        "evidence": "'영월을 롤러코스터로 관광하기'로 실제 관광 동선을 다룬 브이로그",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "MYRixH2-eRc",
+        "title": "유배지에서 단종은 밥은 어떻게 먹었을까? &#39;단종 하루의 재구성&#39; #단종 #왕과사는남자 #유배 #청령포 #영월",
+        "channel": "우리비빔학",
+        "published_at": "2026-03-03",
+        "view_count": 1622511,
+        "like_count": 17163,
+        "comment_count": 314,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'유배지에서 단종은 밥은 어떻게 먹었을까?' 역사 서사 콘텐츠",
+        "poi_mentioned": [
+          "청령포"
+        ],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "5PQ_ASG0vx0",
+        "title": "이름조차 남기지 못한 단종의 궁녀들",
+        "channel": "역사뒷담",
+        "published_at": "2026-02-20",
+        "view_count": 1502630,
+        "like_count": 29225,
+        "comment_count": 694,
+        "content_type": "관광무관",
+        "confidence": 0.65,
+        "evidence": "'이름조차 남기지 못한 단종의 궁녀들' 역사 서사 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "TczOM_s1_Ak",
+        "title": "영월 청령포의 인기실감!어린 단종의 통곡이 스며든 땅!",
+        "channel": "용산 한바퀴(맨디)",
+        "published_at": "2026-02-26",
+        "view_count": 1495647,
+        "like_count": 4050,
+        "comment_count": 157,
+        "content_type": "포토스팟형",
+        "confidence": 0.65,
+        "evidence": "'청령포의 인기실감!'으로 현장 인기·체감 혼잡을 다룸",
+        "poi_mentioned": [
+          "청령포"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "nxukV1yfvCA",
+        "title": "🔥요즘 핫한 영월 여행🔥 관광객은 모르는 현지인 맛집 풀코스 풍자가 직접 완주했습니다. | 또간집 EP.105",
+        "channel": "스튜디오 수제",
+        "published_at": "2026-07-24",
+        "view_count": 1202068,
+        "like_count": 6540,
+        "comment_count": 1102,
+        "content_type": "맛집형",
+        "confidence": 0.85,
+        "evidence": "'요즘 핫한 영월 여행' 현지인 맛집 풀코스로 맛집 순회가 콘텐츠 전체",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "TKjoP9LyQgg",
+        "title": "역사가 기록하지 못한 4개월 영월 사람들의 뜨거운 정 #왕과사는남자",
+        "channel": "애드리브",
+        "published_at": "2026-03-20",
+        "view_count": 1093867,
+        "like_count": 9949,
+        "comment_count": 158,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'역사가 기록하지 못한 4개월 영월 사람들의 뜨거운 정' 역사 서사 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "OviDUGVzyh0",
+        "title": "17살에 끌려간 소년왕, 고개마다 백성들이 몰래 붙인 이름 #단종 #영월 #왕과사는남자",
+        "channel": "조선보고서",
+        "published_at": "2026-04-09",
+        "view_count": 1083836,
+        "like_count": 18985,
+        "comment_count": 203,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "'17살에 끌려간 소년왕' 역사 서사 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "hUy8-tFT3aY",
+        "title": "&#39;파란 보석&#39; 5천만 톤 영월서 터졌다…한국 아니라 미국이 만세 부른 이유/ SBS / AFTER 8NEWS / 최고운 경제부 기자",
+        "channel": "SBS 뉴스",
+        "published_at": "2026-02-05",
+        "view_count": 1007825,
+        "like_count": 7728,
+        "comment_count": 848,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "'파란 보석 5천만 톤 영월서 터졌다' 광물자원 발견을 다룬 경제 뉴스",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "포토스팟형",
+        "count": 2,
+        "ratio": 0.4,
+        "total_views": 3978263
+      },
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 1,
+        "ratio": 0.2,
+        "total_views": 2050744
+      },
+      {
+        "content_type": "코스·일정형",
+        "count": 1,
+        "ratio": 0.2,
+        "total_views": 1646404
+      },
+      {
+        "content_type": "맛집형",
+        "count": 1,
+        "ratio": 0.2,
+        "total_views": 1202068
+      }
+    ],
+    "unclassified_count": 10,
+    "zone_signals": {
+      "핫존": 2,
+      "데드존": 0,
+      "데드존_지점": []
+    }
+  }
+}

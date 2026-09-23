@@ -1,0 +1,279 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:47:54+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google — 팀 DB youtube_case",
+      "retrieved_at": "2026-09-23",
+      "note": "지역명 검색어로 수집된 949건 중 조회수 상위 15건만 분류했다."
+    }
+  ],
+  "period": {
+    "start": "2025-03-15",
+    "end": "2026-08-26",
+    "granularity": "일"
+  },
+  "caveat": [
+    "수집된 영상 중 조회수 상위 15건만 분류했다(거제는 검색 결과 상위 수집이었고, 이 지역들은 DB 스냅샷 전체(949건)가 커서 상위 조회수 기준으로 추가 표본 제한을 뒀다). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+    "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·채널명·검색 키워드 텍스트만으로 수행했다(이 스냅샷에는 설명·태그가 없다) — 거제(RAW_FILE 기반)보다 근거가 더 제한적이다."
+  ],
+  "data": {
+    "region": {
+      "code": "51810",
+      "name": "인제군"
+    },
+    "model": {
+      "name": "claude-opus-5",
+      "provider": "Claude Code 세션(API 미경유)",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "GI7k1QszJXU",
+        "title": "강원도 인제의 유일한 의사 광수",
+        "channel": "콩만이",
+        "published_at": "2025-03-15",
+        "view_count": 3654299,
+        "like_count": 95083,
+        "comment_count": 1766,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "지역 밀착 브이로그로 방문 유발보다 인물 소재가 중심",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "qwNHoH_7B7M",
+        "title": "#백담계곡#인제#강원도#계곡#급류#급류주의#폭우#계곡물#자연의힘#여름여행#국내여행#안전여행#실제상황#여행쇼츠",
+        "channel": "술사TV",
+        "published_at": "2026-08-08",
+        "view_count": 1837909,
+        "like_count": 7803,
+        "comment_count": 537,
+        "content_type": "관광무관",
+        "confidence": 0.6,
+        "evidence": "백담계곡 급류 안전 경고 영상으로 방문 유도가 아닌 위험 경고",
+        "poi_mentioned": [
+          "백담계곡"
+        ],
+        "sentiment": "부정"
+      },
+      {
+        "video_id": "yE9-ENNbXsU",
+        "title": "‘의대보다 공대🤖’중국 천재들이 공대에 몰리는 이유 ㅣ KBS 다큐 인사이트 - 인재전쟁 1부 공대에 미친 중국 25.07.10 방송",
+        "channel": "KBS 다큐",
+        "published_at": "2025-07-11",
+        "view_count": 1657215,
+        "like_count": 28576,
+        "comment_count": 5592,
+        "content_type": "관광무관",
+        "confidence": 0.9,
+        "evidence": "중국 공대 인재 현황을 다룬 다큐멘터리로 인제와 무관(키워드 우연 일치)",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "toYQCP0Q-nc",
+        "title": "인제프 넘버로어 INJEF Number Lore 1-10 Alphabet Lore Sprunki + ITALIAN BRAINROT ANIMALS meme",
+        "channel": "Trendy Toons",
+        "published_at": "2025-05-07",
+        "view_count": 1571895,
+        "like_count": 2600,
+        "comment_count": 67,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "'인제프(INJEF)' 밈 애니메이션으로 지명과 무관한 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "0-nPEj6euio",
+        "title": "전 세계가 주목하는 중국의 첨단기술 🇨🇳 그 중심에는 결국 ‘인재’가 있다 ㅣ KBS 다큐 인사이트 - 인재전쟁2 : 1부 차이나 스피드 260514 방송",
+        "channel": "KBS 다큐",
+        "published_at": "2026-05-15",
+        "view_count": 1224071,
+        "like_count": 18558,
+        "comment_count": 7401,
+        "content_type": "관광무관",
+        "confidence": 0.9,
+        "evidence": "중국 인재전쟁을 다룬 다큐멘터리로 인제와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "BF2hbsM7zOE",
+        "title": "뉴스로만 들어 봤는데 진짜 순식간이네...",
+        "channel": "W-BUSAN",
+        "published_at": "2026-08-09",
+        "view_count": 1079785,
+        "like_count": 4862,
+        "comment_count": 806,
+        "content_type": "관광무관",
+        "confidence": 0.55,
+        "evidence": "내용을 특정할 수 없는 짧은 코멘트형 영상",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "OFkuwVC37Wo",
+        "title": "[우상호·안내상·우현·백성기]40년 지기 찐친들과 인제 신남",
+        "channel": "우상호TV",
+        "published_at": "2026-05-23",
+        "view_count": 1042201,
+        "like_count": 22378,
+        "comment_count": 1470,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.7,
+        "evidence": "방송인들의 인제 방문을 다룬 예능 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "VpCtHHQ8l88",
+        "title": "인제 홍보",
+        "channel": "김선태",
+        "published_at": "2026-08-21",
+        "view_count": 945624,
+        "like_count": 28535,
+        "comment_count": 2601,
+        "content_type": "코스·일정형",
+        "confidence": 0.55,
+        "evidence": "'인제 홍보'로 제목이 포괄적인 지역 홍보 영상",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "RaXWtZFCOus",
+        "title": "byd차량 충돌테스트다 인제 믿겠지.",
+        "channel": "애국청년",
+        "published_at": "2026-06-04",
+        "view_count": 768240,
+        "like_count": 8089,
+        "comment_count": 1079,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.55,
+        "evidence": "인제스피디움으로 추정되는 서킷에서의 차량 테스트 콘텐츠",
+        "poi_mentioned": [
+          "인제스피디움"
+        ],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "VkHG6Fl2_8w",
+        "title": "&#39;백담계곡은 아셔도 여기는 잘 모르실겁니다.&#39;",
+        "channel": "네이쳐맨코리아",
+        "published_at": "2025-06-11",
+        "view_count": 754110,
+        "like_count": 3608,
+        "comment_count": 291,
+        "content_type": "자연경관형",
+        "confidence": 0.7,
+        "evidence": "'백담계곡은 아셔도 여기는 잘 모르실겁니다'로 숨은 경관 명소를 소개",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "LxKhkNcmddM",
+        "title": "비밀의 숲에서 홀로 돌아온 친구, 진실은 어디에 묻혀있나? ｜짧은 그알",
+        "channel": "그것이 알고싶다",
+        "published_at": "2025-04-28",
+        "view_count": 654050,
+        "like_count": 6343,
+        "comment_count": 1029,
+        "content_type": "관광무관",
+        "confidence": 0.8,
+        "evidence": "'그것이 알고싶다' 시사 프로그램의 실종 사건 소재",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "PO70p_-qbtM",
+        "title": "대한민국 고속도로에 터널이 3,700개나 있는 이유 #인제양양터널 #영동고속도로 #백두대간 #고속도로상식",
+        "channel": "신비한 이야기꾼",
+        "published_at": "2026-08-26",
+        "view_count": 576358,
+        "like_count": 5192,
+        "comment_count": 33,
+        "content_type": "관광무관",
+        "confidence": 0.75,
+        "evidence": "인제양양터널을 소재로 한 고속도로 인프라 상식 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "wIl7jmVNPlk",
+        "title": "이거 맞추면 아이큐 180?! #아이큐 #아이큐테스트 #IQ테스트 #문제 #테스트 #인제 #수제",
+        "channel": "수학 선생",
+        "published_at": "2025-03-26",
+        "view_count": 515065,
+        "like_count": 1931,
+        "comment_count": 1111,
+        "content_type": "관광무관",
+        "confidence": 0.85,
+        "evidence": "IQ 퀴즈 콘텐츠로 인제와 무관",
+        "poi_mentioned": [],
+        "sentiment": "중립"
+      },
+      {
+        "video_id": "S78Srg5cRJ8",
+        "title": "로이킴 1일 3몇기야 당함 #로이킴 #roykim #인제 #행사 #해병대 #몇기야 #수난시대",
+        "channel": "쿄쿄의 일기",
+        "published_at": "2025-10-19",
+        "view_count": 503740,
+        "like_count": 4974,
+        "comment_count": 200,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.55,
+        "evidence": "가수의 인제 해병대 행사 참석을 다룬 예능성 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정"
+      },
+      {
+        "video_id": "hkcZ8YiZ_BM",
+        "title": "서킷을 달리는 시선을 사로잡는 많은 차량들 중 과연 모두를 압도시키는 인상 깊은 차량은? #인제스피디움 #서킷주행 #m2 #아이오닉5n #에미라 #ev9 #기아모닝",
+        "channel": "카토크 II CarTALK",
+        "published_at": "2025-06-19",
+        "view_count": 479728,
+        "like_count": 2148,
+        "comment_count": 237,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.75,
+        "evidence": "인제스피디움 서킷 주행 콘텐츠",
+        "poi_mentioned": [
+          "인제스피디움"
+        ],
+        "sentiment": "긍정"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 1,
+        "ratio": 0.3333,
+        "total_views": 1042201
+      },
+      {
+        "content_type": "자연경관형",
+        "count": 1,
+        "ratio": 0.3333,
+        "total_views": 754110
+      },
+      {
+        "content_type": "체험·액티비티형",
+        "count": 1,
+        "ratio": 0.3333,
+        "total_views": 479728
+      }
+    ],
+    "unclassified_count": 12,
+    "zone_signals": {
+      "핫존": 0,
+      "데드존": 0,
+      "데드존_지점": []
+    }
+  }
+}
