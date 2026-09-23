@@ -17,7 +17,7 @@
     SARIMAX        주간 계절성 ARIMA. 달력 변수를 외생변수로 넣는다
 
 사용법:
-    uv run python analysis/src/models.py
+    uv run python analysis/src/forecast/models.py
 """
 
 import json
@@ -35,8 +35,8 @@ from sklearn.preprocessing import StandardScaler
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
 warnings.filterwarnings("ignore")
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "analysis" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from baseline import SPLITS, TARGET, build_features, score, smape  # noqa: E402
 

@@ -1,6 +1,6 @@
 """서식4·발표에 넣을 그림 4장.
 
-담는 것은 전면 검토(analysis/src/review_checks.py)를 통과한 사실만이다.
+담는 것은 전면 검토(analysis/src/forecast/review_checks.py)를 통과한 사실만이다.
 철회한 주장(검색 필터링으로 경보 품질 개선)은 그리지 않는다.
 
     figure1_예측사다리.png    변수를 더할 때 오차가 어떻게 변했는가
@@ -9,7 +9,7 @@
     figure4_급증의성격.png     시군구 방문 급증은 무엇이 만드는가
 
 사용법:
-    uv run python analysis/src/figures.py
+    uv run python analysis/src/forecast/figures.py
 """
 
 import json
@@ -22,7 +22,7 @@ import pandas as pd
 
 matplotlib.use("Agg")
 sys.stdout.reconfigure(encoding="utf-8")
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 INTERIM = ROOT / "data" / "interim"
 OUT_DIR = ROOT / "docs" / "submission" / "figures"
 

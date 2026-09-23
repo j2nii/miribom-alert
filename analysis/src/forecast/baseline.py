@@ -22,8 +22,8 @@
     MAE·sMAPE를 전체와 지역별로 낸다. 큰 지역이 평균을 지배하지 않도록 지역별 중앙값도 함께 본다.
 
 사용법:
-    uv run python analysis/src/baseline.py            # h=7
-    uv run python analysis/src/baseline.py --horizon 1
+    uv run python analysis/src/forecast/baseline.py            # h=7
+    uv run python analysis/src/forecast/baseline.py --horizon 1
 """
 
 import argparse
@@ -37,7 +37,7 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 INTERIM = ROOT / "data" / "interim"
 
 TARGET = "visitors_external"

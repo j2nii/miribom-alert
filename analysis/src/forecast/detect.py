@@ -13,7 +13,7 @@
 임계는 **2025년(검증 구간)에서만** 정하고 2026년 테스트 구간에 적용한다. 테스트를 보고 고르면 성과가 부풀려진다.
 
 사용법:
-    uv run python analysis/src/detect.py
+    uv run python analysis/src/forecast/detect.py
 """
 
 import json
@@ -26,8 +26,8 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "analysis" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from baseline import SPLITS, TARGET, build_features  # noqa: E402
 

@@ -13,7 +13,7 @@
 - 날씨가 없는 79개 지역은 버리지 않는다. weather_available 플래그로 구분해 모델에서 따로 본다
 
 사용법:
-    uv run python analysis/src/build_panel.py
+    uv run python analysis/src/forecast/build_panel.py
 출력:
     data/interim/panel_daily.csv          분석 패널
     data/interim/panel_quality.json       품질 점검 결과
@@ -29,7 +29,7 @@ import pandas as pd
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "collection"))
 
 from db_export import connect  # noqa: E402
