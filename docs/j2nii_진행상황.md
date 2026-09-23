@@ -140,6 +140,14 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 
 **범위 밖**: `forecast`(별도 브랜치), `web/` 쪽 `manifest.js`/`dataManifest.js` 연동(산출물만 만드는 게 이번 브랜치 목표라 화면 반영은 별도 작업).
 
+### 23. 데이터 담당 팀 공유 필요 — `youtube_video` 테이블에 description/tags 컬럼이 없음
+
+`agent2_apply.py`(콘텐츠 유형 분류)를 하드코딩(`RESULTS`)에서 실제 LLM 호출로 교체하는 과정에서 확인함: DB `youtube_video` 테이블에 `description`/`tags` 컬럼 자체가 없다(`DESCRIBE youtube_video`로 직접 확인 — `video_id/region_id/title/channel_name/view_count/...`만 있음. `collection/db_export.py`의 쿼리가 빠뜨린 게 아니라 테이블에 원천적으로 없다).
+
+문제는 `agents/prompts/agent2_content_type.md`의 판단 규칙이 "**근거는 영상에 실제로 있는 표현을 인용한다. 제목·설명·태그에서 가져온다**"고 명시할 만큼 이 필드가 분류 품질에 실제로 쓰인다는 점이다 — 제목만으로는 "예능·방송 노출형"과 "관광무관"처럼 미묘한 구분을 판정하기 어렵다.
+
+지금은 `collection/youtube_collect.py`(YouTube Data API 직접 재수집, description/tags 포함)로 우회했다. 다만 이 재수집을 매번 반복하는 대신, **데이터 담당 팀이 애초에 `youtube_video` 테이블 적재 시 description/tags를 함께 받아주면** 이 우회가 필요 없어진다 — 컬럼 추가를 제안할 가치가 있다는 정도로 이번에는 기록만 남긴다(DB는 조회 전용 계정이라 이 프로젝트가 직접 스키마를 바꿀 수 없고, 바꾸는 것 자체도 우리 결정 사항이 아니다).
+
 ---
 
 ## 확인된 사실 — 목업 수치의 성격
