@@ -8,7 +8,7 @@
 5. 임계 민감도 : 경보 임계를 바꿔도 결론이 유지되는가
 
 사용법:
-    uv run python analysis/src/review_checks.py
+    uv run python analysis/src/forecast/review_checks.py
 """
 
 import sys
@@ -20,8 +20,8 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "analysis" / "src"))
+ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from baseline import SPLITS, TARGET, VISITOR_DELAY, build_features, score  # noqa: E402
 from detect import LOOKAHEAD, collect_events, expected_visitors, search_ratio, year_over_year_ratio  # noqa: E402
