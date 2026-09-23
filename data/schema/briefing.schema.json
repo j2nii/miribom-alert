@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/briefing.schema.json",
+  "title": "briefing — 담당 공무원용 정책 브리핑 (에이전트⑤)",
+  "description": "AREA 3 상단. 3문단 400~600자 고정 구조(D-04). 문장 속 수치는 facts에 있는 값만 쓰며(D-10), 권고 조치 문장은 checklist의 매뉴얼 원문을 코드가 그대로 넣는다(D-08).",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "as_of", "alert_level", "paragraphs", "actions", "facts", "char_count"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "as_of": { "$ref": "_envelope.schema.json#/definitions/date" },
+        "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+        "paragraphs": {
+          "type": "array",
+          "description": "순서 고정: 현재 상황 → 예상 전개 → 권고 조치. 매일 같은 순서라 어제와 달라진 곳이 눈에 띈다.",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["heading", "text"],
+            "properties": {
+              "heading": { "type": "string", "enum": ["현재 상황", "예상 전개", "권고 조치"] },
+              "text": { "type": "string", "minLength": 20 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "actions": {
+          "type": "array",
+          "description": "3문단에 들어간 권고 조치. 화면에서 체크리스트 항목으로 연결할 때 쓴다.",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["checklist_id", "action", "page", "why"],
+            "properties": {
+              "checklist_id": { "type": "string", "pattern": "^CL-\\d{3}$" },
+              "action": { "type": "string", "description": "매뉴얼 원문 (checklist.json의 action과 동일)" },
+              "page": { "type": "integer", "minimum": 1 },
+              "why": { "type": "string", "description": "이 상황에서 이 조치를 권고하는 이유 한 구절" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "facts": {
+          "type": "array",
+          "description": "브리핑 문장이 인용한 수치와 출처. 화면에서 수치에 출처를 붙일 때 쓴다. 문장 속 숫자는 모두 여기 있어야 한다(코드 검증).",
+          "items": {
+            "type": "object",
+            "required": ["id", "label", "value", "source"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^F\\d+$" },
+              "label": { "type": "string" },
+              "value": { "type": "string" },
+              "source": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "char_count": {
+          "type": "integer",
+          "minimum": 400,
+          "maximum": 600,
+          "description": "세 문단 글자 수 합계(공백 포함). 600자를 넘으면 스크롤이 생겨 마지막 문단(권고 조치)이 안 읽힌다(D-04)."
+        },
+        "model": {
+          "type": "object",
+          "required": ["name", "prompt_version"],
+          "properties": {
+            "name": { "type": "string" },
+            "provider": { "type": "string" },
+            "prompt_version": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

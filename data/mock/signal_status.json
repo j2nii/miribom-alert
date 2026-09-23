@@ -3,22 +3,24 @@
   "generated_at": "2026-09-12T13:00:00+09:00",
   "source": [
     {
+      "name": "SNS 언급량",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/",
+      "note": "데이터랩 지역별 관광현황 > 소셜미디어 탭"
+    },
+    {
+      "name": "내비게이션 목적지 검색건수",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/",
+      "note": "데이터랩 빅데이터 > 내비게이션 > 지역별 검색건수"
+    },
+    {
       "name": "이동통신 기반 유동인구",
       "provider": "한국관광공사(통신사 제휴 데이터)",
       "retrieved_at": "2026-09-12",
       "note": "관광 데이터랩 제공 가공 지표"
-    },
-    {
-      "name": "한국관광 데이터랩 지역별 방문자 통계",
-      "provider": "한국관광공사",
-      "retrieved_at": "2026-09-12",
-      "url": "https://datalab.visitkorea.or.kr/"
-    },
-    {
-      "name": "YouTube Data API v3",
-      "provider": "Google",
-      "retrieved_at": "2026-09-12",
-      "note": "'거제' 검색 결과 중 최근 90일 업로드 영상"
     }
   ],
   "period": {
@@ -29,6 +31,7 @@
   "caveat": [
     "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
     "3중 교차검증은 서로 출처가 다른 지표를 쓴다. 같은 원천에서 파생된 지표는 독립 신호로 세지 않는다.",
+    "임계값은 역할2의 급상승 조작적 정의가 확정되기 전의 가정값이다.",
     "밀도는 구역 면적 추정치를 사용하므로 절대값보다 단계 변화에 의미를 둔다."
   ],
   "data": {
@@ -47,38 +50,48 @@
     },
     "cross_validation": [
       {
-        "signal": "이동통신 유동인구 전주 대비 증가율",
-        "provider": "한국관광공사(통신사 제휴 데이터)",
-        "value": 0.34,
-        "threshold": 0.25,
+        "stage": "관심",
+        "signal": "SNS 언급량 전주 대비 증가율",
+        "provider": "한국관광공사(데이터랩 소셜미디어)",
+        "value": 0.42,
+        "threshold": 0.3,
         "unit": "비율",
         "exceeded": true,
         "trend": "상승"
       },
       {
-        "signal": "유튜브 관련 영상 조회수 증가율",
-        "provider": "YouTube Data API v3",
-        "value": 2.7,
-        "threshold": 1.5,
-        "unit": "배",
-        "exceeded": true,
-        "trend": "상승"
-      },
-      {
-        "signal": "카드 소비 건수 전주 대비 증가율",
-        "provider": "한국관광공사(카드사 제휴 데이터)",
-        "value": 0.11,
+        "stage": "의도",
+        "signal": "내비게이션 목적지 검색건수 전주 대비 증가율",
+        "provider": "한국관광공사(데이터랩 내비게이션)",
+        "value": 0.17,
         "threshold": 0.2,
         "unit": "비율",
         "exceeded": false,
         "trend": "상승"
+      },
+      {
+        "stage": "실현",
+        "signal": "방문자 수 전주 대비 증가율",
+        "provider": "한국관광공사(데이터랩 이동통신)",
+        "value": 0.06,
+        "threshold": 0.15,
+        "unit": "비율",
+        "exceeded": false,
+        "trend": "유지"
       }
     ],
     "agreement": {
-      "exceeded_count": 2,
+      "exceeded_count": 1,
       "total": 3
     },
-    "basis": "독립 신호 3개 중 2개가 임계를 초과하여 경보를 관심에서 주의로 상향했다. 소비 지표는 아직 임계 미만으로, 방문은 늘었으나 소비 전환은 따라오지 않은 상태다.",
+    "escalation": {
+      "next_level": "경계",
+      "required_exceeded": 2,
+      "current_exceeded": 1,
+      "met": false,
+      "note": "내비게이션 검색건수가 임계를 넘으면 2/3이 되어 경계 상향 조건을 충족한다. 하향은 2회 연속 조건 미달 시에만 한다."
+    },
+    "basis": "관심 신호(SNS 언급량)가 임계를 넘어 경보를 관심에서 주의로 상향했다. 의도 신호(내비 검색)는 상승 중이나 임계 미만이고 실현 신호(방문자 수)는 변화가 없어, 아직 실수요로 확정할 단계는 아니다.",
     "manual_ref": {
       "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
       "page": 20,

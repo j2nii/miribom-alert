@@ -40,6 +40,20 @@ CARD = {
     "provider": "한국관광공사(카드사 제휴 데이터)",
     "retrieved_at": "2026-09-12",
 }
+SNS = {
+    "name": "SNS 언급량",
+    "provider": "한국관광공사",
+    "retrieved_at": "2026-09-12",
+    "url": "https://datalab.visitkorea.or.kr/",
+    "note": "데이터랩 지역별 관광현황 > 소셜미디어 탭",
+}
+NAVI = {
+    "name": "내비게이션 목적지 검색건수",
+    "provider": "한국관광공사",
+    "retrieved_at": "2026-09-12",
+    "url": "https://datalab.visitkorea.or.kr/",
+    "note": "데이터랩 빅데이터 > 내비게이션 > 지역별 검색건수",
+}
 YOUTUBE = {
     "name": "YouTube Data API v3",
     "provider": "Google",
@@ -80,8 +94,11 @@ def daily_visitors(d: date) -> int:
 
 
 def signal_status():
-    payload = envelope([TELECOM, DATALAB, YOUTUBE], "2026-08-13", "2026-09-12", [
+    # 3중 교차검증 구성은 v3 회의안 A: 관심(SNS 언급량) → 의도(내비 검색) → 실현(방문자수).
+    # 경보 단계와 escalation은 설계결정 D-05(관심→주의 1/3, 주의→경계 2/3, 경계→심각 3/3)와 일치시킨다.
+    payload = envelope([SNS, NAVI, TELECOM], "2026-08-13", "2026-09-12", [
         "3중 교차검증은 서로 출처가 다른 지표를 쓴다. 같은 원천에서 파생된 지표는 독립 신호로 세지 않는다.",
+        "임계값은 역할2의 급상승 조작적 정의가 확정되기 전의 가정값이다.",
         "밀도는 구역 면적 추정치를 사용하므로 절대값보다 단계 변화에 의미를 둔다.",
     ])
     payload["data"] = {
@@ -93,35 +110,45 @@ def signal_status():
         "density": {"value": 0.52, "unit": "명/㎡", "slope_corrected": False},
         "cross_validation": [
             {
-                "signal": "이동통신 유동인구 전주 대비 증가율",
-                "provider": "한국관광공사(통신사 제휴 데이터)",
-                "value": 0.34,
-                "threshold": 0.25,
+                "stage": "관심",
+                "signal": "SNS 언급량 전주 대비 증가율",
+                "provider": "한국관광공사(데이터랩 소셜미디어)",
+                "value": 0.42,
+                "threshold": 0.30,
                 "unit": "비율",
                 "exceeded": True,
                 "trend": "상승",
             },
             {
-                "signal": "유튜브 관련 영상 조회수 증가율",
-                "provider": "YouTube Data API v3",
-                "value": 2.7,
-                "threshold": 1.5,
-                "unit": "배",
-                "exceeded": True,
-                "trend": "상승",
-            },
-            {
-                "signal": "카드 소비 건수 전주 대비 증가율",
-                "provider": "한국관광공사(카드사 제휴 데이터)",
-                "value": 0.11,
+                "stage": "의도",
+                "signal": "내비게이션 목적지 검색건수 전주 대비 증가율",
+                "provider": "한국관광공사(데이터랩 내비게이션)",
+                "value": 0.17,
                 "threshold": 0.20,
                 "unit": "비율",
                 "exceeded": False,
                 "trend": "상승",
             },
+            {
+                "stage": "실현",
+                "signal": "방문자 수 전주 대비 증가율",
+                "provider": "한국관광공사(데이터랩 이동통신)",
+                "value": 0.06,
+                "threshold": 0.15,
+                "unit": "비율",
+                "exceeded": False,
+                "trend": "유지",
+            },
         ],
-        "agreement": {"exceeded_count": 2, "total": 3},
-        "basis": "독립 신호 3개 중 2개가 임계를 초과하여 경보를 관심에서 주의로 상향했다. 소비 지표는 아직 임계 미만으로, 방문은 늘었으나 소비 전환은 따라오지 않은 상태다.",
+        "agreement": {"exceeded_count": 1, "total": 3},
+        "escalation": {
+            "next_level": "경계",
+            "required_exceeded": 2,
+            "current_exceeded": 1,
+            "met": False,
+            "note": "내비게이션 검색건수가 임계를 넘으면 2/3이 되어 경계 상향 조건을 충족한다. 하향은 2회 연속 조건 미달 시에만 한다.",
+        },
+        "basis": "관심 신호(SNS 언급량)가 임계를 넘어 경보를 관심에서 주의로 상향했다. 의도 신호(내비 검색)는 상승 중이나 임계 미만이고 실현 신호(방문자 수)는 변화가 없어, 아직 실수요로 확정할 단계는 아니다.",
         "manual_ref": {
             "document": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼(한국관광공사, 2026.03)",
             "page": 20,
@@ -351,7 +378,7 @@ def content_type():
 
 
 PRIORITY_ORDER = {"최우선": 0, "높음": 1, "보통": 2}
-PHASE_ORDER = {"오전(준비)": 0, "운영 중(모니터링)": 1, "비상 대응": 2, "마감(평가)": 3}
+PHASE_ORDER = {"사전(예보 대응)": 0, "오전(준비)": 1, "운영 중(모니터링)": 2, "비상 대응": 3, "마감(평가)": 4}
 
 
 def checklist():
@@ -603,6 +630,62 @@ def timeline():
     write("timeline", payload)
 
 
+def briefing():
+    """에이전트⑤ 출력 형식 예시. 수치는 위에서 만든 목업(signal_status·forecast)과 맞춘다."""
+    fc = json.loads((OUT / "forecast.json").read_text(encoding="utf-8"))["data"]
+    daily = {d["date"]: d for d in fc["daily"]}
+    manual = {i["id"]: i for i in json.loads((ROOT / "manual" / "checklist_items.json").read_text(encoding="utf-8"))["items"]}
+
+    def kd(iso):
+        d = date.fromisoformat(iso)
+        return f"{d.month}월 {d.day}일({WEEKDAY_KR[d.weekday()]})"
+
+    p1, p2 = fc["peak_days"][:2]
+    d1 = daily[p1["date"]]
+    mape = fc["model"]["metric"]["value"]
+    picks = [("CL-046", "반복 언급 지점의 대기에 대비"), ("CL-047", "주차장 일대 유입에 대비"), ("CL-044", "피크 예상일을 운영에 반영")]
+    actions = [{"checklist_id": cid, "action": manual[cid]["조치"], "page": manual[cid]["근거"]["쪽"], "why": why} for cid, why in picks]
+    lines = " ".join(f"{m} {a['action']} (p.{a['page']}) — {a['why']}." for m, a in zip("①②③", actions))
+
+    paragraphs = [
+        {"heading": "현재 상황", "text": (
+            "거제시 경보 단계를 관심에서 주의로 상향했다. 3중 교차검증에서 관심 신호인 SNS 언급량이 42% 늘어 "
+            "임계 30%를 넘었으나, 의도 신호인 내비게이션 검색건수(17%)와 실현 신호인 방문자 수(6%)는 임계 미만이다. "
+            "아직 실수요로 확정되지 않았으며, 경계 상향에는 3개 신호 중 2개 초과가 필요하다.")},
+        {"heading": "예상 전개", "text": (
+            f"예측 기간 중 방문객이 가장 많을 날은 {kd(p1['date'])}로 {p1['predicted']:,}명"
+            f"(80% 구간 {d1['lower']:,}~{d1['upper']:,}명)이 예상된다. {kd(p2['date'])}도 {p2['predicted']:,}명으로 "
+            f"예상 경보는 {p2['expected_alert_level']}이다. 예측 모델의 검증 MAPE는 {mape}%다.")},
+        {"heading": "권고 조치", "text": f"선행 신호 단계이므로 현장 통제보다 사전 준비를 권고한다. {lines}"},
+    ]
+    src = "[목업]"
+    facts = [
+        {"id": "F1", "label": "경보 단계", "value": "주의 (직전 관심)", "source": f"3중 교차검증 판정 {src}"},
+        {"id": "F3", "label": "관심 신호 — SNS 언급량 전주 대비 증가율", "value": "42% (임계 30%, 초과)", "source": f"데이터랩 소셜미디어 {src}"},
+        {"id": "F4", "label": "의도 신호 — 내비게이션 목적지 검색건수 전주 대비 증가율", "value": "17% (임계 20%, 미달)", "source": f"데이터랩 내비게이션 {src}"},
+        {"id": "F5", "label": "실현 신호 — 방문자 수 전주 대비 증가율", "value": "6% (임계 15%, 미달)", "source": f"데이터랩 이동통신 {src}"},
+        {"id": "F6", "label": "다음 단계 상향 조건", "value": "경계 상향에는 3개 신호 중 2개 초과 필요, 현재 1개", "source": "설계결정 D-05"},
+        {"id": "F11", "label": "피크 예상일 1", "value": f"{kd(p1['date'])} {p1['predicted']:,}명 (80% 구간 {d1['lower']:,}~{d1['upper']:,}명)", "source": f"방문객 예측 {src}"},
+        {"id": "F12", "label": "피크 예상일 2", "value": f"{kd(p2['date'])} {p2['predicted']:,}명, 예상 경보 {p2['expected_alert_level']}", "source": f"방문객 예측 {src}"},
+        {"id": "F10", "label": "예측 모델 성능", "value": f"검증 MAPE {mape}%", "source": f"방문객 예측 {src}"},
+    ]
+    payload = envelope([MANUAL_SRC, SNS, NAVI, TELECOM, DATALAB], "2026-09-12", fc["daily"][-1]["date"], [
+        "문장 속 수치는 facts의 값만 쓴다. 에이전트⑤ 실행 시 코드가 대조 검증한다(D-10).",
+        "권고 조치 문장과 쪽수는 매뉴얼 원문 그대로다(D-08).",
+    ])
+    payload["data"] = {
+        "region": REGION,
+        "as_of": "2026-09-12",
+        "alert_level": "주의",
+        "paragraphs": paragraphs,
+        "actions": actions,
+        "facts": facts,
+        "char_count": sum(len(p["text"]) for p in paragraphs),
+        "model": {"name": "목업 — 형식 예시", "prompt_version": "agent5_briefing_v1.0"},
+    }
+    write("briefing", payload)
+
+
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
     print("목업 생성 (거제시 기준)\n")
@@ -615,4 +698,5 @@ if __name__ == "__main__":
     precedent()
     before_after()
     timeline()
-    print("\n완료 — 9종")
+    briefing()
+    print("\n완료 — 10종")

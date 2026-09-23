@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://tourism-early-warning/schema/timeline.schema.json",
   "title": "timeline — 사례별 타임라인 (에이전트①)",
-  "description": "콘텐츠 확산 → 방문 급증 → 민원·혼잡 → 조치 → 완화로 이어지는 전개를 시간축에 놓는다. '조기경보가 가능했다'를 보여주는 근거 화면.",
+  "description": "콘텐츠 확산 → 방문 급증 → 민원·혼잡 → 조치 → 완화로 이어지는 전개를 시간축에 놓는다. '조기경보가 가능했다'를 보여주는 근거 화면. 지역별 파일: 기본 지역(거제)은 timeline.json, 그 밖의 사례는 timeline_{시군구코드}.json (설계결정 D-12).",
   "allOf": [{ "$ref": "_envelope.schema.json" }],
   "properties": {
     "data": {
@@ -12,11 +12,64 @@
         "case_id": { "type": "string", "pattern": "^TL-\\d{3}$" },
         "region": { "$ref": "_envelope.schema.json#/definitions/region" },
         "title": { "type": "string" },
+        "case_kind": {
+          "type": "string",
+          "enum": ["수요 급증", "평판 위기", "비관광 급증"],
+          "description": "사례 성격 (D-12). 수요 급증 = 콘텐츠가 방문 수요를 만든 사례. 평판 위기 = 불친절·바가지 폭로가 확산된 사례로, 혼잡도 매뉴얼 범위 밖이다. 비관광 급증 = 재난·사고로 검색만 급증한 사례로, 오경보 후보를 보여 준다."
+        },
         "spatial_type": { "$ref": "_envelope.schema.json#/definitions/spatial_type" },
         "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
         "lead_time_days": {
           "type": "integer",
-          "description": "콘텐츠 확산 시점부터 방문 급증까지의 일수. 이 값이 곧 조기경보로 벌 수 있는 시간이다."
+          "description": "콘텐츠 확산 시점부터 방문 급증까지의 일수. 이 값이 곧 조기경보로 벌 수 있는 시간이다. 방문 급증의 시작일이 확인된 경우(date_basis가 사건일·기간 시작일)에만 둔다. 없으면 필드를 생략한다 — 화면은 생략을 처리해야 한다."
+        },
+        "signal_rule": {
+          "type": "object",
+          "description": "is_signal=true인 '검색 급증' 이벤트를 만든 판정 규칙 (D-12). 임시 규칙이며 역할2의 백테스트로 교체될 수 있다.",
+          "required": ["metric", "statistic", "threshold", "threshold_basis", "min_duration_days"],
+          "properties": {
+            "metric": { "type": "string" },
+            "statistic": { "type": "string" },
+            "threshold": { "type": "number" },
+            "threshold_basis": { "type": "string" },
+            "min_duration_days": { "type": "integer", "minimum": 1 }
+          },
+          "additionalProperties": false
+        },
+        "lags": {
+          "type": "object",
+          "description": "시차 요약 (D-12). 콘텐츠 기점·시스템 신호·첫 행정 조치 사이의 일수. first_action_date는 actor=행정이고 is_case_response=true인 첫 조치다. 해당 시점이 없으면 그 필드와 파생 일수를 생략한다.",
+          "properties": {
+            "content_date": { "$ref": "_envelope.schema.json#/definitions/date" },
+            "signal_date": { "$ref": "_envelope.schema.json#/definitions/date" },
+            "first_action_date": { "$ref": "_envelope.schema.json#/definitions/date" },
+            "content_to_signal_days": { "type": "integer" },
+            "signal_to_action_days": {
+              "type": "integer",
+              "description": "양수면 시스템 신호가 행정 조치보다 그만큼 먼저였다는 뜻"
+            },
+            "content_to_action_days": { "type": "integer" }
+          },
+          "additionalProperties": false
+        },
+        "signal_check": {
+          "type": "array",
+          "description": "사례 기간에 각 지표가 임계를 넘었는지. 신호가 없었던 것도 결과로 남긴다 (거른 것도 보여준다).",
+          "items": {
+            "type": "object",
+            "required": ["metric", "window_start", "window_end", "max_value", "threshold", "signaled"],
+            "properties": {
+              "metric": { "type": "string" },
+              "window_start": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "window_end": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "max_value": { "type": "number" },
+              "max_date": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "threshold": { "type": "number" },
+              "signaled": { "type": "boolean", "description": "임계 초과가 min_duration_days 이상 이어졌는가" },
+              "note": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
         },
         "events": {
           "type": "array",
@@ -28,11 +81,30 @@
               "date": { "$ref": "_envelope.schema.json#/definitions/date" },
               "type": {
                 "type": "string",
-                "enum": ["콘텐츠 확산", "방문 급증", "혼잡 발생", "민원 발생", "조치 시행", "완화"]
+                "enum": ["콘텐츠 확산", "검색 급증", "방문 급증", "혼잡 발생", "민원 발생", "조치 시행", "완화", "외부 요인"],
+                "description": "'검색 급증'은 시스템 신호(데이터), '외부 요인'은 재난·사고 등 관광 수요와 무관한 사건 (D-12)"
+              },
+              "date_basis": {
+                "type": "string",
+                "enum": ["사건일", "기간 시작일", "집계 기준일", "발표일", "보도일", "게시일", "관측일"],
+                "description": "date가 무엇의 날짜인가. 기사에 사건일이 없으면 보도일을 쓰고 그렇게 표시한다 — 실제 사건은 그보다 앞설 수 있다"
               },
               "description": { "type": "string", "minLength": 5 },
               "value": { "type": "number", "description": "해당 시점의 수치 (방문객 수, 조회수, 민원 건수 등)" },
               "unit": { "type": "string" },
+              "quote": {
+                "type": "string",
+                "description": "기사 원문 인용. 기사 출처 이벤트에는 필수이며, 코드가 원문 페이지와 글자 단위로 대조한다 (D-12)"
+              },
+              "actor": {
+                "type": "string",
+                "enum": ["행정", "민간"],
+                "description": "조치 시행 이벤트의 주체. 상인회·협동조합의 자율 조치는 민간"
+              },
+              "is_case_response": {
+                "type": "boolean",
+                "description": "조치 시행 이벤트가 이 사례에 대한 대응으로 인정되는가. 매년 하는 정례 행사이거나 사례와 무관하면 false이며, lags.first_action_date 계산에서 빠진다 (D-12)"
+              },
               "source": { "$ref": "_envelope.schema.json#/definitions/source" },
               "is_signal": {
                 "type": "boolean",

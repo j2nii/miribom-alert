@@ -7,13 +7,19 @@
   "properties": {
     "data": {
       "type": "object",
-      "required": ["region", "as_of", "alert_level", "congestion_level", "cross_validation", "agreement", "basis"],
+      "required": ["region", "as_of", "alert_level", "cross_validation", "agreement", "basis"],
       "properties": {
         "region": { "$ref": "_envelope.schema.json#/definitions/region" },
-        "as_of": { "$ref": "_envelope.schema.json#/definitions/date" },
+        "as_of": {
+          "$ref": "_envelope.schema.json#/definitions/date",
+          "$comment": "판정 기준일. 월 단위 판정이면 그 달의 말일 (D-13)"
+        },
         "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
         "previous_alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
-        "congestion_level": { "$ref": "_envelope.schema.json#/definitions/congestion_level" },
+        "congestion_level": {
+          "$ref": "_envelope.schema.json#/definitions/congestion_level",
+          "$comment": "실측·추정이 없으면 생략한다 — 값을 지어내지 않는다. 생략되면 에이전트③은 현장 조치를 모두 '대기'로 두고, 화면은 '미측정'으로 표시한다 (D-07, D-13)"
+        },
         "density": {
           "type": "object",
           "description": "밀도 실측/추정치. 경사지는 slope_corrected를 사용한다 (매뉴얼 p.53).",
@@ -35,9 +41,18 @@
             "type": "object",
             "required": ["signal", "provider", "value", "threshold", "exceeded"],
             "properties": {
-              "signal": { "type": "string", "description": "예: 이동통신 유동인구 증가율" },
+              "stage": {
+                "type": "string",
+                "enum": ["관심", "의도", "실현"],
+                "description": "신호가 수요 전개의 어느 단계를 보는가 (v3 회의안 A). 관심=SNS 언급량, 의도=내비게이션 검색건수, 실현=방문자 수. 배열 순서도 이 순서를 따른다. 경보 단계(alert_level)의 '관심'과는 다른 축이다."
+              },
+              "signal": { "type": "string", "description": "예: SNS 언급량 전주 대비 증가율" },
               "provider": { "type": "string" },
-              "value": { "type": "number" },
+              "value": {
+                "type": ["number", "null"],
+                "description": "원천 값이 없으면 null이고 exceeded=false, missing_reason에 이유를 적는다. 0으로 채우지 않는다 (D-13)"
+              },
+              "missing_reason": { "type": "string" },
               "threshold": { "type": "number" },
               "unit": { "type": "string" },
               "exceeded": { "type": "boolean", "description": "임계 초과 여부" },
@@ -47,7 +62,7 @@
         },
         "agreement": {
           "type": "object",
-          "description": "몇 개 신호가 임계를 넘었는가. 2/3 이상이면 경보 상향.",
+          "description": "몇 개 신호가 임계를 넘었는가. 상향에 필요한 개수는 단계마다 다르다 — escalation 참조 (설계결정 D-05).",
           "required": ["exceeded_count", "total"],
           "properties": {
             "exceeded_count": { "type": "integer", "minimum": 0, "maximum": 3 },
@@ -66,6 +81,22 @@
             "note": { "type": "string", "description": "예: 경계→심각은 혼잡도 단계 5 실측으로도 충족" }
           },
           "additionalProperties": false
+        },
+        "history": {
+          "type": "array",
+          "description": "월별 판정 이력 (D-13). D-05의 상향·하향 규칙을 첫 달부터 차례로 적용한 결과이며, 마지막 항목이 현재 판정이다.",
+          "items": {
+            "type": "object",
+            "required": ["as_of", "alert_level", "exceeded_count", "exceeded_stages", "change"],
+            "properties": {
+              "as_of": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+              "exceeded_count": { "type": "integer", "minimum": 0, "maximum": 3 },
+              "exceeded_stages": { "type": "array", "items": { "type": "string", "enum": ["관심", "의도", "실현"] } },
+              "change": { "type": "string", "enum": ["상향", "하향", "유지"] }
+            },
+            "additionalProperties": false
+          }
         },
         "basis": {
           "type": "string",
