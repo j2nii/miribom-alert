@@ -6,8 +6,11 @@
 const USE_PROD = process.env.VITE_USE_PROD === "true";
 
 export const REGION_MANIFEST = {
+  yeongwol: {
+    signal_status: { url: "/prod/yeongwol_signal_status.json", kind: "real" },
+  },
   geoje: {
-    signal_status: { url: "/mock/signal_status.json", kind: "mock" },
+    signal_status: { url: "/prod/geoje_signal_status.json", kind: "real" },
     forecast: { url: "/mock/forecast.json", kind: "mock" },
     visitor_profile: { url: "/mock/visitor_profile.json", kind: "mock" },
     hotspots: { url: "/mock/hotspots.json", kind: "mock" },

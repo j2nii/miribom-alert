@@ -4,7 +4,12 @@
 //
 // `kind`:
 //   "mock"        - data/mock/*.json, _mock:true envelope
-//   "real"        - data/prod/*.json, _mock:false envelope
+//   "real"        - data/prod/*.json, _mock:false envelope. yeongwol/geoje's
+//                   signal_status files are generated once by
+//                   web/scripts/generate-signal-status.mjs from the live
+//                   MySQL DB, not fetched live -- see that script's header
+//                   comment for why (vw_daily_anomaly_scored is too slow to
+//                   query per-request, 180s+ even filtered to one region).
 //   "unsupported" - no file for this region/dataType yet; UI shows the
 //                   existing "데이터 준비 전" empty state.
 // VITE_USE_PROD gates data types that have BOTH a mock and a real file today.
@@ -14,8 +19,17 @@
 const USE_PROD = import.meta.env.VITE_USE_PROD === "true";
 
 export const REGION_MANIFEST = {
+  yeongwol: {
+    // 메인 실데이터 사례 (docs/meeting-notes/UI/MySQL_실데이터_연동_계획.md).
+    // 나머지 8개 계약은 거제 전용 목업(지명·사례가 "거제"로 하드코딩됨)을 그대로
+    // 재사용하면 화면에 지역명이 어긋나므로, 이번 라운드 범위 밖으로 두고
+    // chungju와 같은 방식으로 "unsupported" 처리한다(파일 자체를 안 둠).
+    signal_status: { url: "/prod/yeongwol_signal_status.json", kind: "real" },
+  },
   geoje: {
-    signal_status: { url: "/mock/signal_status.json", kind: "mock" },
+    // 대비 사례 (총량은 그대로인데 특정 지점에만 쏠리는 패턴) -- signal_status만
+    // 우선 실데이터로 전환, content_type 등 나머지는 이번 라운드 범위 밖.
+    signal_status: { url: "/prod/geoje_signal_status.json", kind: "real" },
     forecast: { url: "/mock/forecast.json", kind: "mock" },
     visitor_profile: { url: "/mock/visitor_profile.json", kind: "mock" },
     hotspots: { url: "/mock/hotspots.json", kind: "mock" },
@@ -40,6 +54,7 @@ export const REGION_MANIFEST = {
 };
 
 export const REGIONS = [
+  { key: "yeongwol", label: "영월군" },
   { key: "geoje", label: "거제시" },
   { key: "chungju", label: "충주시" },
 ];
