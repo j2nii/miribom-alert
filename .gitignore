@@ -137,5 +137,5 @@ data/prod/**
 **/*.dump
 **/*.sql.gz
 
-
-
+# 제출용 Zip은 scripts/build_submission_zip.py 로 그때그때 만든다
+docs/submission/제출첨부_*.zip
