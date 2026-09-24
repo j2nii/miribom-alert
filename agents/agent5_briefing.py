@@ -325,11 +325,14 @@ def main() -> None:
     # 지금도 긴 추론이 필요 없으므로 low를 기본으로 둔다
     parser.add_argument("--reasoning-effort", default="low", choices=["low", "medium", "high"],
                         help="추론 모델(upstage)의 추론 강도. 기본 low")
+    parser.add_argument("--region", help="지역 코드(예: 51750). 기본(거제)은 파일명에 접미사가 없다")
     parser.add_argument("--dump-prompt", action="store_true")
-    parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--out", type=Path)
     args = parser.parse_args()
+    if args.out is None:
+        args.out = OUT.with_name(f"briefing_{args.region}.json") if args.region else OUT
 
-    inputs = {name: load_input(name) for name in ("signal_status", "forecast", "content_type", "checklist")}
+    inputs = {name: load_input(name, args.region) for name in ("signal_status", "forecast", "content_type", "checklist")}
     signal, forecast, checklist = (inputs[n][0] for n in ("signal_status", "forecast", "checklist"))
     facts = build_facts(inputs)
     allowed = set().union(*(numbers(f["label"] + " " + f["value"]) for f in facts))
