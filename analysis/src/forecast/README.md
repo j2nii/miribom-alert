@@ -4,6 +4,16 @@
 
 ## 실행 순서
 
+전 과정을 한 번에 돌리려면 이것 하나면 된다.
+
+```bash
+uv run python analysis/src/forecast/run_all.py            # 전체 재실행 + 동결본 대조 (20~40분)
+uv run python analysis/src/forecast/run_all.py --offline  # DB 없이 (패널이 이미 있을 때)
+uv run python analysis/src/forecast/freeze.py --check     # 수치가 그대로인지만 확인 (10초)
+```
+
+단계별로 돌릴 때의 순서는 아래와 같다.
+
 ```bash
 uv run python analysis/src/forecast/build_panel.py      # 1. DB → 분석 패널 (먼저 실행)
 uv run python analysis/src/forecast/build_external.py   # 1-2. DB → 데이터랩 월간·근거기사·바이럴 키워드
@@ -39,6 +49,8 @@ uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6
 | `point_level.py` | 전국 관광지점 배율 vs 시군구 총량, 총량 감시 사각지대 | `point_level.json` |
 | `point_level_rigor.py` | 감지 불가능성·연도 재현·균형 패널·경보 부담 등 반론 8종 | `point_level_rigor.json` |
 | `figures.py` | 그림 8장 | `docs/submission/figures/` |
+| `freeze.py` | 서식4에 쓸 수치 동결·대조 | `frozen_numbers.json` · `docs/확정수치_0924.md` |
+| `run_all.py` | 전 과정 재실행 + 동결본 대조 | 콘솔 |
 
 `baseline.py`의 `build_features`·`SPLITS`는 다른 스크립트들이 공통으로 가져다 씁니다. 분할이나 지연 규칙을 바꾸려면 여기만 고치면 됩니다.
 
@@ -46,6 +58,7 @@ uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6
 
 - `docs/분석_검증_추가데이터_0924.md` — **추가 데이터 검증의 결론과 정정 사항 (최신)**
 - `docs/분석_지점쏠림_반론검증_0924.md` — **핵심 주장에 대한 반론 8가지와 답**
+- `docs/확정수치_0924.md` — **서식4에 옮길 숫자는 전부 여기서 가져온다**
 - `docs/작업기록_0922.md` — 9/22까지의 전체 파악
 - `docs/분석_누출점검표.md` — 어떤 변수를 왜 썼는가·안 썼는가
 - `docs/분석_결과_예측사다리.md` · `docs/분석_결과_탐지와모델비교.md`
