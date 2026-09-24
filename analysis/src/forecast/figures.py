@@ -10,6 +10,7 @@
     figure5_추가데이터기여도.png  어떤 추가 데이터가 실제로 예측을 개선했는가 (09.24)
     figure6_명절정렬재검.png    전년대비 급증 43건이 설 날짜 이동이었음 (09.24)
     figure7_총량감시_사각지대.png 지점 급증의 98%는 시군구 총량에서 보이지 않는다 (09.24)
+    figure8_감지불가능성.png   그 급증이 총량에 남기는 흔적은 총량의 잡음보다 작다 (09.24)
 
 사용법:
     uv run python analysis/src/forecast/figures.py
@@ -220,6 +221,7 @@ def main() -> None:
     figure_block_contribution()
     figure_holiday_alignment()
     figure_blind_spot()
+    figure_undetectable()
     print(f"글꼴: {font}")
     for path in sorted(OUT_DIR.glob("*.png")):
         print(f"  {path.relative_to(ROOT)}  {path.stat().st_size // 1024}KB")
@@ -350,6 +352,48 @@ def figure_blind_spot() -> None:
           f"· 지점 급증 {summary['지점급증_건수']}건 중 {summary['사각지대_건수']}건은 시군구에서 보이지 않는다")
     fig.tight_layout()
     fig.savefig(OUT_DIR / "figure7_총량감시_사각지대.png", dpi=200)
+    plt.close(fig)
+
+
+def figure_undetectable() -> None:
+    """R1에 대한 답 한 장 — 지점 급증이 총량에 남기는 흔적 vs 총량 자체의 흔들림.
+
+    "관광지 하나는 시군구의 일부이니 총량이 안 움직이는 게 당연하다"는 반론에
+    "그 당연함이 얼마나 큰가"로 답한다. 흔적이 잡음 안에 파묻혀 있으면,
+    총량 감시는 놓친 것이 아니라 원리적으로 감지할 수 없는 것이다.
+    """
+    events_path = INTERIM / "point_level_rigor_events.csv"
+    summary_path = INTERIM / "point_level_rigor.json"
+    if not events_path.exists() or not summary_path.exists():
+        print("  figure8 건너뜀 — point_level_rigor.py를 먼저 실행하세요")
+        return
+    events = pd.read_csv(events_path)
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    noise = 100 * summary["R1_시군구배율_표준편차"]
+    contribution = events["contribution_pp"].clip(upper=14)
+
+    fig, ax = plt.subplots(figsize=(9.6, 4.9))
+    ax.axvspan(-noise, noise, color="#e8edf2", zorder=0)
+    ax.hist(contribution, bins=40, color=WARM, alpha=0.9, zorder=2)
+    ax.axvline(0, color=INK, linewidth=1, zorder=3)
+    top = ax.get_ylim()[1]
+    ax.text(noise + 0.25, top * 0.92,
+            f"시군구 총량이 평소에도 흔들리는 폭 ±{noise:.1f}%p",
+            fontsize=9.5, color=MUTED, va="top")
+    ax.annotate("", xy=(noise, top * 0.80), xytext=(-noise, top * 0.80),
+                arrowprops={"arrowstyle": "<->", "color": MUTED, "linewidth": 1.2})
+    median = events["contribution_pp"].median()
+    ax.axvline(median, color=ACCENT, linewidth=1.8, zorder=4)
+    note = f"급증 {len(events)}건이 총량에 더한 몫\n중앙값 {median:.2f}%p"
+    ax.text(median + 0.25, top * 0.55, note, fontsize=10, color=ACCENT,
+            fontweight="bold", va="top")
+    ax.set_xlabel("지점 급증이 시군구 월 총방문자에 더한 몫 (%p)", fontsize=9.5, color=MUTED)
+    ax.set_ylabel("건수", fontsize=9.5, color=MUTED)
+    style(ax, "총량 감시는 놓친 것이 아니라 감지할 수 없다",
+          f"지점 급증 {len(events)}건 · 총량을 1.2배로 올리려면 그 지점 혼자 "
+          f"중앙값 {summary['R1_필요배율_중앙값']:,.0f}배가 되어야 한다")
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "figure8_감지불가능성.png", dpi=200)
     plt.close(fig)
 
 
