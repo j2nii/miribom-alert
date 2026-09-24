@@ -15,6 +15,7 @@ uv run python analysis/src/forecast/ablation.py         # 5-2. 추가 데이터 
 uv run python analysis/src/forecast/detect_ablation.py  # 5-3. 추가 데이터로 조기경보가 되는가
 uv run python analysis/src/forecast/evidence_check.py   # 5-4. 근거 기사를 입력으로 쓸 수 있는가
 uv run python analysis/src/forecast/compare_pipelines.py# 5-5. 수영님 450건과 대조 · 명절 정렬 재검
+uv run python analysis/src/forecast/point_level.py      # 5-6. 전국 관광지점 vs 시군구 총량 (사각지대)
 uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6장
 ```
 
@@ -34,7 +35,8 @@ uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6
 | `detect_ablation.py` | 월 단위 조기경보 실험(AUC·상승도) | `detect_ablation.json` |
 | `evidence_check.py` | 근거 기사 사용 가능성 판정 | `evidence_check.json` |
 | `compare_pipelines.py` | 수영님 파이프라인과 대조, 명절 정렬 재검 | `pipeline_comparison.json` |
-| `figures.py` | 그림 6장 | `docs/submission/figures/` |
+| `point_level.py` | 전국 관광지점 배율 vs 시군구 총량, 총량 감시 사각지대 | `point_level.json` |
+| `figures.py` | 그림 7장 | `docs/submission/figures/` |
 
 `baseline.py`의 `build_features`·`SPLITS`는 다른 스크립트들이 공통으로 가져다 씁니다. 분할이나 지연 규칙을 바꾸려면 여기만 고치면 됩니다.
 

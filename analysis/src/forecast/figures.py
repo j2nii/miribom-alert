@@ -9,6 +9,7 @@
     figure4_급증의성격.png     시군구 방문 급증은 무엇이 만드는가
     figure5_추가데이터기여도.png  어떤 추가 데이터가 실제로 예측을 개선했는가 (09.24)
     figure6_명절정렬재검.png    전년대비 급증 43건이 설 날짜 이동이었음 (09.24)
+    figure7_총량감시_사각지대.png 지점 급증의 98%는 시군구 총량에서 보이지 않는다 (09.24)
 
 사용법:
     uv run python analysis/src/forecast/figures.py
@@ -218,6 +219,7 @@ def main() -> None:
     figure_surge_composition()
     figure_block_contribution()
     figure_holiday_alignment()
+    figure_blind_spot()
     print(f"글꼴: {font}")
     for path in sorted(OUT_DIR.glob("*.png")):
         print(f"  {path.relative_to(ROOT)}  {path.stat().st_size // 1024}KB")
@@ -290,6 +292,64 @@ def figure_holiday_alignment() -> None:
           "· 명절을 맞춰 비교하면 급증이라 부를 지역이 없다")
     fig.tight_layout()
     fig.savefig(OUT_DIR / "figure6_명절정렬재검.png", dpi=200)
+    plt.close(fig)
+
+
+def figure_blind_spot() -> None:
+    """총량 감시의 사각지대를 한 장으로 — 가로 시군구 배율, 세로 지점 배율.
+
+    오른쪽 위(둘 다 큼)에 점이 몰려야 "총량으로도 보인다"가 되는데, 실제로는
+    왼쪽 위(지점만 큼)에 몰린다. 그 사분면이 곧 우리가 말하는 사각지대다.
+    """
+    path = INTERIM / "point_level_ratios.csv"
+    if not path.exists():
+        print("  figure7 건너뜀 — point_level.py를 먼저 실행하세요")
+        return
+    frame = pd.read_csv(path, dtype={"region_id": str})
+    summary = json.loads((INTERIM / "point_level.json").read_text(encoding="utf-8"))
+    surge, flat = summary["지점_급증임계"], summary["시군구_평탄상한"]
+
+    blind = frame[(frame["point_ratio"] >= surge) & (frame["region_ratio"] < flat)]
+    rest = frame.drop(blind.index)
+
+    fig, ax = plt.subplots(figsize=(9.6, 5.6))
+    ax.scatter(rest["region_ratio"], rest["point_ratio"], s=9, color=MUTED, alpha=0.35,
+               linewidths=0, label="나머지 지점-월")
+    ax.scatter(blind["region_ratio"], blind["point_ratio"], s=26, color=WARM, alpha=0.85,
+               linewidths=0, label="사각지대 (지점만 급증)")
+    ax.axhline(surge, color=INK, linewidth=1, linestyle="--")
+    ax.axvline(flat, color=INK, linewidth=1, linestyle="--")
+    ax.text(flat + 0.01, surge * 1.03, f" 시군구 {flat}배 · 지점 {surge}배 기준선",
+            fontsize=8.5, color=INK, va="bottom")
+    caption = f"사각지대 {len(blind)}건\n({blind['region_id'].nunique()}개 시군구)"
+    ax.text(0.63, 18, caption, fontsize=11, color=WARM, fontweight="bold", va="top")
+
+    for name, offset in (("청령포", (-78, 14)), ("단종장릉", (-88, -22))):
+        hit = frame[frame["attraction_name"].str.contains(name, na=False)]
+        if hit.empty:
+            continue
+        row = hit.loc[hit["point_ratio"].idxmax()]
+        ax.scatter([row["region_ratio"]], [row["point_ratio"]], s=40, color=ACCENT, zorder=5)
+        ax.annotate(f"{name} {row['point_ratio']:.1f}배 (영월)",
+                    (row["region_ratio"], row["point_ratio"]),
+                    textcoords="offset points", xytext=offset, fontsize=9.5, color=ACCENT,
+                    arrowprops=dict(arrowstyle="-", color=ACCENT, linewidth=0.8))
+
+    ax.set_yscale("log")
+    ax.set_ylim(0.25, 22)
+    ax.set_yticks([0.5, 1, 2, 5, 10, 20])
+    ax.get_yaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+    ax.get_yaxis().set_minor_formatter(matplotlib.ticker.NullFormatter())
+    ax.tick_params(axis="y", which="minor", length=0)
+    ax.set_xlim(0.6, 1.45)
+    ax.set_xlabel("시군구 총 방문자 전년 같은 달 대비 배율", fontsize=9.5, color=MUTED)
+    ax.set_ylabel("지점 입장객 전년 같은 달 대비 배율 (로그)", fontsize=9.5, color=MUTED)
+    ax.legend(frameon=False, fontsize=9, loc="lower right")
+    style(ax, "시군구 총량은 지점의 쏠림을 놓친다",
+          f"2026년 3~6월 · {summary['지점수']:,}개 관광지점 × {summary['시군구수']}개 시군구 "
+          f"· 지점 급증 {summary['지점급증_건수']}건 중 {summary['사각지대_건수']}건은 시군구에서 보이지 않는다")
+    fig.tight_layout()
+    fig.savefig(OUT_DIR / "figure7_총량감시_사각지대.png", dpi=200)
     plt.close(fig)
 
 
