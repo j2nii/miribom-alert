@@ -15,7 +15,7 @@ export default function Area4Performance({ region }) {
       <div className="panel-head">
         <p className="panel-eyebrow">AREA 4 · 성과 리포트</p>
         <h2>성과 리포트</h2>
-        <p className="panel-subtitle">조기 감지가 실제 대응·개선으로 이어졌는지 리드타임과 전후 지표로 봅니다.</p>
+        <p className="panel-subtitle">신호를 조치로 연결하는 데 며칠 걸렸는지, 조치 후 지표가 실제로 움직였는지 점검하는 화면입니다. 다음 회차 대응 속도를 정하는 근거로 씁니다.</p>
       </div>
 
       <MockBanner isMock={beforeAfter.status === "ok" && beforeAfter.envelope._mock} />

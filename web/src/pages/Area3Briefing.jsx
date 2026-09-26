@@ -19,7 +19,7 @@ export default function Area3Briefing({ region }) {
       <div className="panel-head">
         <p className="panel-eyebrow">AREA 3 · POLICY BRIEFING</p>
         <h2>정책 브리핑</h2>
-        <p className="panel-subtitle">매뉴얼 근거가 달린 대응 체크리스트와 선례, agent5가 생성한 정책 브리핑입니다.</p>
+        <p className="panel-subtitle">오늘 무엇을 할지 고르고 보고문까지 받아 가는 화면입니다. 매뉴얼 근거가 달린 구간별 조치 목록, 유사 지역 선례, 복사·저장 가능한 정책 브리핑 순입니다.</p>
       </div>
 
       <MockBanner isMock={checklist.status === "ok" && checklist.envelope._mock} />

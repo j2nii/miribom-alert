@@ -22,7 +22,7 @@ export default function Area1SignalScan({ region }) {
       <div className="panel-head">
         <p className="panel-eyebrow">AREA 1 · SIGNAL SCAN</p>
         <h2>바이럴 신호 스캔</h2>
-        <p className="panel-subtitle">현재 지역의 3중 교차검증·예측·핫스팟·방문객 프로파일을 확인합니다. 지역 변경은 AREA0에서 할 수 있습니다.</p>
+        <p className="panel-subtitle">지금 올라온 신호가 믿을 만한지, 며칠 뒤 몇 명이 올지 판단하는 화면입니다. 신호등·90일 예측·급증 지점·방문객 구성 순으로 봅니다. 지역 변경은 AREA0에서 합니다.</p>
       </div>
 
       <div className="section-block">

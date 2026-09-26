@@ -32,6 +32,22 @@
   --alert-경계: #c76b1f;
   --alert-심각: var(--crimson);
 
+  /* 정책 대응 체크리스트의 구간(phase) 색. 시간 순서(사전 -> 운영 -> 마감)를 차가운 색에서
+     뜨거운 색으로 흐르게 배치해, "지금 대응 중" 구간이 스크롤 중에도 가장 눈에 띄게 한다.
+     ChecklistPanel.jsx의 PHASES[].slug와 1:1로 대응된다. */
+  --phase-before: var(--slate);
+  --phase-morning: var(--teal);
+  --phase-operating: var(--amber);
+  --phase-emergency: var(--crimson);
+  --phase-closing: var(--ink-soft);
+
+  /* 제목 3단 위계. 화면마다 인라인 스타일로 13/14px가 섞여 소제목보다 항목명이 더 큰
+     경우까지 있었으므로(체크리스트 구간 헤더 14px vs 섹션 소제목 13px), 레벨별 크기를
+     여기 한 곳에서만 정한다: 화면 제목 > 섹션 소제목 > 항목 그룹명. */
+  --fs-panel-title: 20px;
+  --fs-section-title: 15px;
+  --fs-subsection-title: 13px;
+
   --font-kr: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard Variable", Pretendard,
     "Malgun Gothic", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
@@ -58,6 +74,13 @@ body {
   color: var(--ink);
   min-height: 100%;
   padding: 0 0 40px 0;
+}
+@media (max-width: 860px) {
+  /* 우하단에 고정되는 챗봇 플로팅 아이콘(.chat-widget__toggle) 아래로 본문 마지막 줄과
+     푸터가 깔리지 않게 확보하는 여백. */
+  .app {
+    padding-bottom: 88px;
+  }
 }
 
 /* Header -- brand / tag / subtitle, same structure as the reference demo */
@@ -169,8 +192,9 @@ body {
 }
 .panel-head h2 {
   margin: 4px 0 0;
-  font-size: 17px;
+  font-size: var(--fs-panel-title);
   font-weight: 800;
+  letter-spacing: -0.01em;
 }
 .panel-subtitle {
   margin: 4px 0 0;
@@ -205,10 +229,20 @@ body {
   padding-top: 0;
   margin-top: 0;
 }
+.panel-subtitle {
+  line-height: 1.55;
+}
 .section-title {
   margin: 0 0 8px;
-  font-size: 13px;
+  font-size: var(--fs-section-title);
   font-weight: 800;
+}
+/* 섹션 안에서 항목 묶음을 가르는 3단 제목 (요일별 집중도, 거주지 상위, 리드타임 사례명...).
+   이전에는 컴포넌트마다 13/14px 인라인 스타일로 흩어져 있었다. */
+.subsection-title {
+  margin: 0 0 6px;
+  font-size: var(--fs-subsection-title);
+  font-weight: 700;
 }
 
 /* Region scan form (moved from the old demo's map+input into AREA 1) */
@@ -298,6 +332,31 @@ body {
   background: var(--abyss);
   color: #fff;
 }
+/* 전용 데이터가 없어 AREA1 수치를 대신 보여주는 탭 표시 (ContentTypeTabs.jsx의 substitute) */
+.tab-btn__badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--amber-tint-bg);
+  color: var(--amber-tint-text);
+  font-size: 9px;
+  letter-spacing: 0;
+}
+.tab-btn.is-active .tab-btn__badge {
+  background: var(--amber);
+  color: #fff;
+}
+.substitute-note {
+  background: var(--amber-tint-bg);
+  border: 1px solid var(--amber-tint-border);
+  color: var(--amber-tint-text);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
 
 /* Ranked lists (hotspots, peak days) */
 .rank-list {
@@ -329,10 +388,10 @@ body {
 }
 
 /* Info / caveat boxes -- the demo's recurring mist-box pattern */
+/* display:flex였을 때 박스 안의 텍스트 조각과 <strong>이 각각 flex 아이템이 되어 한 줄로
+   늘어서면서, 좁은 화면에서 "오늘(2026-09-13 (일)) 예측 방문객 33,822명 · 예상 경보 주의"
+   같은 문장이 가로로 잘려 나갔다. 내용이 전부 산문이므로 블록으로 되돌려 정상 줄바꿈시킨다. */
 .info-box {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
   background: var(--mist);
   border-radius: 10px;
   padding: 10px 12px;
@@ -350,18 +409,42 @@ body {
   font-size: 13px;
   margin-bottom: 16px;
 }
+/* 기본 접힘 <details>. 제목과 건수는 접힌 상태에서도 항상 보인다 (CaveatNote.jsx 참고). */
 .caveat-note {
   background: var(--mist);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   font-size: 12px;
   color: var(--ink-soft);
   margin: 8px 0;
 }
 .caveat-note__title {
-  margin: 0 0 4px;
+  margin: 0;
   font-weight: 700;
   color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+}
+.caveat-note__title::marker,
+.caveat-note__title::-webkit-details-marker {
+  display: none;
+}
+/* 접힘/펼침을 알려주는 삼각형을 직접 그린다 -- 기본 마커는 브라우저마다 크기·색이 달라
+   같은 박스 안의 다른 뱃지들과 톤이 맞지 않는다. */
+.caveat-note__title::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--amber-tint-text);
+  transition: transform 0.12s ease;
+}
+.caveat-note[open] > .caveat-note__title::before {
+  transform: rotate(90deg);
+}
+.caveat-note ul {
+  margin: 6px 0 2px;
+  padding-left: 18px;
+  line-height: 1.55;
 }
 
 .manual-ref-cite {
@@ -448,6 +531,52 @@ body {
   border: 1px solid var(--line);
 }
 
+/* Checklist phases (AREA 3) -- 구간(사전/오전/운영 중/비상/마감)을 색으로 갈라, 스크롤
+   중에도 지금 어느 구간을 보고 있는지 잃지 않게 한다. 색은 :root의 --phase-* 토큰,
+   slug는 ChecklistPanel.jsx의 PHASES와 대응. */
+.checklist-phase {
+  --phase-color: var(--slate);
+  border-left: 3px solid var(--phase-color);
+  border-radius: 0 10px 10px 0;
+  padding: 10px 12px 12px;
+  margin-bottom: 14px;
+  background: linear-gradient(to right, rgba(16, 32, 47, 0.035), rgba(16, 32, 47, 0) 45%);
+}
+.checklist-phase--before {
+  --phase-color: var(--phase-before);
+}
+.checklist-phase--morning {
+  --phase-color: var(--phase-morning);
+}
+.checklist-phase--operating {
+  --phase-color: var(--phase-operating);
+}
+.checklist-phase--emergency {
+  --phase-color: var(--phase-emergency);
+}
+.checklist-phase--closing {
+  --phase-color: var(--phase-closing);
+}
+.checklist-phase__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.checklist-phase__chip {
+  background: var(--phase-color);
+  color: #fff;
+  font-size: var(--fs-subsection-title);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 12px;
+}
+.checklist-phase__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+
 /* Checklist items (AREA 3) */
 .briefing-list {
   list-style: none;
@@ -471,6 +600,10 @@ body {
   border-radius: 6px;
   padding: 1px 8px;
   white-space: nowrap;
+  /* 조치명이 여러 줄로 접히는 좁은 화면에서 flex 기본값(stretch) 때문에 태그가 그 높이만큼
+     세로로 늘어나 커다란 색 덩어리가 됐다. 첫 줄 옆에 붙여 둔다. */
+  align-self: flex-start;
+  height: fit-content;
 }
 .priority-높음,
 .priority-긴급 {
@@ -584,9 +717,15 @@ body {
   max-height: 440px;
 }
 @media (max-width: 860px) {
+  /* 좁은 화면에서는 Area0Dashboard가 측정 높이를 넘기지 않으므로(useMediaQuery 분기)
+     대화창 높이는 내용이 결정한다. 상한만 걸어 첫 화면에서 빈 대화창이 세로를 잡아먹지
+     않게 한다 -- 질문 전 초기 상태에서 500px 넘는 빈 공간이 생겼던 문제. */
   .chat-widget--docked {
     flex: none;
-    max-height: 480px;
+    max-height: 360px;
+  }
+  .chat-widget--docked .chat-widget__messages {
+    min-height: 96px;
   }
 }
 .chat-widget__header {
@@ -696,8 +835,72 @@ body {
   color: var(--ink-soft);
   font-style: italic;
 }
-.chat-message__source {
+/* 답변 근거 표시 (ChatWidget.jsx의 ChatSources). 화면 수치와 같은 실측/샘플 언어를 쓰고,
+   조회했지만 파일이 없는 데이터는 "준비 전"으로 남긴다 -- 챗봇 답변만 출처가 없어서
+   신뢰도를 판단할 수 없다는 QA 피드백 반영. */
+.chat-message__sources {
+  margin-top: 8px;
+  border-top: 1px dashed var(--line);
+  padding-top: 6px;
+}
+.chat-source-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.chat-source-chip {
+  font-size: 10px;
+  line-height: 1.5;
+  border-radius: 999px;
+  padding: 1px 8px;
+  background: var(--mist);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+.chat-source-chip b {
+  font-family: var(--font-mono);
+}
+.chat-source-chip--real {
+  background: var(--teal-tint-bg);
+  border-color: var(--teal-tint-border);
+  color: var(--teal);
+}
+.chat-source-chip--sample {
+  background: var(--mist);
+  color: var(--ink-soft);
+}
+.chat-source-chip--none {
+  background: var(--crimson-tint-bg);
+  border-color: var(--crimson-tint-border);
+  color: var(--crimson-tint-text);
+}
+.chat-source-detail {
   margin-top: 6px;
+  font-size: 11px;
+}
+.chat-source-detail > summary {
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.chat-source-detail__item {
+  margin-top: 6px;
+}
+.chat-source-detail__name {
+  margin: 0;
+  font-weight: 700;
+  font-size: 11px;
+}
+.chat-widget__region {
+  margin-left: auto;
+  margin-right: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--teal);
+  background: var(--teal-tint-bg);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
 }
 .chat-widget__input-row {
   display: flex;
@@ -736,4 +939,13 @@ body {
 }
 .chat-widget__toggle:hover {
   background: var(--abyss-hover);
+}
+@media (max-width: 860px) {
+  /* ChatWidget.jsx의 TOGGLE_SIZE_NARROW와 같은 값 -- 클램프 계산과 실제 크기가 어긋나면
+     아이콘이 화면 밖으로 조금 밀려난다. */
+  .chat-widget__toggle {
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+  }
 }

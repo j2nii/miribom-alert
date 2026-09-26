@@ -4,16 +4,27 @@ import ManualRefCite from "../common/ManualRefCite.jsx";
 // agents 브랜치 계약 변경: "사전(예보 대응)"이 기존 4단계 앞에 추가됐다. 이
 // 목록에 없는 phase 값을 가진 항목은 byPhase의 필터에서 조용히 빠지므로(에러
 // 없이 화면에서 사라짐), 새 phase가 생길 때마다 여기도 같이 넓혀야 한다.
-const PHASE_ORDER = ["사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"];
+//
+// `slug`는 구간별 색 토큰(index.css의 --phase-*)과 이어진다. 구간 구분이 텍스트
+// 헤더뿐이라 스크롤하며 훑을 때 지금 어느 구간인지 놓친다는 QA 피드백 때문에, 각
+// 구간에 왼쪽 컬러 바 + 같은 색 칩 헤더를 준다. 시간 순서(사전→운영→마감)를 차가운
+// 색에서 뜨거운 색으로 흐르게 배치해 "지금 대응 중"인 구간이 가장 눈에 띈다.
+const PHASES = [
+  { name: "사전(예보 대응)", slug: "before" },
+  { name: "오전(준비)", slug: "morning" },
+  { name: "운영 중(모니터링)", slug: "operating" },
+  { name: "비상 대응", slug: "emergency" },
+  { name: "마감(평가)", slug: "closing" },
+];
 const PAGE_SIZE = 5;
 
 export default function ChecklistPanel({ checklistData }) {
   const { matched_for, items, excluded_count } = checklistData;
   const [expanded, setExpanded] = useState({});
 
-  const byPhase = PHASE_ORDER.map((phase) => ({
-    phase,
-    items: items.filter((i) => i.phase === phase).sort((a, b) => a.rank - b.rank),
+  const byPhase = PHASES.map((phase) => ({
+    ...phase,
+    items: items.filter((i) => i.phase === phase.name).sort((a, b) => a.rank - b.rank),
   })).filter((g) => g.items.length > 0);
 
   return (
@@ -28,11 +39,14 @@ export default function ChecklistPanel({ checklistData }) {
       </div>
 
       {byPhase.map((group) => {
-        const showAll = expanded[group.phase];
+        const showAll = expanded[group.name];
         const visible = showAll ? group.items : group.items.slice(0, PAGE_SIZE);
         return (
-          <div key={group.phase} style={{ marginBottom: 16 }}>
-            <p style={{ fontWeight: 700, fontSize: 14, margin: "0 0 8px" }}>{group.phase}</p>
+          <section key={group.name} className={`checklist-phase checklist-phase--${group.slug}`}>
+            <div className="checklist-phase__head">
+              <span className="checklist-phase__chip">{group.name}</span>
+              <span className="checklist-phase__count">{group.items.length}건</span>
+            </div>
             <ul className="briefing-list">
               {visible.map((item) => (
                 <li key={item.id} className="briefing-item">
@@ -49,13 +63,13 @@ export default function ChecklistPanel({ checklistData }) {
             </ul>
             {group.items.length > PAGE_SIZE && (
               <button
-                onClick={() => setExpanded((e) => ({ ...e, [group.phase]: !showAll }))}
+                onClick={() => setExpanded((e) => ({ ...e, [group.name]: !showAll }))}
                 className="footer-link-btn"
               >
                 {showAll ? "접기" : `더보기 (${group.items.length - PAGE_SIZE}건)`}
               </button>
             )}
-          </div>
+          </section>
         );
       })}
 

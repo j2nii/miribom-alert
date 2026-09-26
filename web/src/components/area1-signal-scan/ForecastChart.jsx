@@ -1,3 +1,5 @@
+import { formatDateWithWeekday, isWeekend, weekdayOf } from "../../lib/format.js";
+
 const WIDTH = 640;
 const HEIGHT = 180;
 const PAD = 8;
@@ -36,7 +38,8 @@ export default function ForecastChart({ forecastData }) {
         )}
       </svg>
       <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
-        예측 기간 {daily[0].date} ~ {daily[daily.length - 1].date} · 음영 = 검증 잔차 80% 구간 · 점 = 공휴일
+        예측 기간 {formatDateWithWeekday(daily[0].date)} ~{" "}
+        {formatDateWithWeekday(daily[daily.length - 1].date)} · 음영 = 검증 잔차 80% 구간 · 점 = 공휴일
       </div>
 
       <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 13, flexWrap: "wrap" }}>
@@ -52,8 +55,10 @@ export default function ForecastChart({ forecastData }) {
       </div>
 
       <div style={{ marginTop: 12 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, margin: "0 0 6px" }}>요일별 집중도</p>
-        <div style={{ display: "flex", gap: 6 }}>
+        <p className="subsection-title">요일별 집중도</p>
+        {/* align-items: flex-end -- 막대 높이가 제각각이라 기본 정렬(stretch/start)에서는
+            요일 라벨이 막대 아래마다 다른 높이에 찍혀 비교가 안 됐다. 바닥선을 맞춘다. */}
+        <div style={{ display: "flex", gap: 6, alignItems: "flex-end" }}>
           {weekday_concentration.map((w) => (
             <div key={w.weekday} style={{ textAlign: "center", fontSize: 12 }}>
               <div
@@ -72,11 +77,18 @@ export default function ForecastChart({ forecastData }) {
       </div>
 
       <div style={{ marginTop: 12 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, margin: "0 0 6px" }}>피크 예상일 Top {peak_days.length}</p>
+        <p className="subsection-title">피크 예상일 Top {peak_days.length}</p>
+        {/* 날짜만 있으면 주말 피크인지 매번 달력을 열어 봐야 한다. 요일을 함께 찍고
+            주말(토/일)은 색으로 구분해, 인력 배치를 주말 기준으로 잡아야 하는 날인지
+            목록을 훑는 것만으로 판단되게 한다. */}
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13 }}>
           {peak_days.map((p) => (
             <li key={p.date}>
-              {p.date} — {p.predicted.toLocaleString()}명, 예상 경보 {p.expected_alert_level} ({p.reason})
+              <span style={{ fontFamily: "var(--font-mono)" }}>{p.date}</span>{" "}
+              <strong style={{ color: isWeekend(p.date) ? "var(--crimson)" : "var(--ink-soft)" }}>
+                ({weekdayOf(p.date)})
+              </strong>{" "}
+              — {p.predicted.toLocaleString()}명, 예상 경보 {p.expected_alert_level} ({p.reason})
             </li>
           ))}
         </ul>
