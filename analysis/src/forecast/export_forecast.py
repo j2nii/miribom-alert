@@ -13,6 +13,10 @@
 사용법:
     uv run python analysis/src/forecast/export_forecast.py                       # 거제·영월
     uv run python analysis/src/forecast/export_forecast.py --region 51750
+    uv run python analysis/src/forecast/export_forecast.py --all              # 실제 시군구 226곳 전체
+
+사례 지역(SHOWCASE)은 data/prod/에, 나머지는 data/prod/regions/에 쓴다. 테스트 기간 실제·예측은
+data/interim/forecast_backtest_h7.csv로 남겨 export_signal_series.py가 화면용 백테스트 곡선을 만든다.
 """
 
 import argparse
@@ -44,6 +48,8 @@ PROD = ROOT / "data" / "prod"
 HORIZON = 7
 SEEDS = 3
 DEFAULT_REGION = "48310"  # 거제는 파일명 접미사 없이 forecast.json (agents/common.load_input 규칙)
+# 화면의 지역 선택에 올라 있고 에이전트 산출물이 함께 있는 지역. 나머지는 data/prod/regions/로 간다
+SHOWCASE = {"48310", "51750", "12130", "47940", "51210", "51810"}
 VALIDATED = {"smape": 8.979, "mae": 7603.0}  # data/interim/ablation_h7.json의 LAG+CAL+FES+NAV+DLB (09-24 패널)
 # DB 적재가 이어져 패널을 다시 만들면 변수가 조금 달라진다(09-26 재생성: sMAPE 8.966, MAE 7,575).
 # 이 정도는 같은 모델로 보고, 화면에는 지금 예측을 만든 모델의 테스트 성능을 싣는다
@@ -197,9 +203,13 @@ def build_payload(region: str, rows: pd.DataFrame, test: pd.DataFrame, history: 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--region", nargs="+", default=["48310", "51750"], help="지역 코드 (기본 거제·영월)")
+    parser.add_argument("--all", action="store_true", help="패널의 실제 시군구 226곳 전체 (합산 단위 2곳 제외)")
     args = parser.parse_args()
 
     panel = pd.read_csv(INTERIM / "panel_daily.csv", dtype={"region_id": str}, parse_dates=["observed_date"])
+    if args.all:
+        # 인천 중구권·서구권 합산 단위(IC_MID 등, is_synthetic=1)는 학습에는 쓰지만 화면용 파일은 만들지 않는다
+        args.region = sorted(r for r in panel["region_id"].unique() if r.isdigit())
     missing = set(args.region) - set(panel["region_id"])
     if missing:
         sys.exit(f"패널에 없는 지역: {sorted(missing)}")
@@ -247,13 +257,17 @@ def main() -> None:
         sys.exit("검증 성능이 재현되지 않는다 — 패널이나 코드가 ablation 실행 때와 다르다. 내보내지 않는다")
 
     intervals, national = interval_ratios(test)
+    test[["region_id", "observed_date", TARGET, "pred"]].to_csv(
+        INTERIM / "forecast_backtest_h7.csv", index=False, float_format="%.1f")
     PROD.mkdir(parents=True, exist_ok=True)
+    (PROD / "regions").mkdir(exist_ok=True)
     for region in args.region:
         payload = build_payload(region, target[target["region_id"] == region], test, panel,
                                 intervals, national, festivals, retrieved, data_end, got)
         if problems := validate_payload("forecast", payload):
             sys.exit(f"{region} 스키마 검증 실패: {problems[:5]}")
-        path = PROD / ("forecast.json" if region == DEFAULT_REGION else f"forecast_{region}.json")
+        folder = PROD if region in SHOWCASE else PROD / "regions"
+        path = folder / ("forecast.json" if region == DEFAULT_REGION else f"forecast_{region}.json")
         path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         d = payload["data"]
         print(f"\n{d['region']['name']}({region}) → {path.relative_to(ROOT)}")

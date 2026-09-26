@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/signal_series.schema.json",
+  "title": "signal_series — 신호 추이(검색·방문 일별 배율, 백테스트, 지점 vs 시군구 월별 배율)",
+  "description": "AREA1 신호 추이 차트의 입력. 판정 규칙은 agents/signals.py(D-12)와 analysis/src/forecast/point_level.py를 그대로 쓴다. 이 파일은 판정을 새로 하지 않고, 이미 정의된 통계량을 화면에 그릴 수 있게 옮긴다.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "as_of", "thresholds", "daily", "episodes", "backtest", "points"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "as_of": {
+          "type": "object",
+          "description": "지표마다 데이터 마지막 날이 다르다. 화면은 각 곡선을 자기 기준일까지만 그린다.",
+          "required": ["search", "visitors"],
+          "properties": {
+            "search": { "type": "string", "format": "date" },
+            "visitors": { "type": "string", "format": "date" },
+            "points": { "type": ["string", "null"], "description": "YYYY-MM. 지점 자료가 없으면 null" }
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "required": ["search", "visitors", "min_duration", "basis"],
+          "properties": {
+            "search": { "type": "number", "minimum": 1 },
+            "visitors": { "type": "number", "minimum": 1 },
+            "min_duration": { "type": "integer", "minimum": 1 },
+            "basis": { "type": "string" }
+          }
+        },
+        "daily": {
+          "type": "array",
+          "minItems": 30,
+          "items": {
+            "type": "object",
+            "required": ["date"],
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "search_stat": { "type": ["number", "null"], "description": "검색지수 전년 동요일 대비 배율의 7일 중앙값 (D-12 통계량)" },
+              "visitors_stat": { "type": ["number", "null"], "description": "외지인 방문자 전년 동요일 대비 배율의 7일 중앙값" },
+              "visitors": { "type": ["number", "null"], "description": "외지인 방문자 (명)" },
+              "visitors_ly": { "type": ["number", "null"], "description": "364일 전 같은 요일 외지인 방문자 (명)" },
+              "backtest": { "type": ["number", "null"], "description": "7일 전 시점 정보만으로 낸 예측 (테스트 구간만)" }
+            }
+          }
+        },
+        "episodes": {
+          "type": "array",
+          "description": "임계를 min_duration일 이상 연속 넘은 구간. confirm은 신호가 확정되는 날(start + min_duration - 1).",
+          "items": {
+            "type": "object",
+            "required": ["metric", "start", "confirm", "end", "peak", "peak_date"],
+            "properties": {
+              "metric": { "type": "string", "enum": ["search", "visitors"] },
+              "start": { "type": "string", "format": "date" },
+              "confirm": { "type": "string", "format": "date" },
+              "end": { "type": "string", "format": "date" },
+              "peak": { "type": "number" },
+              "peak_date": { "type": "string", "format": "date" }
+            }
+          }
+        },
+        "backtest": {
+          "type": "object",
+          "required": ["period", "n", "smape", "mae"],
+          "properties": {
+            "period": { "$ref": "_envelope.schema.json#/definitions/period" },
+            "n": { "type": "integer", "minimum": 0 },
+            "smape": { "type": "number", "minimum": 0 },
+            "mae": { "type": "number", "minimum": 0 },
+            "national_smape": { "type": "number", "minimum": 0 }
+          }
+        },
+        "points": {
+          "type": "object",
+          "required": ["months", "region_total", "attractions", "min_base", "surge", "flat"],
+          "properties": {
+            "months": { "type": "array", "items": { "type": "string", "pattern": "^\\d{4}-\\d{2}$" } },
+            "region_total": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["month", "ratio"],
+                "properties": {
+                  "month": { "type": "string" },
+                  "ratio": { "type": ["number", "null"] },
+                  "visitors": { "type": ["number", "null"] }
+                }
+              }
+            },
+            "attractions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name", "series", "max_ratio"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "max_ratio": { "type": "number" },
+                  "series": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": ["month", "ratio", "visitors", "prev"],
+                      "properties": {
+                        "month": { "type": "string" },
+                        "ratio": { "type": "number" },
+                        "visitors": { "type": "number" },
+                        "prev": { "type": "number" }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "min_base": { "type": "integer" },
+            "surge": { "type": "number" },
+            "flat": { "type": "number" }
+          }
+        }
+      }
+    }
+  }
+}
