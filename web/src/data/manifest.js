@@ -92,3 +92,31 @@ export const REGIONS = [
 export function getManifestEntry(region, dataType) {
   return REGION_MANIFEST[region]?.[dataType] ?? null;
 }
+
+// 9종 계약 중 이 지역에 몇 개가 있고 그중 몇 개가 실측인지. 지역마다 준비 상태가 달라서
+// 어떤 화면은 비어 있는데, 그 이유를 지역 선택기 옆에서 바로 알려 주기 위한 것이다
+// (처음 온 사람은 빈 화면을 고장으로 읽는다).
+// 9종 데이터 계약. briefing은 이 9종을 입력으로 agent5가 만들어 내는 산출물이라 계약 수에
+// 포함하지 않는다(web/api/query.js의 TOOLS 목록과 같은 기준). 이걸 빼먹으면 거제가
+// "10/9종"으로 표시된다.
+export const DATA_TYPES = [
+  "signal_status",
+  "forecast",
+  "visitor_profile",
+  "hotspots",
+  "content_type",
+  "checklist",
+  "precedent",
+  "before_after",
+  "timeline",
+];
+
+export function getRegionCoverage(region) {
+  const manifest = REGION_MANIFEST[region] ?? {};
+  const entries = DATA_TYPES.map((t) => manifest[t]).filter(Boolean);
+  return {
+    total: DATA_TYPES.length,
+    available: entries.length,
+    real: entries.filter((e) => e.kind === "real").length,
+  };
+}

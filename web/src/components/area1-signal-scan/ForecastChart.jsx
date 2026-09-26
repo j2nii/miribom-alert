@@ -1,4 +1,5 @@
 import { formatDateWithWeekday, isWeekend, weekdayOf } from "../../lib/format.js";
+import Term from "../common/Term.jsx";
 
 const WIDTH = 640;
 const HEIGHT = 180;
@@ -47,7 +48,7 @@ export default function ForecastChart({ forecastData }) {
           모델 <strong>{model.name}</strong>
         </span>
         <span>
-          {model.metric.name} <strong>{model.metric.value}</strong>
+          <Term name={model.metric.name}>{model.metric.name}</Term> <strong>{model.metric.value}</strong>
         </span>
         <span style={{ color: "var(--muted)" }}>
           검증기간 {model.metric.validation_period.start}~{model.metric.validation_period.end}

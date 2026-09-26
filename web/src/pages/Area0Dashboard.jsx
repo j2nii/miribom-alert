@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useRegionData } from "../hooks/useRegionData.js";
 import { useMediaQuery, NARROW_QUERY } from "../hooks/useMediaQuery.js";
-import { REGIONS } from "../data/manifest.js";
+import { REGIONS, getRegionCoverage } from "../data/manifest.js";
 import DataState from "../components/common/DataState.jsx";
 import MockBanner from "../components/common/MockBanner.jsx";
 import ChatWidget from "../components/common/ChatWidget.jsx";
 import SignalStatusPanel from "../components/area0-dashboard/SignalStatusPanel.jsx";
 import LifecyclePanel from "../components/area0-dashboard/LifecyclePanel.jsx";
+import TodayActionCard from "../components/area0-dashboard/TodayActionCard.jsx";
 
 export default function Area0Dashboard({ region, onRegionChange }) {
   const signalStatus = useRegionData("signal_status", region);
   const forecast = useRegionData("forecast", region);
+  // 오늘의 결론 카드용. 둘 다 정적 JSON이라 AREA3와 중복 요청이 되지만 브라우저 캐시가
+  // 받아주고, 대신 AREA0가 AREA3의 결론을 먼저 보여줄 수 있게 된다.
+  const checklist = useRegionData("checklist", region);
+  const briefing = useRegionData("briefing", region);
   const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
   // Watched by ChatWidget: as long as any part of this row is still on
   // screen, the chat stays docked in its 2-column spot -- only once the
@@ -33,6 +38,7 @@ export default function Area0Dashboard({ region, onRegionChange }) {
   // 게이지 패널만큼(수백 px) 빈 채로 세로를 차지한다 -- QA의 "빈 대화창이 화면 절반을
   // 먹는다"가 그 증상이다. 좁은 화면에서는 높이 강제를 끄고 내용만큼만 차지하게 한다.
   const isNarrow = useMediaQuery(NARROW_QUERY);
+  const coverage = getRegionCoverage(region);
 
   useEffect(() => {
     const el = mainRef.current;
@@ -48,7 +54,10 @@ export default function Area0Dashboard({ region, onRegionChange }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">AREA 0 · CONTROL DASHBOARD</p>
+        <p className="panel-eyebrow">
+          <span className="panel-eyebrow__code">AREA 0</span>
+          지금 상황
+        </p>
         <h2>관제 대시보드</h2>
         <p className="panel-subtitle">담당 지역의 오늘 경보 단계를 확인하고, 옆 대화창으로 근거를 되물어보는 화면입니다. 여기서 바꾼 지역은 화면 전체(AREA1~4)와 대화창에 함께 적용됩니다.</p>
       </div>
@@ -63,6 +72,12 @@ export default function Area0Dashboard({ region, onRegionChange }) {
             ))}
           </select>
         </div>
+        {/* 지역마다 준비된 데이터 종류가 달라 어떤 화면은 비어 있다. 그 이유를 고르는
+            자리에서 바로 알려 준다 -- 빈 화면을 고장으로 읽지 않도록. */}
+        <span className="region-coverage" title="9종 데이터 계약 중 이 지역에 준비된 수">
+          데이터 {coverage.available}/{coverage.total}종
+          <span className="region-coverage__real">실측 {coverage.real}</span>
+        </span>
       </div>
 
       <div className="area0-layout" ref={layoutRef}>
@@ -84,6 +99,15 @@ export default function Area0Dashboard({ region, onRegionChange }) {
               ) : (
                 <LifecyclePanel envelope={envelope} />
               )
+            }
+          />
+
+          <TodayActionCard
+            region={region}
+            checklist={checklist}
+            briefing={briefing}
+            alertLevel={
+              signalStatus.status === "ok" ? signalStatus.envelope.data.alert_level : null
             }
           />
         </div>

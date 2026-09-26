@@ -19,6 +19,14 @@ const INPUT_MAX_HEIGHT = 120;
 // 답변이 2~4문장 규격이라 20개여도 컨텍스트 부담이 작다. api/query.js에도 같은 상한이 있다.
 const MAX_HISTORY_MESSAGES = 20;
 
+// 빈 대화창에 띄우는 예시 질문. 지역 이름은 {지역} 자리에 채워 넣는다. 모든 지역에
+// signal_status/checklist가 있으므로 어느 지역에서 눌러도 근거 있는 답이 나온다.
+const SUGGESTIONS = [
+  "지금 {지역} 상황 어때?",
+  "오늘 뭘 먼저 해야 해?",
+  "어디가 제일 붐벼?",
+];
+
 // 출처 칩에 쓰는 데이터 계약별 한글 이름 (api/query.js의 TOOLS와 같은 dataType 키).
 const DATA_LABELS = {
   signal_status: "신호 상태",
@@ -314,9 +322,12 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
     });
   }
 
-  async function handleSubmit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
-    const question = input.trim();
+    submitQuestion(input.trim());
+  }
+
+  async function submitQuestion(question) {
     if (!question || loading) return;
 
     // 각 이력 항목에 지역을 함께 실어 보낸다 -- 서버(api/query.js)가 현재 조회 지역과
@@ -477,11 +488,29 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
 
           <div className="chat-widget__messages" ref={messagesRef}>
             {messages.length === 0 && (
-              <p className="chat-widget__hint">
-                {regionLabel ?? region} 데이터만 근거로 답합니다. 지역을 바꾸면 대화가 새로 시작됩니다.
-                <br />
-                예: "지금 {regionLabel ?? region} 상황 어때?", "이번 주말 방문객 얼마나 예상돼?"
-              </p>
+              <>
+                <p className="chat-widget__hint">
+                  {regionLabel ?? region} 데이터만 근거로 답합니다. 지역을 바꾸면 대화가 새로 시작됩니다.
+                </p>
+                {/* 빈 입력창 앞에서 "무엇을 물어봐도 되는지" 모르는 게 첫 사용자의 가장 큰 벽이다.
+                    눌러서 바로 보내지는 예시를 준다. */}
+                <div className="chat-widget__suggestions">
+                  {SUGGESTIONS.map((q) => {
+                    const text = q.replace("{지역}", regionLabel ?? region);
+                    return (
+                      <button
+                        key={q}
+                        type="button"
+                        className="chat-suggestion"
+                        onClick={() => submitQuestion(text)}
+                        disabled={loading}
+                      >
+                        {text}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
             )}
             {messages.map((m, i) => {
               const isPendingFirstToken = m.streaming && !m.content;

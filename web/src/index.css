@@ -13,6 +13,11 @@
   --crimson: #d14b3d;
   --slate: #7a8b99;
   --teal: #2f7a70;
+  /* 원본 데모(docs/meeting-notes/tourism-radar-demo.html)의 토큰인데 index.css로 옮길 때
+     빠져 있었다. CrossValidationLights가 "임계 미달" 신호등의 꺼진 불 색으로 쓰는데,
+     미정의 변수라 background가 무효가 되어 점이 투명하게 렌더됐다 -- 3중 신호등에서
+     "몇 개가 켜졌나"를 읽어야 하는 바로 그 지점이 비어 있었다. */
+  --pin-neutral: #b7c0c7;
 
   --teal-tint-bg: #eaf4f1;
   --teal-tint-border: #bfe0d9;
@@ -115,24 +120,98 @@ body {
   font-size: 13px;
   color: rgba(255, 255, 255, 0.68);
 }
-.app-header-anchors {
+.app-header__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.app-header__help {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-kr);
+}
+.app-header__help:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* 구역 앵커 = 화면 전체의 업무 흐름 표시. 스크롤해도 따라오도록 sticky로 두고, 그래서
+   <header>의 형제로 렌더한다(Header.jsx 주석 참고). 투어를 닫은 뒤에도 "지금 어디 있고
+   다음은 어디인지"가 남아 있어야 한다. */
+.area-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--abyss);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 2px 10px rgba(14, 30, 46, 0.18);
+}
+.area-nav__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 9px 20px;
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-top: 12px;
+}
+@media (max-width: 860px) {
+  /* 좁은 화면에서 줄바꿈되면 이 바가 두 줄이 되어 세로를 크게 먹는다(스티키라 계속).
+     한 줄로 두고 가로 스와이프하게 한다. */
+  .area-nav__inner {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 8px 16px;
+  }
+  .area-nav__inner::-webkit-scrollbar {
+    display: none;
+  }
+  .app-header-anchor {
+    flex-shrink: 0;
+  }
 }
 .app-header-anchor {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
-  padding: 3px 9px;
+  padding: 4px 11px 4px 5px;
   text-decoration: none;
+}
+.app-header-anchor__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  font-family: var(--font-mono);
+  font-size: 9px;
 }
 .app-header-anchor:hover {
   border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+.app-header-anchor.is-active {
+  background: #fff;
+  border-color: #fff;
+  color: var(--abyss);
+}
+.app-header-anchor.is-active .app-header-anchor__num {
+  background: var(--abyss);
+  color: #fff;
 }
 
 /* AREA layout -- same grid-template-areas as the reference demo
@@ -184,11 +263,20 @@ body {
 .panel-head {
   margin-bottom: 14px;
 }
+/* "AREA 3" 같은 코드는 모노+자간으로, 그 뒤 한글 라벨은 본문 폰트로 쓴다. 한글에 모노
+   자간을 그대로 먹이면 "오 늘 할 일"처럼 글자가 벌어져 읽기 나빠진다. */
 .panel-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+}
+.panel-eyebrow__code {
   font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.08em;
-  color: var(--teal);
+  font-weight: 400;
+  opacity: 0.8;
+  margin-right: 5px;
 }
 .panel-head h2 {
   margin: 4px 0 0;
@@ -510,6 +598,16 @@ body {
   color: var(--ink-soft);
 }
 
+/* 경보 단계가 행정적으로 무엇을 뜻하는지 한 줄 (lib/alertLevels.js의 ALERT_MEANING).
+   단계 이름만으로는 무엇을 해야 하는지 알 수 없다. */
+.alert-meaning {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
 .alert-badge {
   display: inline-block;
   padding: 4px 12px;
@@ -636,6 +734,374 @@ body {
   text-align: center;
   color: var(--ink-soft);
   font-size: 13px;
+}
+.unsupported-state {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: var(--mist);
+  border-radius: 10px;
+  padding: 18px 14px;
+}
+.unsupported-state__hint {
+  font-size: 12px;
+}
+
+/* 지역 선택기 옆 데이터 준비 상태 */
+.region-coverage {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+.region-coverage__real {
+  color: var(--teal);
+  background: var(--teal-tint-bg);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* 챗봇 추천 질문 */
+.chat-widget__suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.chat-suggestion {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: var(--font-kr);
+}
+.chat-suggestion:hover:not(:disabled) {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.chat-suggestion:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* 용어 해설 (Term.jsx + lib/glossary.js). 점선 밑줄 = "눌러 보면 뜻이 나온다"는 표시. */
+.term-wrap {
+  position: relative;
+  display: inline;
+}
+.term {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: help;
+  border-bottom: 1px dotted var(--teal);
+}
+.term:hover {
+  color: var(--teal);
+}
+.term__pop {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  display: block;
+  width: max-content;
+  max-width: min(300px, 72vw);
+  background: var(--abyss);
+  color: #fff;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.6;
+  box-shadow: 0 10px 26px rgba(14, 30, 46, 0.32);
+  white-space: normal;
+  text-align: left;
+}
+.term__pop strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--teal-tint-border);
+}
+
+/* 첫 방문 사용법 투어 (GuideTour.jsx). 대상 요소 크기의 빈 사각형에 아주 큰 spread의
+   box-shadow를 줘서 화면 전체를 덮되 그 안쪽만 선명하게 남긴다 -- SVG 마스크나 별도
+   라이브러리 없이 스포트라이트가 된다. */
+.tour {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+.tour__hole,
+.tour__backdrop {
+  position: fixed;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(14, 30, 46, 0.66);
+  transition: top 0.18s ease, left 0.18s ease, width 0.18s ease, height 0.18s ease;
+  pointer-events: auto;
+}
+.tour__backdrop {
+  inset: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: rgba(14, 30, 46, 0.66);
+}
+.tour__hole {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 0;
+}
+.tour__card {
+  pointer-events: auto;
+  background: var(--panel);
+  border-radius: 14px;
+  padding: 16px 18px;
+  box-shadow: 0 16px 44px rgba(14, 30, 46, 0.4);
+  z-index: 101;
+}
+.tour__progress {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--teal);
+}
+.tour__title {
+  margin: 6px 0 0;
+  font-size: var(--fs-section-title);
+  font-weight: 800;
+}
+.tour__body {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+.tour__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+}
+.tour__nav {
+  display: flex;
+  gap: 8px;
+}
+.tour__skip {
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-kr);
+  text-decoration: underline;
+}
+
+/* AREA0 "오늘의 결론" 카드 -- 첫 화면에서 성과로 가는 입구. 화면에서 가장 먼저 눈에
+   들어와야 하므로 패널 안에서 유일하게 짙은 배경을 쓴다. */
+.today-action {
+  background: var(--abyss);
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-top: 14px;
+}
+.today-action__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.today-action__eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.65);
+}
+.today-action__count {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.92);
+}
+.today-action__count strong {
+  font-size: 16px;
+}
+.today-action__done {
+  color: var(--teal-tint-border);
+}
+.today-action__situations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+/* 접혀 있을 때는 칩끼리 한 줄에 나란히, 펼치면 근거 문장을 위해 한 줄을 다 쓴다. */
+.today-action__situation {
+  flex: 0 1 auto;
+}
+.today-action__situation[open] {
+  flex: 1 1 100%;
+}
+.today-action__situation > summary {
+  display: inline-block;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 3px 11px;
+  list-style: none;
+}
+.today-action__situation > summary::marker,
+.today-action__situation > summary::-webkit-details-marker {
+  display: none;
+}
+.today-action__situation > summary::after {
+  content: " ⌄";
+  color: rgba(255, 255, 255, 0.6);
+}
+.today-action__situation p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+}
+.today-action__list {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.today-action__list li {
+  font-size: 13px;
+}
+.today-action__what {
+  display: block;
+  font-weight: 700;
+}
+.today-action__why {
+  display: block;
+  font-size: 11px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 2px;
+}
+.today-action__buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.today-action__buttons .btn-primary {
+  background: #fff;
+  color: var(--abyss);
+  text-decoration: none;
+}
+.today-action__buttons .btn-primary:hover {
+  background: var(--mist);
+}
+.today-action__buttons .btn-ghost {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.today-action__buttons .btn-ghost:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+/* 체크리스트 진행률 */
+.checklist-progress {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.checklist-progress__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+.checklist-progress__count {
+  color: var(--teal);
+}
+.checklist-progress__pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.checklist-progress__bar {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--mist);
+  margin-top: 8px;
+  overflow: hidden;
+}
+.checklist-progress__fill {
+  height: 100%;
+  background: var(--teal);
+  border-radius: 999px;
+  transition: width 0.2s ease;
+}
+.checklist-progress__note {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.briefing-item-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+.briefing-item-check input {
+  margin: 2px 0 0;
+  flex-shrink: 0;
+  accent-color: var(--teal);
+  width: 15px;
+  height: 15px;
+}
+.briefing-item--done .briefing-item-label {
+  text-decoration: line-through;
+  color: var(--ink-soft);
+}
+.briefing-item--done {
+  background: var(--teal-tint-bg);
+  border-color: var(--teal-tint-border);
+}
+.briefing-item--muted {
+  opacity: 0.72;
+}
+/* status="대기" = 지금은 조건에 해당하지 않는 조치. 기본으로 접어 두고 "지금 해야 할 것"만
+   먼저 보이게 한다 -- 예전엔 발동/대기가 같은 무게로 섞여 22건이 한꺼번에 쏟아졌다. */
+.checklist-waiting {
+  margin-top: 10px;
+  font-size: 12px;
+}
+.checklist-waiting > summary {
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.checklist-waiting > summary + .briefing-list {
+  margin-top: 8px;
 }
 
 .app-footer {

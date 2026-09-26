@@ -6,6 +6,7 @@ import CrossValidationLights from "../components/area1-signal-scan/CrossValidati
 import ForecastChart from "../components/area1-signal-scan/ForecastChart.jsx";
 import HotspotRanking from "../components/area1-signal-scan/HotspotRanking.jsx";
 import VisitorProfileCard from "../components/area1-signal-scan/VisitorProfileCard.jsx";
+import Term from "../components/common/Term.jsx";
 
 export default function Area1SignalScan({ region }) {
   const signalStatus = useRegionData("signal_status", region);
@@ -20,13 +21,18 @@ export default function Area1SignalScan({ region }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">AREA 1 · SIGNAL SCAN</p>
+        <p className="panel-eyebrow">
+          <span className="panel-eyebrow__code">AREA 1</span>
+          신호 확인
+        </p>
         <h2>바이럴 신호 스캔</h2>
         <p className="panel-subtitle">지금 올라온 신호가 믿을 만한지, 며칠 뒤 몇 명이 올지 판단하는 화면입니다. 신호등·90일 예측·급증 지점·방문객 구성 순으로 봅니다. 지역 변경은 AREA0에서 합니다.</p>
       </div>
 
       <div className="section-block">
-        <p className="section-title">3중 교차검증 신호등</p>
+        <p className="section-title">
+          <Term name="3중 교차검증">3중 교차검증</Term> 신호등
+        </p>
         <DataState
           result={signalStatus}
           render={({ envelope }) =>

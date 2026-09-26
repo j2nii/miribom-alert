@@ -13,7 +13,10 @@ export default function Area2Content({ region }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">AREA 2 · CONTENT SOURCES</p>
+        <p className="panel-eyebrow">
+          <span className="panel-eyebrow__code">AREA 2</span>
+          원인 콘텐츠
+        </p>
         <h2>콘텐츠 분석</h2>
         <p className="panel-subtitle">어떤 콘텐츠가 사람을 부르고 있고 어느 지점이 비어 있는지 확인하는 화면입니다. 전용 데이터가 없는 탭은 '준비 중' 배지로 표시됩니다.</p>
       </div>

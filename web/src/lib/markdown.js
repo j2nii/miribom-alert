@@ -14,8 +14,13 @@
 
 const EMPHASIS = /\*\*([^*]+)\*\*/g;
 
-// ASCII 구두점 전체 + 한글 문서에서 흔한 둥근 따옴표. 한글·영숫자는 마커에 붙어도 안전하다.
-const PUNCT = /[!-/:-@[-`{-~‘’“”]/;
+// CommonMark가 말하는 "구두점": ASCII 구두점 전체 + 유니코드 구두점 카테고리(\p{P}).
+// \p{P}가 중요한 이유는 한국어 답변에 「」·『』·… 같은 CJK 문장부호가 자주 섞이기 때문이다.
+// ASCII와 둥근 따옴표만 보던 이전 버전은 **「주의」**를 처럼 CJK 괄호가 마커에 붙은 경우를
+// 놓쳐서 별표가 그대로 노출됐다. (\p{S}는 넣지 않는다 -- CommonMark 0.30의 정의에 없고,
+// 이미 정상 파싱되는 문자열을 괜히 건드리게 된다.)
+const ASCII_PUNCT = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+const UNICODE_PUNCT = /\p{P}/u;
 const SPACE = /\s/;
 
 // 닫는 기호 -> 여는 기호. 아래 fixOne에서 짝을 함께 밖으로 밀어낼 때 쓴다.
@@ -25,12 +30,19 @@ const PAIR_OPENER = {
   ")": "(",
   "]": "[",
   "}": "{",
-  "’": "‘",
-  "”": "“",
+  "’": "‘", // ’ ‘
+  "”": "“", // ” “
+  "」": "「", // 」 「
+  "』": "『", // 』 『
+  "〉": "〈", // 〉 〈
+  "》": "《", // 》 《
+  "】": "【", // 】 【
+  "〕": "〔", // 〕 〔
+  "）": "（", // ） （
 };
 
 function isPunct(ch) {
-  return !!ch && PUNCT.test(ch);
+  return !!ch && (ASCII_PUNCT.includes(ch) || UNICODE_PUNCT.test(ch));
 }
 function isSpace(ch) {
   return !!ch && SPACE.test(ch);
@@ -81,6 +93,15 @@ export function normalizeMarkdown(text) {
   let out = text.replace(EMPHASIS, (match, inner, offset, whole) =>
     fixOne(inner, whole[offset - 1], whole[offset + match.length])
   );
+
+  // 모델이 문단 경계에 `|`를 하나 흘리는 경우가 있다(실제 답변에서 관측:
+  // "...로 둔다(에이전트③ 기준).|"). 표 문법이 아니라 단독 문자라 마크다운은 그대로
+  // 글자로 찍고, 화면에는 정체불명의 막대기가 남는다. 한 줄에 `|`가 하나뿐이고 줄 끝이나
+  // 줄 머리에 있을 때만 지운다 -- 진짜 표라면 한 줄에 여러 개가 있으므로 건드리지 않는다.
+  out = out
+    .split("\n")
+    .map((line) => ((line.match(/\|/g) ?? []).length === 1 ? line.replace(/^\s*\||\|\s*$/, "") : line))
+    .join("\n");
 
   // 스트리밍 중에는 여는 `**`만 도착한 순간이 있다 -- 짝이 없는 마지막 마커는 렌더 전에
   // 지워서 타이핑 도중 별표가 번쩍이지 않게 한다.
