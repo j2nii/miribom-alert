@@ -450,14 +450,20 @@ def main() -> None:
     parser.add_argument("--base-url", help="openai 백엔드 주소")
     parser.add_argument("--response", type=Path, help="replay 백엔드가 읽을 응답 파일")
     parser.add_argument("--dump-prompt", action="store_true", help="LLM을 호출하지 않고 요청만 저장")
+    parser.add_argument("--region", action="append",
+                        help="특정 지역 코드만 처리(반복 지정 가능). 기본: 전체(거제 포함)")
     args = parser.parse_args()
+    regions = set(args.region) if args.region else None
 
-    if (RAW_DIR / RAW_FILE).exists():
-        build_geoje()
-    else:
-        print(f"[건너뜀] 거제: {RAW_FILE}이 없다 (data/raw/youtube는 gitignore 대상 — 기존 data/prod/content_type.json 유지)")
+    if regions is None or "48310" in regions:
+        if (RAW_DIR / RAW_FILE).exists():
+            build_geoje()
+        else:
+            print(f"[건너뜀] 거제: {RAW_FILE}이 없다 (data/raw/youtube는 gitignore 대상 — 기존 data/prod/content_type.json 유지)")
 
     for region, (region_name, _) in OTHER_RAW_FILES.items():
+        if regions is not None and region not in regions:
+            continue
         payload = build_other(region, region_name, args)
         if payload is None:
             continue

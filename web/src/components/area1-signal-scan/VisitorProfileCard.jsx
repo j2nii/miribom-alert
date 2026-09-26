@@ -24,8 +24,14 @@ export default function VisitorProfileCard({ profileData }) {
   return (
     <div>
       <p style={{ fontSize: 14 }}>
-        총 방문객 <strong>{total_visitors.toLocaleString()}</strong>명 · 현지 {(local_external_mix.local * 100).toFixed(0)}%
-        / 외지 {(local_external_mix.external * 100).toFixed(0)}%
+        총 방문객 <strong>{total_visitors.toLocaleString()}</strong>명
+        {local_external_mix && (
+          <>
+            {" "}
+            · 현지 {(local_external_mix.local * 100).toFixed(0)}% / 외지{" "}
+            {(local_external_mix.external * 100).toFixed(0)}%
+          </>
+        )}
       </p>
 
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
