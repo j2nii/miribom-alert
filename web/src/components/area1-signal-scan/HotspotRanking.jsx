@@ -22,7 +22,8 @@ export default function HotspotRanking({ hotspotsData, deadZonePois = [] }) {
                 </span>
               </div>
               <div style={{ color: "var(--ink-soft)", fontSize: 11 }}>
-                {poi.visitors.toLocaleString()}명 · 혼잡도 {poi.congestion_level}/5 · {poi.spatial_type}
+                {poi.visitors.toLocaleString()}명
+                {poi.congestion_level != null && ` · 혼잡도 ${poi.congestion_level}/5`} · {poi.spatial_type}
               </div>
               {poi.bottleneck && (
                 <div style={{ color: "var(--ink-soft)", fontSize: 11 }}>

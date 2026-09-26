@@ -263,11 +263,14 @@ def main() -> None:
     parser.add_argument("--base-url", help="openai 백엔드 주소")
     parser.add_argument("--response", type=Path, help="replay 백엔드가 읽을 응답 파일")
     parser.add_argument("--spatial-type", help="매칭 기준 공간 유형. 기본: 급증 지점 1위의 유형")
+    parser.add_argument("--region", help="지역 코드(예: 51750). 기본(거제)은 파일명에 접미사가 없다")
     parser.add_argument("--dump-prompt", action="store_true", help="LLM을 호출하지 않고 요청만 저장")
-    parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--out", type=Path)
     args = parser.parse_args()
+    if args.out is None:
+        args.out = OUT.with_name(f"checklist_{args.region}.json") if args.region else OUT
 
-    inputs = {name: load_input(name) for name in ("signal_status", "hotspots", "visitor_profile", "content_type")}
+    inputs = {name: load_input(name, args.region) for name in ("signal_status", "hotspots", "visitor_profile", "content_type")}
     signal, hotspots, profile, content = (inputs[n][0] for n in inputs)
     spatial = args.spatial_type or hotspots["data"]["ranking"][0]["spatial_type"]
     situation = build_situation(signal, hotspots, profile, content, spatial)

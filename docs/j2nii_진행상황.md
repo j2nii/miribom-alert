@@ -1,6 +1,6 @@
 # 진행 상황 (j2nii · 프론트엔드)
 
-> 최종 갱신: **2026-09-23(수)** · 작성 담당: 역할3(프론트엔드) — j2nii
+> 최종 갱신: **2026-09-25(금)** · 작성 담당: 역할3(프론트엔드) — j2nii
 > 관련 문서: `docs/진행상황.md`(전체 프로젝트), `docs/설계결정.md`(D-01~D-13), `docs/meeting-notes/UI/`(자연어 질의 인터페이스 조사·계획, MySQL 실데이터 연동 계획), `docs/meeting-notes/DB/관광바이럴조기경보DB사용설명서.pdf`
 
 ---
@@ -8,6 +8,8 @@
 ## 한 줄 요약
 
 **`web/`에 실제 Vite+React 앱을 새로 세우고, 9종+briefing 스키마를 실제로 읽어 그리는 AREA 0~4 화면을 전부 완성했다. AREA 0에 자연어 질의 채팅(실제 tool-calling + 스트리밍, Upstage Solar)을 추가했다. agents 브랜치가 안내한 `signal_status`/`checklist`/`timeline` 스키마 변경 중 화면이 깨지는 부분(Tier 1)은 반영 완료. MySQL DB(`tour_earlywarning`)에 직접 연결해보기도 했으나(§14~16), `agents/` 폴더(judge_signal_status.py, agent1_timeline.py, agent5_briefing.py 등)가 이미 DB→JSON 변환을 전담하는 정본 파이프라인임을 확인하고 우리 코드는 걷어낸 뒤 그 산출물을 쓰는 쪽으로 최종 정리했다(§17~18) — `signal_status`/`timeline`(영월·거제)과 `checklist`(거제)가 실데이터로, "AI 정책 초안 도우미"도 라이브 LLM 호출 대신 agent5의 정적 브리핑을 표시하는 방식으로 바뀌었다.**
+
+**(09-24~09-25 추가) `refactor/agents_db-full연동` 브랜치가 develop에 병합된 뒤, 그 브랜치가 만든 `hotspots`/`visitor_profile`/`content_type`(5개 지역) 실측 산출물을 프론트에 마저 연결했다(§24) — 이 과정에서 실측 데이터가 옵셔널 필드를 비워도 무조건 읽던 컴포넌트 버그 2건을 발견해 고쳤다. 영월 콘텐츠 분류에서 유튜브 검색이 지역명이 전혀 없는 강릉 영상을 섞어 온 것을 발견해 `agent2_content_type.md` 프롬프트에 지역 검증 규칙을 추가했다(§25 — 완전히 해결되진 않음). `agents/common.py`에 지역 인자를 추가해 `agent3_match.py`/`agent5_briefing.py`가 거제 외 지역도 처리할 수 있게 확장하고, 영월 `checklist`를 실측으로 만들었다(§26 — `briefing`은 forecast 부재로 아직 보류). 마지막으로 5개 에이전트+비에이전트 스크립트의 현황을 정리한 문서와 실제 화면 캡처를 남겼다(§27).**
 
 ---
 
@@ -150,6 +152,46 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 
 ---
 
+## 09-24~09-25 작업 (UI/UX 브랜치 — hotspots/visitor_profile/content_type 프론트 반영 + content_type 지역 오분류 수정 + checklist 다지역 확장)
+
+### 24. hotspots/visitor_profile/content_type(거제·영월) 프론트 반영 + 컴포넌트 버그 2건 수정
+
+`refactor/agents_db-full연동` 브랜치(§19~23)가 develop에 PR#10으로 병합된 뒤, `manifest.js`/`dataManifest.js`가 아직 그 산출물을 안 가리키고 있어 산출물은 있는데 화면엔 안 뜨는 상태였다. 범위는 **기존 지역(영월·거제)만** — 여수·울릉·속초·인제는 이미 실측 파일이 있지만 `REGIONS` 선택지 자체에 없어 이번엔 손대지 않았다(사용자 결정: "우선 기존 지역 위주로 프론트를 완성한 뒤 시계열 예측 모델이 잘 맞는 지역 기준으로 지역을 늘린다").
+
+manifest만 바꾸면 안 됐다 — 실측 데이터는 목업과 달리 스키마상 선택 필드를 의도적으로 비워두는데(발명 금지 원칙), 렌더 컴포넌트 두 곳이 그 필드가 항상 있다고 가정하고 있었다:
+- `VisitorProfileCard.jsx` — `local_external_mix.local`을 무조건 읽어 실측 데이터 연결 시 `Cannot read properties of undefined` 크래시. `local_external_mix`가 있을 때만 렌더링하도록 수정.
+- `HotspotRanking.jsx` — `congestion_level`을 무조건 문자열에 끼워 넣어 "혼잡도 undefined/5"로 표시됨. 있을 때만 "· 혼잡도 N/5"를 붙이도록 수정.
+
+`manifest.js`/`dataManifest.js`: 거제 `hotspots`/`visitor_profile`을 mock→real로, `checklist`의 `kind` 라벨을 실제 상태(`_mock:false`)에 맞게 정정, 영월에 `hotspots`/`visitor_profile`/`content_type` 3종 추가. 로컬 dev 서버 + 임시 설치한 Playwright로 두 지역 모두 크래시·콘솔 에러 없이 렌더링되는 것을 확인했다.
+
+### 25. content_type — 영월 재수집 데이터에 강릉(다른 지역) 영상이 섞여 들어온 것을 발견·부분 수정
+
+영월 content_type 화면을 보다가 강릉 관련 영상이 섞여 있는 것을 발견해 조사했다. 원인은 두 겹:
+1. **수집 단계**(`collection/youtube_collect.py`): YouTube Data API의 `search.list`가 정확한 키워드 매칭이 아니라 의미 기반 유사도 검색이라, "영월 맛집" 등으로 검색해도 "영월"이라는 단어를 제목·설명·태그 어디에도 포함하지 않는 순수 강릉 콘텐츠가 섞여 들어왔다(재수집 63건 중 14건).
+2. **분류 단계**(`agents/prompts/agent2_content_type.md`): "관광무관" 정의(v1.1)가 "지역명만 겹치고 방문 수요와 무관한 콘텐츠"만 다뤄서, "아예 대상 지역이 아닌 콘텐츠"를 걸러내라는 지시가 없었다. 그 결과 조회수 상위 50건에 포함된 강릉 영상 11건 중 2건만 관광무관으로 걸러지고 9건이 맛집형 등으로 정상 분류돼, "맛집형 40%(16건)" 같은 집계 수치에 다른 지역 콘텐츠가 섞여 있었다.
+
+**조치**: 프롬프트 v1.2 — 판단 규칙 1번으로 "제목·설명·태그 어디에도 대상 지역명이 없으면 관광무관으로 분류"를 추가하고, `agent2_apply.py`에 `--region` 필터를 추가해 영월만 재실행했다.
+
+**검증 결과**: 강릉 영상 11건 중 관광무관으로 걸러진 건수가 2건 → 5건으로 늘었다(3건 추가 정정, 신뢰도도 0.95로 상승). 전체 `unclassified_count`도 5건 → 17건으로 늘었다. **다만 완전히 해결되지는 않았다** — 나머지 6건은 프롬프트에 규칙을 명시했는데도 여전히 맛집형/코스·일정형으로 분류됐다. LLM이 규칙을 항상 따르지는 않는다는 뜻이라, 근본적으로는 수집 단계에서 지역명 포함 여부로 사전 필터링하는 것도 함께 검토해야 한다 — 다음 작업으로 남겨둔다.
+
+### 26. agent3_match.py/agent5_briefing.py에 지역 인자 추가, 영월 checklist 실측 생성
+
+`agent3_match.py`(checklist)와 `agent5_briefing.py`(briefing)는 원래 거제 단일 지역만 처리했다 — `agents/common.py`의 `load_input(name)`이 지역 구분 없이 항상 `{name}.json`(거제 전용 파일명)만 읽었기 때문이다. `load_input(name, region)`으로 확장해 `region` 인자가 있으면 `{name}_{region}.json`을 찾도록 하고(`agent_hotspots.py` 등 다른 지역별 산출물과 같은 파일명 규칙), 두 스크립트에 `--region` 옵션을 추가했다. 다른 지역 파일로 대신 채우지 않는다(발명 금지) — 지역별 파일이 없으면 그대로 에러를 낸다.
+
+`python agents/agent3_match.py --region 51750 --provider upstage`로 영월 `checklist_51750.json`을 생성했다 — "주의" 단계·혼잡도 미측정 상황에서 22건 후보 중 19건 발동으로 매칭됐다(거제와 다른 조합).
+
+**`agent5_briefing.py`는 영월에서 실행 불가**: `forecast`를 필수 입력으로 요구하는데, 영월은 forecast 데이터가 mock조차 없다(시계열 브랜치 미완 — `manifest.js`에도 영월 forecast 항목 자체가 없었음). 임시 mock forecast를 지어내 우회할 수도 있었지만 실제 값이 아닌 것을 화면에 올리는 셈이라(발명 금지 원칙과 상충) 보류했다 — forecast가 실측이든 목업이든 먼저 생기면 그때 실행한다.
+
+`manifest.js`/`dataManifest.js`에 영월 `checklist` 추가(real).
+
+### 27. 문서화 — 에이전트 현황 및 프론트 매핑 문서 작성, AREA1 스크린샷 클리핑 버그 발견
+
+`docs/meeting-notes/UI/에이전트_현황_및_프론트_매핑.md` 신규 작성 — 프로젝트가 원래 번호를 붙인 5개 에이전트(①타임라인 ②콘텐츠 유형 ③매뉴얼 매칭 ④선례 조사 ⑤브리핑)를 하나씩(LLM 여부·프롬프트·모델·상태·프론트 위치), 그 번호에 속하지 않는 규칙 기반 스크립트(signal_status/hotspots/visitor_profile)를 별도로 정리하고 거제·영월 실제 화면 캡처를 붙였다.
+
+캡처 과정에서 발견한 것: AREA1/AREA2는 `panel-scroll`(고정 높이 82vh + 내부 스크롤)인데, Playwright의 엘리먼트 스크린샷은 스크롤 전 보이는 부분만 캡처한다 — 그 결과 첫 AREA1 캡처엔 신호등급만 담기고 **핫스팟 랭킹이 통째로 안 담겨 있었다**. 스크롤을 임시로 해제(`overflow: visible`)하고 다시 캡처해 신호등급/핫스팟 랭킹 두 부분으로 나눠 저장했다. 실제 앱 동작에는 문제가 없는, 문서용 캡처 방법의 함정이었다.
+
+---
+
 ## 확인된 사실 — 목업 수치의 성격
 
 `scripts/gen_mock.py`를 직접 확인한 결과: `signal_status.json`의 `congestion_level`/`density`는 계산 로직이 아니라 **사람이 손으로 넣은 고정값**이다. 반면 `forecast`의 일별 방문객, `hotspots`의 방문객 수는 실제 공식(계절성+주말가중+노이즈, 순위감쇠+노이즈)으로 계산된다.
@@ -170,6 +212,9 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 | ⑦ | ~~작업이 커밋·푸시 안 됨~~ | **해결** — 09-17까지 및 09-20~09-23 MySQL 연동 작업(§16) 전부 `UI/UX` 브랜치에 커밋·푸시됨 |
 | ⑧ | ~~`vw_daily_anomaly_scored`가 지역 필터링해도 180초+ 걸림~~ | **무의미해짐** — §17에서 이 뷰를 직접 쓰는 코드 자체를 폐기함. 다만 `agents/judge_signal_status.py`가 이 DB를 쓴다면 동일 성능 이슈가 있을 수 있어 참고 공유는 여전히 유효 |
 | ⑨ | 세션 중 실수로 MySQL 비밀번호가 대화 로그에 노출된 적 있음 | **권장** — DB 관리자에게 `tour_team*` 계정 비밀번호 교체 요청 |
+| ⑪ | `youtube_video` 테이블에 `description`/`tags` 컬럼이 없어 content_type 분류 품질이 제한됨(§23) | 미해결 — 데이터 담당 팀에 컬럼 추가 제안, 지금은 로컬 재수집으로 우회 |
+| ⑫ | content_type 분류에 다른 지역(강릉 등) 영상이 섞여 들어와 일부가 정상 유형으로 오분류됨(§25) | **부분 해결(09-24)** — 프롬프트에 지역 검증 규칙 추가로 11건 중 5건은 정정됐으나 6건은 여전히 오분류. 수집 단계 사전 필터링 검토 필요 |
+| ⑬ | `UI/UX` 브랜치가 이번 세션 커밋 4개만큼 `develop`보다 앞서 있고 아직 PR 안 됨(원격엔 push됨) | 미해결 — PR 생성 필요 |
 
 ---
 
@@ -179,16 +224,20 @@ agents 브랜치가 DB 연결로 실데이터를 만들면서 `signal_status`/`c
 | --- | --- | --- |
 | 1 | ~~Vercel 프로젝트 Environment Variables에 `UPSTAGE_API_KEY` 등록~~ | **완료** — `YOUTUBE_API_KEY` 등록 여부만 확인 필요 |
 | 2 | ~~`develop`으로 PR 생성~~ | **완료** |
-| 3 | agents 브랜치 develop 병합 후 실데이터로 AREA 0/1/3/4 재확인 | 대기 (Tier 1만 선반영된 상태) |
-| 4 | Tier 2 반영 (지역 5곳 추가, `signal_status.history` 추이 그래프, checklist 신규 필드 등) | 미착수 |
+| 3 | ~~agents 브랜치 develop 병합 후 실데이터로 AREA 0/1/3/4 재확인~~ | **완료(09-24/25)** — 영월·거제 hotspots/visitor_profile/content_type/checklist 반영·검증(§24~26). 나머지 4개 지역은 10번 항목 참고 |
+| 4 | Tier 2 반영 (지역 5곳 추가, `signal_status.history` 추이 그래프, checklist 신규 필드 등) | 미착수 — "지역 5곳 추가"는 10번과 중복, 시계열 모델이 확정될 때까지 의도적으로 보류 |
 | 5 | ~~Tier 3 — 브리핑 아키텍처(`web/api/briefing.js` vs `data/prod/briefing.json`) 팀 논의~~ | **완료(09-23, §18)** — `data/prod/briefing.json`(agent5) 채택, 라이브 API 폐기 |
 | 6 | 공공데이터포털(data.go.kr) API 키 신청 | 미착수 |
 | 7 | 경주 지역 지원 추가 | 미착수 |
-| 8 | 실 화면 클릭스루 QA (배포 URL, 브라우저 직접) | 미확인 — 3번 항목과 함께 확인 권장 |
+| 8 | 실 화면 클릭스루 QA (배포 URL, 브라우저 직접) | 미확인 — 09-24/25 검증은 전부 로컬 dev 서버 기준. 배포 URL에서는 아직 확인 안 됨 |
 | 9 | ~~MySQL 연동 작업(§16) 커밋~~ | **완료** — `b79dfb2`~`27755b8` (§17에서 이 중 라이브 API/생성스크립트 부분은 되돌림) |
-| 10 | 여수(`12130`)·울릉(`47940`)·속초(`51210`)·인제(`51810`)도 `agents/` 산출물이 이미 있음(`signal_status_*.json`, `timeline_*.json`) — `manifest.js`에 지역 추가만 하면 바로 씀 | 미착수, 난이도 낮음(영월과 동일 패턴 반복) |
-| 11 | `content_type`/`checklist`(agent3)/`briefing`(agent5) 모두 입력 일부가 아직 mock이라 `_mock:true`로 남음 — 언제 완전한 실측이 될지 | 미착수 — agent 쪽 담당자와 일정 조율 필요 |
+| 10 | 여수(`12130`)·울릉(`47940`)·속초(`51210`)·인제(`51810`)도 `agents/` 산출물이 이미 있음(`signal_status_*.json`, `timeline_*.json` 외 hotspots/visitor_profile/content_type도 09-23에 추가됨) — `manifest.js`에 지역 추가만 하면 바로 씀 | 미착수, 난이도 낮음(영월과 동일 패턴 반복) — 다만 09-24 기준 "시계열 모델이 잘 맞는 지역 먼저 고른다"는 정책으로 의도적 보류 |
+| 11 | `briefing`(agent5)이 forecast 입력 때문에 `_mock:true`로 남음(거제) / 영월은 forecast 자체가 없어 아예 생성 불가 | 미착수 — forecast 브랜치 완료 대기(§26) |
+| 11-1 | `checklist`/`content_type`을 다른 4개 지역(여수·울릉·속초·인제)까지 확장 | 미착수 — `--region` 옵션은 이미 만들어둠(09-24), 10번과 함께 결정되면 바로 실행 가능 |
 | 12 | 24시간 자동 재수집이 시작되면 `agents/` 파이프라인(judge_signal_status.py 등) 재실행 주기 확인 | 미착수 — 이건 이제 우리(프론트) 담당이 아니라 agents 담당자의 자동화 범위, 조율만 필요 |
+| 13 | `UI/UX` → `develop` PR 생성(이번 세션 커밋 4개) | 미착수 |
+| 14 | content_type 지역 오분류 잔여 6건 해결 — `collection/youtube_collect.py` 수집 단계 사전 필터링 검토(§25) | 미착수 |
+| 15 | `youtube_video` 테이블에 `description`/`tags` 컬럼 추가 요청(§23) | 미착수 — 데이터 담당 팀 결정 사항 |
 
 ---
 
@@ -227,13 +276,18 @@ docs/meeting-notes/UI/
   프론트구조_기능조사_및_에이전트연동계획.md   ← 09-17 신규
   자연어_질의_인터페이스_구현계획.md            ← 09-17 신규
   MySQL_실데이터_연동_계획.md                   ← 09-23 신규
+  에이전트_현황_및_프론트_매핑.md               ← 09-25 신규: 5개 에이전트+규칙 스크립트별 LLM 여부·상태·화면 캡처 정리
+  screenshots/                                  ← 09-25 신규: 거제·영월 AREA0~4 실제 화면 캡처
 
 data/mock/chungju_signal_status.json, chungju_content_type.json   ← 충주 참고 사례
 data/prod/                                                        ← agents/ 파이프라인 산출물 (실측)
   signal_status.json, signal_status_{12130,47940,51210,51750,51810}.json   ← judge_signal_status.py
   timeline.json, timeline_{12130,47940,51210,51750,51810}.json            ← agent1_timeline.py
-  content_type.json                                                       ← agent2_apply.py
-  checklist.json (agent3_match.py, 아직 _mock:true), briefing.json (agent5_briefing.py, 아직 _mock:true, 09-23부터 연동)
+  content_type.json, content_type_{12130,47940,51210,51750,51810}.json    ← agent2_apply.py (51750은 09-24 프롬프트 v1.2로 재분류)
+  hotspots.json, hotspots_{12130,47940,51210,51750,51810}.json            ← agent_hotspots.py
+  visitor_profile.json, visitor_profile_{12130,47940,51210,51750,51810}.json ← agent_visitor_profile.py
+  checklist.json, checklist_51750.json (agent3_match.py, --region 지원 09-24 추가)
+  briefing.json (agent5_briefing.py, 아직 _mock:true — forecast 입력이 mock. 영월은 forecast 부재로 파일 자체가 없음)
 ```
 
 ### 실행 명령
@@ -267,4 +321,7 @@ npm run build             # 프로덕션 빌드 검증
 - **배포 URL 공유 + 실제 브라우저로 5개 화면 클릭스루 확인**
 - ~~MySQL 연동 커밋~~ — **완료** (`b79dfb2`~`27755b8`, `UI/UX` 브랜치, §17에서 라이브 API/생성스크립트 부분은 agents/ 산출물 사용으로 되돌림)
 - **MySQL 계정(`tour_team*`) 비밀번호 교체 요청** — 세션 중 실수로 대화 로그에 노출된 적 있음
-- **agents 담당자와 조율**: 여수·울릉·속초·인제 4개 지역도 `signal_status`/`timeline` 실측 파일이 이미 있음 — 우리 쪽 `manifest.js`에 추가할지 결정, `checklist`/`content_type`/`briefing`을 언제 실측 전환할지, 24시간 자동 재수집 시작 시 agents 파이프라인 재실행 주기는 어떻게 되는지
+- **agents 담당자와 조율**: 여수·울릉·속초·인제 4개 지역도 `signal_status`/`timeline`/`hotspots`/`visitor_profile`/`content_type` 실측 파일이 이미 있음(09-23) — 우리 쪽 `manifest.js`에 언제 추가할지(시계열 모델 확정 시점과 맞출지) 결정, `briefing`을 언제 실측 전환할지(forecast 브랜치 일정), 24시간 자동 재수집 시작 시 agents 파이프라인 재실행 주기는 어떻게 되는지
+- **`UI/UX` → `develop` PR 생성** (09-24/25 커밋 4개, 원격엔 이미 push됨)
+- **데이터 담당 팀에 `youtube_video` 테이블 `description`/`tags` 컬럼 추가 제안**(§23) — 지금은 로컬 재수집으로 우회 중
+- **forecast 브랜치 완료 대기** — 끝나야 거제 briefing이 완전한 실측(`_mock:false`)이 되고, 영월 briefing도 그때부터 생성 가능해짐(§26)
