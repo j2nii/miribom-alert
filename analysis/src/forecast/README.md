@@ -27,6 +27,7 @@ uv run python analysis/src/forecast/evidence_check.py   # 5-4. 근거 기사를 
 uv run python analysis/src/forecast/compare_pipelines.py# 5-5. 수영님 450건과 대조 · 명절 정렬 재검
 uv run python analysis/src/forecast/point_level.py      # 5-6. 전국 관광지점 vs 시군구 총량 (사각지대)
 uv run python analysis/src/forecast/point_level_rigor.py# 5-7. 그 결과에 대한 반론 8가지 검증
+uv run python analysis/src/forecast/naver_redesign.py   # 5-8. 검색 변수 설계 재검토 (09.26)
 uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6장
 ```
 
@@ -48,6 +49,7 @@ uv run python analysis/src/forecast/figures.py          # 6. 서식4용 그림 6
 | `compare_pipelines.py` | 수영님 파이프라인과 대조, 명절 정렬 재검 | `pipeline_comparison.json` |
 | `point_level.py` | 전국 관광지점 배율 vs 시군구 총량, 총량 감시 사각지대 | `point_level.json` |
 | `point_level_rigor.py` | 감지 불가능성·연도 재현·균형 패널·경보 부담 등 반론 8종 | `point_level_rigor.json` |
+| `naver_redesign.py` | 검색지수 하락 진단, 절대 수준 변수 제거 후 재측정 | `naver_redesign.json` |
 | `figures.py` | 그림 8장 | `docs/submission/figures/` |
 | `freeze.py` | 서식4에 쓸 수치 동결·대조 | `frozen_numbers.json` · `docs/확정수치_0924.md` |
 | `run_all.py` | 전 과정 재실행 + 동결본 대조 | 콘솔 |
