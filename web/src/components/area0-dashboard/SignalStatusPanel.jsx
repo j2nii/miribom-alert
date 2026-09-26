@@ -60,9 +60,10 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
 
       {todayForecast && (
         <div className="info-box">
-          오늘({todayForecast.date}) 예측 방문객 <strong>{todayForecast.predicted.toLocaleString()}</strong>명
-          · 예상 경보 <strong>{todayForecast.expected_alert_level}</strong>
-          <span style={{ color: "var(--ink-soft)" }}> — 90일 전체 예측은 AREA 1에서 확인</span>
+          {todayForecast.date} 예측 외지인 방문자 <strong>{todayForecast.predicted.toLocaleString()}</strong>명
+          <span style={{ color: "var(--ink-soft)" }}>
+            {" "}(80% 구간 {todayForecast.lower.toLocaleString()}~{todayForecast.upper.toLocaleString()}명, 데이터 기준일 다음 날) — 7일 예측은 아래 '신호 추이·예측'에서 확인
+          </span>
         </div>
       )}
 

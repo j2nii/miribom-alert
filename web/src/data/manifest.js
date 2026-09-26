@@ -26,6 +26,23 @@
 // not a runtime toggle.
 const USE_PROD = import.meta.env.VITE_USE_PROD === "true";
 
+// 에이전트 산출물(signal_status·timeline·hotspots·visitor_profile·content_type)과 예측·신호 추이가
+// 모두 있는 추가 지역. 파일 이름 규칙이 같아 지역코드만 다르다. 체크리스트·브리핑·선례·조치 전후는
+// 이 지역들에 아직 없다 -> "unsupported"(데이터 준비 전)로 뜬다.
+function agentRegion(code) {
+  const real = (name) => ({ url: `/prod/${name}_${code}.json`, kind: "real" });
+  return {
+    signal_status: real("signal_status"),
+    timeline: real("timeline"),
+    hotspots: real("hotspots"),
+    visitor_profile: real("visitor_profile"),
+    content_type: real("content_type"),
+    // analysis/src/forecast/export_forecast.py · export_signal_series.py (228개 시군구 공통 모델)
+    forecast: real("forecast"),
+    signal_series: real("signal_series"),
+  };
+}
+
 export const REGION_MANIFEST = {
   yeongwol: {
     // 메인 실데이터 사례 (docs/meeting-notes/UI/MySQL_실데이터_연동_계획.md).
@@ -41,16 +58,23 @@ export const REGION_MANIFEST = {
     // agent3_match.py --region 51750 실행 결과 (2026-09-24, common.py의 load_input에
     // region 인자를 추가해 지역별 파일을 읽도록 확장한 뒤 생성).
     checklist: { url: "/prod/checklist_51750.json", kind: "real" },
-    // briefing/forecast/precedent/before_after는 아직 파일이 없다 -- "unsupported" 처리.
-    // briefing은 agent5_briefing.py가 forecast를 필수 입력으로 요구하는데, 영월은 forecast가
-    // mock조차 없어(시계열 브랜치 미완) 그 전까지는 생성이 막혀 있다(2026-09-24 확인, 보류 결정).
+    // analysis/src/forecast/export_forecast.py --region 51750 (7일 예측, 09-26 실측화).
+    forecast: { url: "/prod/forecast_51750.json", kind: "real" },
+    // analysis/src/forecast/export_signal_series.py -- 신호 추이·예측 패널의 차트 입력.
+    signal_series: { url: "/prod/signal_series_51750.json", kind: "real" },
+    // agents/agent4_precedent.py --region 51750 (연구보고서 사례, 원문 인용).
+    precedent: { url: "/prod/precedent_51750.json", kind: "real" },
+    // briefing/before_after는 아직 파일이 없다 -- "unsupported" 처리.
+    // briefing은 forecast_51750이 생겼으므로 agent5_briefing.py --region 51750으로 만들 수 있다.
   },
   geoje: {
     // 대비 사례 (총량은 그대로인데 특정 지점에만 쏠리는 패턴).
     // signal_status/timeline/content_type 모두 agents/ 파이프라인의 실측
     // 산출물(기본 지역 = 거제이므로 파일명에 지역코드 접미사 없음)을 그대로 사용.
     signal_status: { url: "/prod/signal_status.json", kind: "real" },
-    forecast: { url: "/mock/forecast.json", kind: "mock" },
+    // analysis/src/forecast/export_forecast.py (7일 예측, 09-26 실측화 -- 목업 대체).
+    forecast: { url: "/prod/forecast.json", kind: "real" },
+    signal_series: { url: "/prod/signal_series.json", kind: "real" },
     // agent_visitor_profile.py, agent_hotspots.py 실행 결과 (refactor/agents_db-full연동).
     visitor_profile: { url: "/prod/visitor_profile.json", kind: "real" },
     hotspots: { url: "/prod/hotspots.json", kind: "real" },
@@ -61,7 +85,8 @@ export const REGION_MANIFEST = {
     // 실측이 되면서 입력 4종이 전부 실측이 돼 파일 자체도 _mock:false로 바뀌었다
     // (09-20엔 hotspots/visitor_profile이 아직 mock이라 _mock:true였음).
     checklist: { url: "/prod/checklist.json", kind: "real" },
-    precedent: { url: "/mock/precedent.json", kind: "mock" },
+    // agents/agent4_precedent.py (연구보고서 사례 6건, 원문 인용 -- 목업 대체).
+    precedent: { url: "/prod/precedent.json", kind: "real" },
     before_after: { url: "/mock/before_after.json", kind: "mock" },
     timeline: { url: "/prod/timeline.json", kind: "real" },
     // agent5_briefing.py 실행 결과. 라이브 LLM 호출(web/api/briefing.js)은
@@ -69,8 +94,13 @@ export const REGION_MANIFEST = {
     // 어제와 비교된다"는 설계 근거와 어긋난다. 나중에 실시간성이 필요해지면
     // 이 정적 파일을 읽는 대신 agent5_briefing.py 자체를 최신 데이터로 재실행하는
     // 방식으로 가야 한다(에이전트 루프 밖에서 별도 LLM 호출을 만들지 않는다).
-    briefing: { url: "/prod/briefing.json", kind: "mock" },
+    // forecast가 실측이 된 뒤 다시 생성돼 파일도 _mock:false다.
+    briefing: { url: "/prod/briefing.json", kind: "real" },
   },
+  yeosu: agentRegion("12130"),
+  ulleung: agentRegion("47940"),
+  sokcho: agentRegion("51210"),
+  inje: agentRegion("51810"),
   chungju: {
     // Intentionally schema-independent (baseline lifecycle reference case,
     // not one of the 9 official contracts) -- but same envelope shape, so
@@ -86,6 +116,10 @@ export const REGION_MANIFEST = {
 export const REGIONS = [
   { key: "yeongwol", label: "영월군" },
   { key: "geoje", label: "거제시" },
+  { key: "yeosu", label: "여수시" },
+  { key: "sokcho", label: "속초시" },
+  { key: "inje", label: "인제군" },
+  { key: "ulleung", label: "울릉군" },
   { key: "chungju", label: "충주시" },
 ];
 

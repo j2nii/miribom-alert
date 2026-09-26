@@ -5,6 +5,7 @@
 // pill tags rather than as a separate nav bar.
 const AREA_ANCHORS = [
   { href: "#area0", label: "AREA 0" },
+  { href: "#trend", label: "신호 추이·예측" },
   { href: "#area1", label: "AREA 1" },
   { href: "#area2", label: "AREA 2" },
   { href: "#area3", label: "AREA 3" },

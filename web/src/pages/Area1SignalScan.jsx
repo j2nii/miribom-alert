@@ -3,13 +3,11 @@ import DataState from "../components/common/DataState.jsx";
 import SourceBadge from "../components/common/SourceBadge.jsx";
 import CaveatNote from "../components/common/CaveatNote.jsx";
 import CrossValidationLights from "../components/area1-signal-scan/CrossValidationLights.jsx";
-import ForecastChart from "../components/area1-signal-scan/ForecastChart.jsx";
 import HotspotRanking from "../components/area1-signal-scan/HotspotRanking.jsx";
 import VisitorProfileCard from "../components/area1-signal-scan/VisitorProfileCard.jsx";
 
 export default function Area1SignalScan({ region }) {
   const signalStatus = useRegionData("signal_status", region);
-  const forecast = useRegionData("forecast", region);
   const hotspots = useRegionData("hotspots", region);
   const visitorProfile = useRegionData("visitor_profile", region);
   const contentType = useRegionData("content_type", region);
@@ -22,7 +20,7 @@ export default function Area1SignalScan({ region }) {
       <div className="panel-head">
         <p className="panel-eyebrow">AREA 1 · SIGNAL SCAN</p>
         <h2>바이럴 신호 스캔</h2>
-        <p className="panel-subtitle">현재 지역의 3중 교차검증·예측·핫스팟·방문객 프로파일을 확인합니다. 지역 변경은 AREA0에서 할 수 있습니다.</p>
+        <p className="panel-subtitle">현재 지역의 3중 교차검증·핫스팟·방문객 프로파일을 확인합니다. 신호 추이와 7일 예측은 바로 위 패널에 있습니다. 지역 변경은 AREA0에서 할 수 있습니다.</p>
       </div>
 
       <div className="section-block">
@@ -53,20 +51,6 @@ export default function Area1SignalScan({ region }) {
               </>
             )
           }
-        />
-      </div>
-
-      <div className="section-block">
-        <p className="section-title">90일 방문객 예측</p>
-        <DataState
-          result={forecast}
-          render={({ envelope }) => (
-            <>
-              <ForecastChart forecastData={envelope.data} />
-              <SourceBadge envelope={envelope} />
-              <CaveatNote envelope={envelope} />
-            </>
-          )}
         />
       </div>
 

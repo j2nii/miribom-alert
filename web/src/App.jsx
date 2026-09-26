@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { REGIONS } from "./data/manifest.js";
 import Header from "./components/common/Header.jsx";
 import Area0Dashboard from "./pages/Area0Dashboard.jsx";
+import SignalTrend from "./pages/SignalTrend.jsx";
 import Area1SignalScan from "./pages/Area1SignalScan.jsx";
 import Area2Content from "./pages/Area2Content.jsx";
 import Area3Briefing from "./pages/Area3Briefing.jsx";
@@ -13,7 +15,11 @@ import Area4Performance from "./pages/Area4Performance.jsx";
 // exactly one .panel, same as the reference demo (not one panel per
 // sub-feature).
 export default function App() {
-  const [region, setRegion] = useState("yeongwol");
+  // ?region=geoje 처럼 지역을 주소에 실어 공유·시연 링크로 쓸 수 있다. 없거나 모르는 값이면 영월
+  const [region, setRegion] = useState(() => {
+    const asked = new URLSearchParams(window.location.search).get("region");
+    return REGIONS.some((r) => r.key === asked) ? asked : "yeongwol";
+  });
 
   return (
     <div className="app">
@@ -21,6 +27,10 @@ export default function App() {
       <div className="app-grid">
         <section id="area0" className="panel panel-dashboard">
           <Area0Dashboard region={region} onRegionChange={setRegion} />
+        </section>
+
+        <section id="trend" className="panel panel-trend">
+          <SignalTrend region={region} />
         </section>
 
         <section id="area1" className="panel panel-scan panel-scroll">

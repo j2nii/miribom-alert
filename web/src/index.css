@@ -123,6 +123,7 @@ body {
   grid-template-columns: 1.15fr 0.85fr;
   grid-template-areas:
     "dashboard dashboard"
+    "trend trend"
     "scan summary"
     "briefing briefing"
     "performance performance";
@@ -146,8 +147,9 @@ body {
 
 @media (max-width: 860px) {
   .app-grid {
-    grid-template-columns: 1fr;
-    grid-template-areas: "dashboard" "scan" "summary" "briefing" "performance";
+    /* 1fr은 가장 넓은 내용(차트 SVG·채팅)만큼 열을 늘려 화면 밖으로 밀어낸다. minmax(0, 1fr)로 화면 폭에 맞춘다 */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "dashboard" "trend" "scan" "summary" "briefing" "performance";
   }
 }
 
