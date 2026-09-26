@@ -172,8 +172,7 @@ def build_payload(region: str, rows: pd.DataFrame, test: pd.DataFrame, history: 
             f"검증 sMAPE {got['smape']:.2f}%(MAE {got['mae']:,.0f}명), 228개 시군구 공통 모델, "
             f"테스트 {SPLITS['test'][0]}~{SPLITS['test'][1]} {len(test):,}건. "
             f"{name}만 보면 sMAPE {reg_smape:.2f}%, MAE {reg_mae:,.0f}명이다. "
-            f"(09-24 동결 수치 sMAPE {VALIDATED['smape']:.2f}%·MAE {VALIDATED['mae']:,.0f}명과 같은 구성이며, "
-            "이후 DB 갱신으로 입력이 조금 달라진 차이다.)",
+            f"(09-24 동결 수치 sMAPE {VALIDATED['smape']:.2f}%·MAE {VALIDATED['mae']:,.0f}명과 같은 구성·같은 입력이다.)",
             "7일 앞(h=7)만 검증했으므로 그보다 먼 날은 제공하지 않는다.",
             interval_note + " 구간을 벗어나는 날이 5일 중 1일꼴로 생긴다.",
             "일별 경보 단계는 제공하지 않는다. 경보는 월별 3신호 판정(D-13)이라 일별 임계가 없다.",
@@ -226,7 +225,10 @@ def main() -> None:
     def between(start, end):
         return data[(data["observed_date"] >= start) & (data["observed_date"] <= end)]
 
-    fit = between(SPLITS["train"][0], SPLITS["valid"][1]).dropna(subset=lag + [TARGET])
+    # ablation.py는 학습 구간을 concat([train, valid]) 순서로 쌓는다. 부스팅의 조기종료가
+    # 행 순서에 따라 다른 검증 표본을 뽑기 때문에, 한 덩어리로 자르면 같은 데이터인데도
+    # 성능이 미세하게 달라진다(8.98% → 8.97%). 보고한 수치와 맞추려면 순서까지 같아야 한다.
+    fit = pd.concat([between(*SPLITS["train"]), between(*SPLITS["valid"])]).dropna(subset=lag + [TARGET])
     test = between(*SPLITS["test"])
     test = test[test[lag].notna().all(axis=1)].copy()
     target = data[data["observed_date"] > data_end]

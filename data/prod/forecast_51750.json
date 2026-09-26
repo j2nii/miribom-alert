@@ -1,6 +1,6 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-26T15:47:57+09:00",
+  "generated_at": "2026-09-26T16:11:58+09:00",
   "source": [
     {
       "name": "이동통신 기반 시군구 일별 방문자",
@@ -36,7 +36,7 @@
   },
   "caveat": [
     "데이터 기준일 2026-08-14 기준 7일 앞 예측이다. 오늘부터의 7일이 아니다.",
-    "검증 sMAPE 8.97%(MAE 7,575명), 228개 시군구 공통 모델, 테스트 2026-01-01~2026-08-14 51,528건. 영월군만 보면 sMAPE 15.13%, MAE 3,480명이다. (09-24 동결 수치 sMAPE 8.98%·MAE 7,603명과 같은 구성이며, 이후 DB 갱신으로 입력이 조금 달라진 차이다.)",
+    "검증 sMAPE 8.98%(MAE 7,603명), 228개 시군구 공통 모델, 테스트 2026-01-01~2026-08-14 51,528건. 영월군만 보면 sMAPE 15.00%, MAE 3,441명이다. (09-24 동결 수치 sMAPE 8.98%·MAE 7,603명과 같은 구성·같은 입력이다.)",
     "7일 앞(h=7)만 검증했으므로 그보다 먼 날은 제공하지 않는다.",
     "80% 구간은 영월군 테스트 기간 226일의 실제/예측 비율 10·90분위다. 구간을 벗어나는 날이 5일 중 1일꼴로 생긴다.",
     "일별 경보 단계는 제공하지 않는다. 경보는 월별 3신호 판정(D-13)이라 일별 임계가 없다."
@@ -55,7 +55,7 @@
       },
       "metric": {
         "name": "MAE",
-        "value": 7575,
+        "value": 7603,
         "validation_period": {
           "start": "2026-01-01",
           "end": "2026-08-14",
@@ -73,51 +73,51 @@
     "daily": [
       {
         "date": "2026-08-15",
-        "predicted": 89712,
-        "lower": 78723,
-        "upper": 121641,
+        "predicted": 88491,
+        "lower": 78900,
+        "upper": 120222,
         "is_holiday": true
       },
       {
         "date": "2026-08-16",
-        "predicted": 59346,
-        "lower": 52077,
-        "upper": 80468,
+        "predicted": 57728,
+        "lower": 51471,
+        "upper": 78428,
         "is_holiday": false
       },
       {
         "date": "2026-08-17",
-        "predicted": 42229,
-        "lower": 37056,
-        "upper": 57258,
+        "predicted": 42319,
+        "lower": 37732,
+        "upper": 57494,
         "is_holiday": true
       },
       {
         "date": "2026-08-18",
-        "predicted": 20601,
-        "lower": 18077,
-        "upper": 27933,
+        "predicted": 20142,
+        "lower": 17959,
+        "upper": 27364,
         "is_holiday": false
       },
       {
         "date": "2026-08-19",
-        "predicted": 17978,
-        "lower": 15776,
-        "upper": 24376,
+        "predicted": 18033,
+        "lower": 16079,
+        "upper": 24500,
         "is_holiday": false
       },
       {
         "date": "2026-08-20",
-        "predicted": 21313,
-        "lower": 18702,
-        "upper": 28898,
+        "predicted": 21085,
+        "lower": 18799,
+        "upper": 28645,
         "is_holiday": false
       },
       {
         "date": "2026-08-21",
-        "predicted": 30197,
-        "lower": 26498,
-        "upper": 40944,
+        "predicted": 29536,
+        "lower": 26335,
+        "upper": 40127,
         "is_holiday": false
       }
     ],
@@ -154,12 +154,12 @@
     "peak_days": [
       {
         "date": "2026-08-15",
-        "predicted": 89712,
+        "predicted": 88491,
         "reason": "토요일 · 광복절 · 3일 연휴"
       },
       {
         "date": "2026-08-16",
-        "predicted": 59346,
+        "predicted": 57728,
         "reason": "일요일 · 3일 연휴"
       }
     ]

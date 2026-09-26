@@ -1,6 +1,6 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-26T15:47:56+09:00",
+  "generated_at": "2026-09-26T16:11:58+09:00",
   "source": [
     {
       "name": "이동통신 기반 시군구 일별 방문자",
@@ -36,7 +36,7 @@
   },
   "caveat": [
     "데이터 기준일 2026-08-14 기준 7일 앞 예측이다. 오늘부터의 7일이 아니다.",
-    "검증 sMAPE 8.97%(MAE 7,575명), 228개 시군구 공통 모델, 테스트 2026-01-01~2026-08-14 51,528건. 거제시만 보면 sMAPE 10.81%, MAE 7,179명이다. (09-24 동결 수치 sMAPE 8.98%·MAE 7,603명과 같은 구성이며, 이후 DB 갱신으로 입력이 조금 달라진 차이다.)",
+    "검증 sMAPE 8.98%(MAE 7,603명), 228개 시군구 공통 모델, 테스트 2026-01-01~2026-08-14 51,528건. 거제시만 보면 sMAPE 10.88%, MAE 7,223명이다. (09-24 동결 수치 sMAPE 8.98%·MAE 7,603명과 같은 구성·같은 입력이다.)",
     "7일 앞(h=7)만 검증했으므로 그보다 먼 날은 제공하지 않는다.",
     "80% 구간은 거제시 테스트 기간 226일의 실제/예측 비율 10·90분위다. 구간을 벗어나는 날이 5일 중 1일꼴로 생긴다.",
     "일별 경보 단계는 제공하지 않는다. 경보는 월별 3신호 판정(D-13)이라 일별 임계가 없다."
@@ -55,7 +55,7 @@
       },
       "metric": {
         "name": "MAE",
-        "value": 7575,
+        "value": 7603,
         "validation_period": {
           "start": "2026-01-01",
           "end": "2026-08-14",
@@ -73,51 +73,51 @@
     "daily": [
       {
         "date": "2026-08-15",
-        "predicted": 147921,
-        "lower": 127310,
-        "upper": 174330,
+        "predicted": 142715,
+        "lower": 121432,
+        "upper": 170423,
         "is_holiday": true
       },
       {
         "date": "2026-08-16",
-        "predicted": 103432,
-        "lower": 89020,
-        "upper": 121898,
+        "predicted": 101490,
+        "lower": 86355,
+        "upper": 121194,
         "is_holiday": false
       },
       {
         "date": "2026-08-17",
-        "predicted": 97487,
-        "lower": 83903,
-        "upper": 114892,
+        "predicted": 93148,
+        "lower": 79257,
+        "upper": 111232,
         "is_holiday": true
       },
       {
         "date": "2026-08-18",
-        "predicted": 52863,
-        "lower": 45497,
-        "upper": 62301,
+        "predicted": 52137,
+        "lower": 44361,
+        "upper": 62259,
         "is_holiday": false
       },
       {
         "date": "2026-08-19",
-        "predicted": 53873,
-        "lower": 46367,
-        "upper": 63492,
+        "predicted": 53652,
+        "lower": 45651,
+        "upper": 64068,
         "is_holiday": false
       },
       {
         "date": "2026-08-20",
-        "predicted": 58042,
-        "lower": 49954,
-        "upper": 68404,
+        "predicted": 58176,
+        "lower": 49500,
+        "upper": 69471,
         "is_holiday": false
       },
       {
         "date": "2026-08-21",
-        "predicted": 69354,
-        "lower": 59690,
-        "upper": 81736,
+        "predicted": 70738,
+        "lower": 60189,
+        "upper": 84471,
         "is_holiday": false
       }
     ],
@@ -154,12 +154,12 @@
     "peak_days": [
       {
         "date": "2026-08-15",
-        "predicted": 147921,
+        "predicted": 142715,
         "reason": "토요일 · 광복절 · 3일 연휴"
       },
       {
         "date": "2026-08-16",
-        "predicted": 103432,
+        "predicted": 101490,
         "reason": "일요일 · 3일 연휴 · 거제맥주축제(8/23 시작) 직전"
       }
     ]
