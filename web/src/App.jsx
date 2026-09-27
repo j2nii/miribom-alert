@@ -16,6 +16,9 @@ import Area4Performance from "./pages/Area4Performance.jsx";
 export default function App() {
   const [region, setRegion] = useState("yeongwol");
   const [tourOpen, setTourOpen] = useState(false);
+  // 좁은 화면에서 상단 내비의 "물어보기"가 여는 대화창(하단 시트). Header와 ChatWidget이
+  // 형제가 아니라 여기서 상태를 들고 양쪽에 내려준다.
+  const [askOpen, setAskOpen] = useState(false);
 
   // 첫 방문이면 사용법 투어를 자동으로 연다. 바로 열지 않고 한 박자 기다리는 이유:
   // 투어 단계가 화면에 실제로 있는 요소만 골라 잡는데, 정적 JSON이 도착하기 전에는
@@ -28,10 +31,15 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header onReplayTour={() => setTourOpen(true)} />
+      <Header onReplayTour={() => setTourOpen(true)} onAsk={() => setAskOpen(true)} />
       <div className="app-grid">
         <section id="area0" className="panel panel-dashboard">
-          <Area0Dashboard region={region} onRegionChange={setRegion} />
+          <Area0Dashboard
+            region={region}
+            onRegionChange={setRegion}
+            askOpen={askOpen}
+            onAskClose={() => setAskOpen(false)}
+          />
         </section>
 
         <section id="area1" className="panel panel-scan panel-scroll">

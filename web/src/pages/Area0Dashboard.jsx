@@ -9,7 +9,7 @@ import SignalStatusPanel from "../components/area0-dashboard/SignalStatusPanel.j
 import LifecyclePanel from "../components/area0-dashboard/LifecyclePanel.jsx";
 import TodayActionCard from "../components/area0-dashboard/TodayActionCard.jsx";
 
-export default function Area0Dashboard({ region, onRegionChange }) {
+export default function Area0Dashboard({ region, onRegionChange, askOpen, onAskClose }) {
   const signalStatus = useRegionData("signal_status", region);
   const forecast = useRegionData("forecast", region);
   // 오늘의 결론 카드용. 둘 다 정적 JSON이라 AREA3와 중복 요청이 되지만 브라우저 캐시가
@@ -117,6 +117,8 @@ export default function Area0Dashboard({ region, onRegionChange }) {
           regionLabel={regionLabel}
           boundaryRef={layoutRef}
           maxHeight={isNarrow ? null : mainHeight}
+          sheetOpen={askOpen}
+          onSheetClose={onAskClose}
         />
       </div>
     </>

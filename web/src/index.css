@@ -80,13 +80,6 @@ body {
   min-height: 100%;
   padding: 0 0 40px 0;
 }
-@media (max-width: 860px) {
-  /* 우하단에 고정되는 챗봇 플로팅 아이콘(.chat-widget__toggle) 아래로 본문 마지막 줄과
-     푸터가 깔리지 않게 확보하는 여백. */
-  .app {
-    padding-bottom: 88px;
-  }
-}
 
 /* Header -- brand / tag / subtitle, same structure as the reference demo */
 .app-header {
@@ -158,23 +151,52 @@ body {
   margin: 0 auto;
   padding: 9px 20px;
   display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.area-nav__anchors {
+  display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  min-width: 0;
+}
+/* 모바일 전용 챗봇 진입점. 데스크톱은 떠다니는 아이콘이 본문 바깥 여백에 있어 그대로 둔다. */
+.area-nav__ask {
+  display: none;
 }
 @media (max-width: 860px) {
   /* 좁은 화면에서 줄바꿈되면 이 바가 두 줄이 되어 세로를 크게 먹는다(스티키라 계속).
-     한 줄로 두고 가로 스와이프하게 한다. */
-  .area-nav__inner {
+     앵커만 한 줄로 두고 가로 스와이프하게 하고, "물어보기"는 스크롤과 무관하게 고정한다. */
+  .area-nav__anchors {
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
-    padding: 8px 16px;
+    flex: 1;
   }
-  .area-nav__inner::-webkit-scrollbar {
+  .area-nav__anchors::-webkit-scrollbar {
     display: none;
   }
   .app-header-anchor {
     flex-shrink: 0;
+  }
+  .area-nav__inner {
+    padding: 8px 16px;
+  }
+  .area-nav__ask {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 4px;
+    background: #fff;
+    color: var(--abyss);
+    border: none;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: var(--font-kr);
+    cursor: pointer;
+    white-space: nowrap;
   }
 }
 .app-header-anchor {
@@ -1194,6 +1216,32 @@ body {
     min-height: 96px;
   }
 }
+
+/* 모바일 하단 시트 -- 상단 내비의 "물어보기"로 연다. 떠다니는 아이콘을 없앤 자리를
+   대신하며, 본문 위를 상시로 덮지 않고 필요할 때만 올라온다. */
+.chat-widget__scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 30, 46, 0.5);
+  z-index: 60;
+}
+.chat-widget--sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 61;
+  max-height: 78vh;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -10px 34px rgba(14, 30, 46, 0.3);
+  margin-bottom: 0;
+}
+.chat-widget--sheet .chat-widget__messages {
+  min-height: 140px;
+}
+.chat-widget-slot--sheet {
+  width: 100%;
+}
 .chat-widget__header {
   display: flex;
   align-items: center;
@@ -1406,12 +1454,5 @@ body {
 .chat-widget__toggle:hover {
   background: var(--abyss-hover);
 }
-@media (max-width: 860px) {
-  /* ChatWidget.jsx의 TOGGLE_SIZE_NARROW와 같은 값 -- 클램프 계산과 실제 크기가 어긋나면
-     아이콘이 화면 밖으로 조금 밀려난다. */
-  .chat-widget__toggle {
-    width: 46px;
-    height: 46px;
-    font-size: 18px;
-  }
-}
+/* .chat-widget__toggle(떠다니는 아이콘)은 이제 넓은 화면에서만 렌더된다 -- 모바일에서는
+   본문 글자를 가려서(QA #14-3) 상단 내비의 "물어보기" + 하단 시트로 대체했다. */

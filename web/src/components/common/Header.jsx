@@ -18,7 +18,7 @@ const AREA_ANCHORS = [
   { id: "area4", num: "4", label: "성과 점검" },
 ];
 
-export default function Header({ onReplayTour }) {
+export default function Header({ onReplayTour, onAsk }) {
   const [activeId, setActiveId] = useState("area0");
 
   // 지금 보고 있는 구역을 앵커에 표시한다. ChatWidget이 docked/floating 전환에 쓰는 것과
@@ -63,16 +63,24 @@ export default function Header({ onReplayTour }) {
 
       <nav className="area-nav">
         <div className="area-nav__inner">
-          {AREA_ANCHORS.map((a) => (
-            <a
-              key={a.id}
-              href={`#${a.id}`}
-              className={`app-header-anchor${activeId === a.id ? " is-active" : ""}`}
-            >
-              <span className="app-header-anchor__num">{a.num}</span>
-              {a.label}
-            </a>
-          ))}
+          <div className="area-nav__anchors">
+            {AREA_ANCHORS.map((a) => (
+              <a
+                key={a.id}
+                href={`#${a.id}`}
+                className={`app-header-anchor${activeId === a.id ? " is-active" : ""}`}
+              >
+                <span className="app-header-anchor__num">{a.num}</span>
+                {a.label}
+              </a>
+            ))}
+          </div>
+          {/* 좁은 화면 전용(CSS로 숨김/표시). 모바일에서는 떠다니는 챗봇 아이콘이 본문
+              글자를 가려서 아예 없앴고, 그 진입점을 여기로 옮겼다 -- 내비가 화면 상단에
+              고정돼 있으므로 어느 위치에서 읽던 중이든 한 번에 닿는다. */}
+          <button type="button" className="area-nav__ask" onClick={onAsk}>
+            💬 물어보기
+          </button>
         </div>
       </nav>
     </>

@@ -173,7 +173,12 @@ function ChatSources({ results, envelopes }) {
 // 완전히 벗어나야만 floating 모드로 전환된다 -- AREA0를 절반만 내렸다고 바로
 // 1단으로 무너지지 않게 하기 위함. floating일 때만 드래그로 위치를 옮길 수 있고,
 // 접으면 토글 버튼만 남는다.
-export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight }) {
+// `sheetOpen`/`onSheetClose`: 좁은 화면 전용. 모바일에서는 떠다니는 아이콘(FAB)을 아예 쓰지
+// 않는다 -- 390px 폭에서는 본문이 화면을 거의 다 채워서 아이콘을 어디에 두든 글자 위에
+// 얹히기 때문이다(QA #14-3. 좌하단→우하단으로 옮긴 것만으로는 해결되지 않았다). 대신
+// 상단 고정 내비의 "물어보기" 버튼이 이 대화창을 하단 시트로 띄운다. 데스크톱은 아이콘이
+// .app-grid 바깥 여백에 있어 본문과 겹치지 않으므로 기존 동작 그대로 둔다.
+export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight, sheetOpen, onSheetClose }) {
   const [floating, setFloating] = useState(false);
   const [open, setOpen] = useState(true);
   const [position, setPosition] = useState(null);
@@ -201,6 +206,14 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
 
   // 언마운트 시에도 진행 중 스트림을 정리한다.
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // 하단 시트는 모달처럼 동작한다 -- Esc로 닫는다.
+  useEffect(() => {
+    if (!(isNarrow && sheetOpen)) return;
+    const onKey = (e) => e.key === "Escape" && onSheetClose?.();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isNarrow, sheetOpen, onSheetClose]);
 
   // Grows the textarea up to INPUT_MAX_HEIGHT as the question gets longer,
   // then leaves it fixed and lets its own scrollbar take over.
@@ -429,17 +442,25 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
   // the collapsed icon happened to be sitting, so it isn't necessarily a
   // valid *panel*-sized position. Without this, opening the panel from an
   // icon parked near the right margin rendered it partly off-screen.
-  const openPosition = floating && position ? clampToViewport(position, PANEL_WIDTH, PANEL_HEIGHT_OPEN) : null;
+  const openPosition = floating && !isNarrow && position ? clampToViewport(position, PANEL_WIDTH, PANEL_HEIGHT_OPEN) : null;
+  // 좁은 화면에서 "물어보기"로 띄운 하단 시트. 위치/크기는 CSS가 잡으므로 인라인 좌표를 주지 않는다.
+  const asSheet = isNarrow && sheetOpen;
   const panelStyle = openPosition
     ? { position: "fixed", left: openPosition.x, top: openPosition.y, width: PANEL_WIDTH }
-    : !floating && maxHeight
+    : !floating && !asSheet && maxHeight
       ? { height: maxHeight, maxHeight }
       : undefined;
-  const panelClass = `chat-widget ${floating ? "chat-widget--floating" : "chat-widget--docked"}`;
+  const panelClass = `chat-widget ${asSheet ? "chat-widget--sheet" : floating ? "chat-widget--floating" : "chat-widget--docked"}`;
+  const draggable = floating && !isNarrow;
+
+  // 좁은 화면에서 AREA0가 화면 밖으로 나갔는데 시트도 닫혀 있으면 대화창은 아무 데도
+  // 그리지 않는다 -- 예전의 떠다니는 아이콘이 있던 자리다.
+  if (isNarrow && floating && !sheetOpen) return null;
 
   return (
-    <div className={`chat-widget-slot${floating ? " chat-widget-slot--floating" : ""}`}>
-      {floating && !open ? (
+    <div className={`chat-widget-slot${floating && !asSheet ? " chat-widget-slot--floating" : ""}${asSheet ? " chat-widget-slot--sheet" : ""}`}>
+      {asSheet && <div className="chat-widget__scrim" onClick={onSheetClose} />}
+      {floating && !isNarrow && !open ? (
         <button
           className="chat-widget__toggle"
           style={
@@ -459,9 +480,9 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
         <div className={panelClass} style={panelStyle}>
           <div
             className="chat-widget__header"
-            onPointerDown={floating ? handlePointerDown : undefined}
-            onPointerMove={floating ? handlePointerMove : undefined}
-            onPointerUp={floating ? handlePointerUp : undefined}
+            onPointerDown={draggable ? handlePointerDown : undefined}
+            onPointerMove={draggable ? handlePointerMove : undefined}
+            onPointerUp={draggable ? handlePointerUp : undefined}
           >
             <p className="section-title" style={{ margin: 0 }}>
               지역 상황 물어보기
@@ -469,20 +490,26 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
             {/* 답변의 기준 지역을 대화창 안에서도 못 놓치게 한다 -- 지역 전환 시 대화가
                 리셋되는 동작과 짝이 되는 표시. */}
             <span className="chat-widget__region">{regionLabel ?? region}</span>
-            {floating && (
-              // stopPropagation so this click doesn't also bubble into the
-              // header's onPointerDown drag handler above -- without it, a
-              // plain click on this button also starts a (zero-distance)
-              // drag on the header first, which captures the pointer and
-              // eats the click until you press again.
-              <button
-                type="button"
-                className="chat-widget__collapse"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={handleToggle}
-              >
-                접기
+            {asSheet ? (
+              <button type="button" className="chat-widget__collapse" onClick={onSheetClose}>
+                닫기
               </button>
+            ) : (
+              draggable && (
+                // stopPropagation so this click doesn't also bubble into the
+                // header's onPointerDown drag handler above -- without it, a
+                // plain click on this button also starts a (zero-distance)
+                // drag on the header first, which captures the pointer and
+                // eats the click until you press again.
+                <button
+                  type="button"
+                  className="chat-widget__collapse"
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={handleToggle}
+                >
+                  접기
+                </button>
+              )
             )}
           </div>
 
