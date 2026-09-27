@@ -10,7 +10,7 @@ function LeadTimeBadge({ label, days }) {
         display: "inline-block",
         padding: "8px 16px",
         borderRadius: 8,
-        background: "var(--teal)",
+        background: "var(--portal-accent)",
         color: "#fff",
         fontWeight: 700,
       }}
@@ -63,8 +63,8 @@ export default function LeadTimeTimeline({ timelineData }) {
                 width: 10,
                 height: 10,
                 borderRadius: "50%",
-                background: e.is_signal ? "var(--teal)" : "#fff",
-                border: `2px solid ${e.is_signal ? "var(--teal)" : "var(--muted)"}`,
+                background: e.is_signal ? "var(--portal-accent)" : "#fff",
+                border: `2px solid ${e.is_signal ? "var(--portal-accent)" : "var(--muted)"}`,
               }}
             />
             <div style={{ fontSize: 13 }}>

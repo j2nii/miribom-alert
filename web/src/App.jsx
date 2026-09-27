@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Header from "./components/common/Header.jsx";
+import ChatWidget from "./components/common/ChatWidget.jsx";
+import { REGIONS } from "./data/manifest.js";
 import Area0Dashboard from "./pages/Area0Dashboard.jsx";
 import Area1SignalScan from "./pages/Area1SignalScan.jsx";
 import Area2Content from "./pages/Area2Content.jsx";
@@ -17,14 +19,10 @@ export default function App() {
 
   return (
     <div className="app">
-      <Header />
-      <div className="app-grid">
+      <Header region={region} onRegionChange={setRegion} />
+      <main className="app-grid">
         <section id="area0" className="panel panel-dashboard">
-          <Area0Dashboard region={region} onRegionChange={setRegion} />
-        </section>
-
-        <section id="area1" className="panel panel-scan panel-scroll">
-          <Area1SignalScan region={region} />
+          <Area0Dashboard region={region} />
         </section>
 
         <section id="area2" className="panel panel-summary panel-scroll">
@@ -35,14 +33,17 @@ export default function App() {
           <Area3Briefing region={region} />
         </section>
 
+        <section id="area1" className="panel panel-scan panel-scroll">
+          <Area1SignalScan region={region} />
+        </section>
+
         <section id="area4" className="panel panel-performance">
           <Area4Performance region={region} />
         </section>
-      </div>
+      </main>
+      <ChatWidget key={region} region={region} regionLabel={REGIONS.find((item) => item.key === region)?.label ?? region} />
       <footer className="app-footer">
-        이 화면은 목업/실데이터가 혼재된 데모입니다. 거제시는 9종 데이터 스키마(실측 signal_status·timeline·
-        content_type 포함)를 모두 반영했고, 영월군은 실측 신호 상태·타임라인(signal_status·timeline)을 중심으로
-        한 메인 사례이며 나머지 항목은 준비 전입니다. 값 옆의 배지로 출처와 목업 여부를 항상 확인하세요.
+        관광레이더 · 실데이터와 목업을 함께 제공하는 데모입니다. 기준일과 출처를 확인하세요.
       </footer>
     </div>
   );

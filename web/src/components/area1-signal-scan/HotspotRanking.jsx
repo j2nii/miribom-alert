@@ -1,7 +1,15 @@
 export default function HotspotRanking({ hotspotsData, deadZonePois = [] }) {
+  const ranking = [...hotspotsData.ranking].sort((a, b) => a.rank - b.rank);
+  return <>
+    <RankingRows ranking={ranking.slice(0, 3)} deadZonePois={deadZonePois} />
+    {ranking.length > 3 && <details className="compact-details"><summary>나머지 관광지 보기 ({ranking.length - 3}곳)</summary><RankingRows ranking={ranking.slice(3)} deadZonePois={deadZonePois} /></details>}
+  </>;
+}
+
+function RankingRows({ ranking, deadZonePois }) {
   return (
     <ul className="rank-list">
-      {hotspotsData.ranking.map((poi) => {
+      {ranking.map((poi) => {
         const isDeadZone = deadZonePois.includes(poi.poi_name);
         return (
           <li key={poi.rank} className="rank-row" style={{ alignItems: "flex-start" }}>

@@ -1,41 +1,24 @@
-import ZoneSignalBadge from "./ZoneSignalBadge.jsx";
+﻿import { contentRelevance } from "../../lib/contentRelevance.js";
 
-export default function VideoCard({ item, selected, onSelect }) {
+export default function VideoCard({ item, regionName }) {
+  const relevance = contentRelevance(item, regionName);
+  const places = [...new Set(item.poi_mentioned ?? [])].slice(0, 2);
+  const hasDescription = typeof item.description === "string" && item.description.trim().length > 0;
+  const hasTags = relevance.tags.length > 0;
+  const description = hasDescription ? item.description : places.length
+    ? `${places.join(" · ")}의 여행 포인트를 소개하는 영상입니다.`
+    : "지역 여행의 볼거리와 분위기를 소개하는 콘텐츠 예시입니다.";
+  const tags = hasTags ? relevance.tags : [...new Set([...places, item.content_type].filter(Boolean))];
+  const mock = !hasDescription || !hasTags;
   return (
-    <div
-      onClick={onSelect}
-      style={{
-        padding: 12,
-        borderRadius: 8,
-        border: `1px solid ${selected ? "var(--teal)" : "var(--border)"}`,
-        marginBottom: 8,
-        cursor: "pointer",
-        background: selected ? "#f2f8f6" : "#fff",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
-        <strong>{item.title}</strong>
-        <span style={{ color: "var(--muted)" }}>{item.view_count.toLocaleString()}회</span>
-      </div>
-      <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 2 }}>
-        {item.channel} · {item.published_at} · {item.content_type} (신뢰도 {item.confidence})
-        <ZoneSignalBadge zoneSignal={item.zone_signal} />
-      </div>
-      {selected && (
-        <div style={{ marginTop: 8, fontSize: 13 }}>
-          <p style={{ margin: "4px 0" }}>
-            <strong>근거:</strong> {item.evidence}
-          </p>
-          <p style={{ margin: "4px 0" }}>
-            <strong>감성:</strong> {item.sentiment}
-          </p>
-          {item.poi_mentioned?.length > 0 && (
-            <p style={{ margin: "4px 0" }}>
-              <strong>언급 장소:</strong> {item.poi_mentioned.join(", ")}
-            </p>
-          )}
-        </div>
-      )}
-    </div>
+    <article className="content-video-card content-feed-card">
+      <div className="content-feed-date"><span>{item.published_at ?? "게시일 미제공"}</span><span>{Number.isFinite(item.view_count) ? `${item.view_count.toLocaleString("ko-KR")}회` : "조회수 미제공"}</span></div>
+      <h3>{/^[\w-]{11}$/.test(item.video_id) ? <a href={`https://www.youtube.com/watch?v=${item.video_id}`} target="_blank" rel="noreferrer">{item.title}<span className="sr-only"> (새 탭)</span></a> : item.title}</h3>
+      <p className="content-feed-channel">{item.channel ?? "채널 미제공"}</p>
+      <p className="content-feed-description" title={description}>{description}</p>
+      <div className="content-feed-tags">{tags.slice(0, 3).map((tag) => <span key={tag}>#{tag.replace(/^#/, "")}</span>)}</div>
+      {mock && <p className="content-feed-mock">{!hasDescription && !hasTags ? "설명·태그 목업" : !hasDescription ? "설명 목업" : "태그 목업"} · 원문 연결 예정</p>}
+      {!relevance.confirmed && <p className="content-feed-mock">{relevance.label}</p>}
+    </article>
   );
 }

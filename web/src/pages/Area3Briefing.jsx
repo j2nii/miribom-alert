@@ -17,29 +17,30 @@ export default function Area3Briefing({ region }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">AREA 3 · POLICY BRIEFING</p>
-        <h2>정책 브리핑</h2>
-        <p className="panel-subtitle">매뉴얼 근거가 달린 대응 체크리스트와 선례, agent5가 생성한 정책 브리핑입니다.</p>
+        <p className="panel-eyebrow">03 · 대응 준비</p>
+        <h2>지금 먼저 할 일</h2>
       </div>
 
       <MockBanner isMock={checklist.status === "ok" && checklist.envelope._mock} />
 
-      <div className="section-block">
-        <p className="section-title">정책 대응 체크리스트</p>
+      <div>
         <DataState
           result={checklist}
           render={({ envelope }) => (
             <>
-              <ChecklistPanel checklistData={envelope.data} />
+              <p className="policy-now-period">자료 기준 {envelope.period?.end ?? "미제공"} · 사전 준비 우선순위</p>
+              <ChecklistPanel key={region} checklistData={envelope.data} />
+              <details className="compact-details"><summary>출처·데이터 유의사항</summary>
               <SourceBadge envelope={envelope} />
               <CaveatNote envelope={envelope} />
+              </details>
             </>
           )}
         />
       </div>
 
-      <div className="section-block">
-        <p className="section-title">선례</p>
+      <details className="compact-details" key={`precedent-${region}`}>
+        <summary>선례 보기{precedent.status === "unsupported" ? " · 준비 중" : ""}</summary>
         <DataState
           result={precedent}
           render={({ envelope }) => (
@@ -50,9 +51,10 @@ export default function Area3Briefing({ region }) {
             </>
           )}
         />
-      </div>
+      </details>
 
-      <div className="section-block">
+      <details className="compact-details" key={`briefing-${region}`}>
+        <summary>상세 브리핑{briefing.status === "unsupported" ? " · 준비 중" : ""}</summary>
         <DataState
           result={briefing}
           render={({ envelope }) => (
@@ -63,7 +65,7 @@ export default function Area3Briefing({ region }) {
             </>
           )}
         />
-      </div>
+      </details>
     </>
   );
 }

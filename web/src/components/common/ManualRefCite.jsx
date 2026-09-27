@@ -6,12 +6,13 @@ export default function ManualRefCite({ manualRef }) {
   const { document, page, section, quote } = manualRef;
 
   return (
-    <div className="manual-ref-cite">
+    <details className="manual-ref-cite compact-details">
+      <summary>매뉴얼 근거 · p.{page}</summary>
       <p className="manual-ref-cite__source">
         {document} · p.{page}
         {section ? ` · ${section}` : ""}
       </p>
       {quote ? <blockquote className="manual-ref-cite__quote">“{quote}”</blockquote> : null}
-    </div>
+    </details>
   );
 }

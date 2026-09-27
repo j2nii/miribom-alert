@@ -20,13 +20,12 @@ export default function Area1SignalScan({ region }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">AREA 1 · SIGNAL SCAN</p>
-        <h2>바이럴 신호 스캔</h2>
-        <p className="panel-subtitle">현재 지역의 3중 교차검증·예측·핫스팟·방문객 프로파일을 확인합니다. 지역 변경은 AREA0에서 할 수 있습니다.</p>
+        <p className="panel-eyebrow">04 · 참고자료</p>
+        <h2>방문 흐름과 지역 현황</h2>
       </div>
 
       <div className="section-block">
-        <p className="section-title">3중 교차검증 신호등</p>
+        <p className="section-title">관심이 방문으로 이어지나요?</p>
         <DataState
           result={signalStatus}
           render={({ envelope }) =>
@@ -56,8 +55,8 @@ export default function Area1SignalScan({ region }) {
         />
       </div>
 
-      <div className="section-block">
-        <p className="section-title">90일 방문객 예측</p>
+      <details className="section-block compact-details" key={`forecast-${region}`}>
+        <summary>90일 방문객 예측{forecast.status === "unsupported" ? " · 준비 중" : " 보기"}</summary>
         <DataState
           result={forecast}
           render={({ envelope }) => (
@@ -68,35 +67,36 @@ export default function Area1SignalScan({ region }) {
             </>
           )}
         />
-      </div>
+      </details>
 
-      <div className="section-block">
-        <p className="section-title">인기 관광지 랭킹</p>
+      <details className="section-block compact-details" key={`ranking-${region}`}>
+        <summary>인기 관광지 랭킹</summary>
         <DataState
           result={hotspots}
           render={({ envelope }) => (
             <>
-              <HotspotRanking hotspotsData={envelope.data} deadZonePois={deadZonePois} />
+              <HotspotRanking key={region} hotspotsData={envelope.data} deadZonePois={deadZonePois} />
               <SourceBadge envelope={envelope} />
               <CaveatNote envelope={envelope} />
             </>
           )}
         />
-      </div>
+      </details>
 
-      <div className="section-block">
-        <p className="section-title">방문객 프로파일</p>
+      <details className="section-block compact-details" key={`profile-${region}`}>
+        <summary>방문객 구성</summary>
         <DataState
           result={visitorProfile}
           render={({ envelope }) => (
             <>
-              <VisitorProfileCard profileData={envelope.data} />
+              <VisitorProfileCard key={region} profileData={envelope.data} spendingLabel={envelope.caveat?.some((note) => note.includes("외국인 방문객의 소비")) ? "외국인 소비" : "소비"} />
+              <p className="profile-period">자료 기간 {envelope.period?.start ?? "미제공"} ~ {envelope.period?.end ?? "미제공"}</p>
               <SourceBadge envelope={envelope} />
               <CaveatNote envelope={envelope} />
             </>
           )}
         />
-      </div>
+      </details>
     </>
   );
 }

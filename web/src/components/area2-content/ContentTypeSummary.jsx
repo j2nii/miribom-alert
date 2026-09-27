@@ -19,7 +19,7 @@ export default function ContentTypeSummary({ data }) {
               <div
                 style={{
                   width: `${(s.ratio / maxRatio) * 100}%`,
-                  background: "var(--teal)",
+                  background: "var(--portal-accent)",
                   height: "100%",
                   borderRadius: 4,
                 }}

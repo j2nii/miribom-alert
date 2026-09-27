@@ -3,209 +3,36 @@ import ReactMarkdown from "react-markdown";
 import SourceBadge from "./SourceBadge.jsx";
 import CaveatNote from "./CaveatNote.jsx";
 
-const PANEL_WIDTH = 320;
-const PANEL_HEIGHT_OPEN = 440;
-const PANEL_HEIGHT_COLLAPSED = 52; // also the collapsed toggle's width -- it's a 52x52 circle
-const EDGE_MARGIN = 8;
-const DRAG_THRESHOLD = 4; // px of pointer movement before a press counts as a drag, not a click
-const STORAGE_KEY = "chatWidgetPosition";
-const INPUT_MIN_HEIGHT = 56; // ~2 lines, so the placeholder text doesn't scroll on its own
+const INPUT_MIN_HEIGHT = 56;
 const INPUT_MAX_HEIGHT = 120;
 
-function clamp(value, min, max) {
-  return Math.min(Math.max(value, min), max);
-}
-
-// window.innerWidth includes the vertical scrollbar's own width, so a
-// button positioned flush against it ends up rendered *under* the
-// scrollbar. document.documentElement.clientWidth excludes it.
-function safeViewportWidth() {
-  return document.documentElement.clientWidth;
-}
-
-// Left/right edges of the centered page content (.app-grid in App.jsx) --
-// the empty space outside of this on either side is the "margin" the
-// collapsed icon is allowed to roam in. Queried directly rather than
-// threaded down as another ref/prop; .app-grid is a stable, single element.
-function getContentBounds() {
-  const el = document.querySelector(".app-grid");
-  return el ? el.getBoundingClientRect() : null;
-}
-
-// Collapsed (icon-only) mode is free to move anywhere within whichever side
-// margin it's currently in (not pinned to one exact pixel), but must never
-// sit on top of page content or get clipped by the scrollbar. The open
-// panel has no such restriction -- clampToViewport below just keeps *it*
-// fully on screen, wherever that is.
-const MARGIN_GAP = 12;
-function clampToMargin(x, width) {
-  const safeRight = safeViewportWidth();
-  const bounds = getContentBounds();
-  if (!bounds) return clamp(x, EDGE_MARGIN, safeRight - width - EDGE_MARGIN);
-
-  const onLeft = x + width / 2 < window.innerWidth / 2;
-  if (onLeft) {
-    const maxX = Math.max(EDGE_MARGIN, bounds.left - MARGIN_GAP - width);
-    return clamp(x, EDGE_MARGIN, maxX);
-  }
-  const minX = Math.min(safeRight - width - EDGE_MARGIN, bounds.right + MARGIN_GAP);
-  return clamp(x, minX, safeRight - width - EDGE_MARGIN);
-}
-
-function clampToViewport(pos, width, height) {
-  return {
-    x: clamp(pos.x, EDGE_MARGIN, safeViewportWidth() - width - EDGE_MARGIN),
-    y: clamp(pos.y, EDGE_MARGIN, window.innerHeight - height - EDGE_MARGIN),
-  };
-}
-
-function loadStoredPosition() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function saveStoredPosition(pos) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
-  } catch {
-    // per-viewer convenience only -- ignore write failures (private mode, etc.)
-  }
-}
-
-function defaultPosition() {
-  return clampToViewport(
-    { x: safeViewportWidth() - PANEL_WIDTH - 20, y: window.innerHeight - PANEL_HEIGHT_OPEN - 20 },
-    PANEL_WIDTH,
-    PANEL_HEIGHT_OPEN
-  );
-}
-
-
-// AREA0 관제 대시보드에 임베드된 자연어 질의 위젯. `boundaryRef`가 가리키는
-// 영역(AREA0의 2단 레이아웃 전체 -- 채팅 칸 자기 자신이 아니라)이 화면에 조금이라도
-// 보이는 동안은 계속 docked(2단 배치) 상태를 유지하고, 그 영역이 뷰포트에서
-// 완전히 벗어나야만 floating 모드로 전환된다 -- AREA0를 절반만 내렸다고 바로
-// 1단으로 무너지지 않게 하기 위함. floating일 때만 드래그로 위치를 옮길 수 있고,
-// 접으면 토글 버튼만 남는다.
-export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight }) {
-  const [floating, setFloating] = useState(false);
-  const [open, setOpen] = useState(true);
-  const [position, setPosition] = useState(null);
+export default function ChatWidget({ region, regionLabel }) {
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const dragRef = useRef({ dragging: false, offsetX: 0, offsetY: 0 });
   const textareaRef = useRef(null);
   const messagesRef = useRef(null);
+  const launcherRef = useRef(null);
+  const requestRef = useRef(null);
 
-  // Grows the textarea up to INPUT_MAX_HEIGHT as the question gets longer,
-  // then leaves it fixed and lets its own scrollbar take over.
+  useEffect(() => () => requestRef.current?.abort(), []);
+  useEffect(() => {
+    if (open) textareaRef.current?.focus();
+  }, [open]);
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${clamp(el.scrollHeight, INPUT_MIN_HEIGHT, INPUT_MAX_HEIGHT)}px`;
-  }, [input]);
-
-  // Keeps the latest message in view while tokens are streaming in.
+    el.style.height = `${Math.min(Math.max(el.scrollHeight, INPUT_MIN_HEIGHT), INPUT_MAX_HEIGHT)}px`;
+  }, [input, open]);
   useEffect(() => {
     const el = messagesRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [messages]);
-
-  useEffect(() => {
-    const el = boundaryRef?.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const nowFloating = !entry.isIntersecting;
-        setFloating(nowFloating);
-        setOpen(!nowFloating);
-        // Position starts out unset (null) -- without initializing it here,
-        // the very first time the widget floats it renders with no
-        // `position: fixed` style at all (see panelStyle/toggle style below),
-        // so it stays wherever it was in the flow instead of appearing on
-        // screen. Only set it if nothing's been picked (stored or dragged)
-        // yet.
-        if (nowFloating) {
-          setPosition((prev) => prev ?? loadStoredPosition() ?? defaultPosition());
-        }
-      },
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [boundaryRef]);
-
-  function ensurePosition() {
-    if (position) return position;
-    const stored = loadStoredPosition();
-    const next = stored ?? defaultPosition();
-    setPosition(next);
-    return next;
-  }
-
-  function handleToggle() {
-    ensurePosition();
-    setOpen((v) => !v);
-  }
-
-  // The toggle button is both clickable (open) and draggable (move) --
-  // pointerdown/up around a drag still fires a native click afterward, so
-  // without this every drag would also toggle the panel open. Track whether
-  // the pointer actually moved past a small threshold; the click handler
-  // below checks it and swallows the click if so.
-  function handleToggleClick() {
-    if (dragRef.current.moved) {
-      dragRef.current.moved = false;
-      return;
-    }
-    handleToggle();
-  }
-
-  function handlePointerDown(e) {
-    const pos = ensurePosition();
-    dragRef.current = {
-      dragging: true,
-      moved: false,
-      startX: e.clientX,
-      startY: e.clientY,
-      offsetX: e.clientX - pos.x,
-      offsetY: e.clientY - pos.y,
-    };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  }
-
-  function handlePointerMove(e) {
-    if (!dragRef.current.dragging) return;
-    if (Math.abs(e.clientX - dragRef.current.startX) > DRAG_THRESHOLD || Math.abs(e.clientY - dragRef.current.startY) > DRAG_THRESHOLD) {
-      dragRef.current.moved = true;
-    }
-    const rawX = e.clientX - dragRef.current.offsetX;
-    const rawY = e.clientY - dragRef.current.offsetY;
-    if (open) {
-      setPosition(clampToViewport({ x: rawX, y: rawY }, PANEL_WIDTH, PANEL_HEIGHT_OPEN));
-    } else {
-      setPosition({
-        x: clampToMargin(rawX, PANEL_HEIGHT_COLLAPSED),
-        y: clamp(rawY, EDGE_MARGIN, window.innerHeight - PANEL_HEIGHT_COLLAPSED - EDGE_MARGIN),
-      });
-    }
-  }
-
-  function handlePointerUp(e) {
-    if (!dragRef.current.dragging) return;
-    dragRef.current.dragging = false;
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    } catch {
-      // pointer may already be released -- harmless
-    }
-    if (position) saveStoredPosition(position);
+  }, [messages, open]);
+  function closeChat() {
+    setOpen(false);
+    launcherRef.current?.focus();
   }
 
   // Applies a partial update to the assistant message that's currently
@@ -230,7 +57,9 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
     setLoading(true);
 
     try {
+      requestRef.current = new AbortController();
       const res = await fetch("/api/query", {
+        signal: requestRef.current.signal,
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ region, regionLabel, question, history }),
@@ -270,6 +99,7 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
 
       if (serverError) throw new Error(serverError);
     } catch (err) {
+      if (err.name === "AbortError") return;
       patchLastMessage({
         content: `지금은 답변할 수 없습니다 (${err.message}). 잠시 후 다시 시도해주세요.`,
         isError: true,
@@ -282,75 +112,31 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
   }
 
   function handleInputKeyDown(e) {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       handleSubmit(e);
     }
   }
 
-  // Re-clamped to the viewport on every render (not just while dragging) --
-  // `position` can come from a stale localStorage value, or from wherever
-  // the collapsed icon happened to be sitting, so it isn't necessarily a
-  // valid *panel*-sized position. Without this, opening the panel from an
-  // icon parked near the right margin rendered it partly off-screen.
-  const openPosition = floating && position ? clampToViewport(position, PANEL_WIDTH, PANEL_HEIGHT_OPEN) : null;
-  const panelStyle = openPosition
-    ? { position: "fixed", left: openPosition.x, top: openPosition.y, width: PANEL_WIDTH }
-    : !floating && maxHeight
-      ? { height: maxHeight, maxHeight }
-      : undefined;
-  const panelClass = `chat-widget ${floating ? "chat-widget--floating" : "chat-widget--docked"}`;
-
   return (
-    <div className={`chat-widget-slot${floating ? " chat-widget-slot--floating" : ""}`}>
-      {floating && !open ? (
-        <button
-          className="chat-widget__toggle"
-          style={
-            position
-              ? { position: "fixed", left: clampToMargin(position.x, PANEL_HEIGHT_COLLAPSED), top: position.y }
-              : undefined
-          }
-          onClick={handleToggleClick}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          title="지역 상황 물어보기"
-        >
-          💬
-        </button>
-      ) : (
-        <div className={panelClass} style={panelStyle}>
-          <div
-            className="chat-widget__header"
-            onPointerDown={floating ? handlePointerDown : undefined}
-            onPointerMove={floating ? handlePointerMove : undefined}
-            onPointerUp={floating ? handlePointerUp : undefined}
-          >
-            <p className="section-title" style={{ margin: 0 }}>
-              지역 상황 물어보기
-            </p>
-            {floating && (
-              // stopPropagation so this click doesn't also bubble into the
-              // header's onPointerDown drag handler above -- without it, a
-              // plain click on this button also starts a (zero-distance)
-              // drag on the header first, which captures the pointer and
-              // eats the click until you press again.
-              <button
-                type="button"
-                className="chat-widget__collapse"
-                onPointerDown={(e) => e.stopPropagation()}
-                onClick={handleToggle}
-              >
-                접기
-              </button>
-            )}
+    <div className="chat-popup-root">
+      <button type="button" ref={launcherRef} className="chat-popup-launcher"
+        aria-label="관광신호 도우미 열기" aria-expanded={open} aria-controls="regional-chat-popup"
+        onClick={() => open ? closeChat() : setOpen(true)}>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-8 8H5l-3 2v-10a9 9 0 0 1 18 0Z"/><path d="M7 10h8M7 14h5"/></svg>
+        <span>관광신호 도우미</span>
+      </button>
+      {open && (
+        <section id="regional-chat-popup" className="chat-widget chat-popup-panel" role="dialog" aria-modal="false" aria-labelledby="regional-chat-title"
+          onKeyDown={(e) => { if (e.key === "Escape") { e.stopPropagation(); closeChat(); } }}>
+          <div className="chat-widget__header chat-popup-header">
+            <div><strong id="regional-chat-title">관광신호 도우미 · {regionLabel ?? region}</strong><p>우리 지역의 신호와 대응 정보를 쉽게 설명해 드려요.</p></div>
+            <button type="button" className="chat-popup-close" onClick={closeChat} aria-label="관광신호 도우미 닫기">×</button>
           </div>
-
           <div className="chat-widget__messages" ref={messagesRef}>
             {messages.length === 0 && (
               <p className="chat-widget__hint">
-                예: "지금 {regionLabel ?? region} 상황 어때?", "이번 주말 방문객 얼마나 예상돼?"
+                “{regionLabel ?? region}에서 먼저 확인할 변화는?”처럼 질문해 보세요.
               </p>
             )}
             {messages.map((m, i) => {
@@ -381,11 +167,12 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
 
           <form className="chat-widget__input-row" onSubmit={handleSubmit}>
             <textarea
+              aria-label="관광신호 도우미 질문"
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleInputKeyDown}
-              placeholder="지역 상황을 물어보세요 (Shift+Enter로 줄바꿈)"
+              placeholder="궁금한 신호나 대응 방법을 물어보세요"
               rows={1}
               disabled={loading}
             />
@@ -393,7 +180,7 @@ export default function ChatWidget({ region, regionLabel, boundaryRef, maxHeight
               전송
             </button>
           </form>
-        </div>
+        </section>
       )}
     </div>
   );

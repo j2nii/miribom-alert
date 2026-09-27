@@ -31,6 +31,8 @@ export default function ConfidenceBox({ matchedCount, totalCount, lines, note })
           확신도 {level} · {matchedCount}/{totalCount} 지표 일치
         </span>
       </div>
+      <details className="compact-details">
+      <summary>판단 근거</summary>
       <ul style={{ listStyle: "none", margin: "10px 0 0", padding: 0, display: "flex", flexDirection: "column", gap: 6 }}>
         {lines.map((l, i) => (
           <li key={i} style={{ fontSize: 12, display: "flex", gap: 6 }}>
@@ -42,6 +44,7 @@ export default function ConfidenceBox({ matchedCount, totalCount, lines, note })
       {note && (
         <p style={{ fontSize: 11, color: "var(--ink-soft)", marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>{note}</p>
       )}
+      </details>
     </div>
   );
 }

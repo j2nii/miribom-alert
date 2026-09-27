@@ -28,6 +28,7 @@ const USE_PROD = import.meta.env.VITE_USE_PROD === "true";
 
 export const REGION_MANIFEST = {
   yeongwol: {
+    daily_peak: { url: "/mock/daily_peak.json", kind: "mock" },
     // 메인 실데이터 사례 (docs/meeting-notes/UI/MySQL_실데이터_연동_계획.md).
     // signal_status/timeline/hotspots/visitor_profile/content_type 5종은
     // agents/ 파이프라인이 이 지역(region_id 51750) 실측 산출물을 만들어뒀음.
@@ -46,6 +47,7 @@ export const REGION_MANIFEST = {
     // mock조차 없어(시계열 브랜치 미완) 그 전까지는 생성이 막혀 있다(2026-09-24 확인, 보류 결정).
   },
   geoje: {
+    daily_peak: { url: "/mock/daily_peak_geoje.json", kind: "mock" },
     // 대비 사례 (총량은 그대로인데 특정 지점에만 쏠리는 패턴).
     // signal_status/timeline/content_type 모두 agents/ 파이프라인의 실측
     // 산출물(기본 지역 = 거제이므로 파일명에 지역코드 접미사 없음)을 그대로 사용.
@@ -72,6 +74,7 @@ export const REGION_MANIFEST = {
     briefing: { url: "/prod/briefing.json", kind: "mock" },
   },
   chungju: {
+    daily_peak: { url: "/mock/daily_peak.json", kind: "mock" },
     // Intentionally schema-independent (baseline lifecycle reference case,
     // not one of the 9 official contracts) -- but same envelope shape, so
     // it's just as swappable to real data later. See docs/설계결정.md and
