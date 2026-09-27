@@ -282,31 +282,3 @@
 .region-search__hint kbd {
   margin: 0 1px;
 }
-
-.region-mode {
-  margin: -6px 0 12px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--mist);
-  font-size: 12px;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-.region-mode b {
-  color: var(--ink);
-}
-.region-mode--case {
-  background: var(--teal-tint-bg);
-}
-.region-mode__link {
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-family: var(--font-kr);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--teal);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
