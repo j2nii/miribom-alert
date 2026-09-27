@@ -18,6 +18,21 @@ const CARD_GAP = 14;
 
 const STEPS = [
   {
+    // selector가 없는 단계 = 스포트라이트 없이 화면 가운데에 띄우는 소개. 무엇을 가리킬지
+    // 정하기 전에 "이 화면이 무엇을 위한 것인지"부터 알려야, 뒤따르는 단계들이 각각
+    // 어디에 쓰이는 조각인지 이해된다.
+    intro: true,
+    title: "관광레이더는 이런 서비스입니다",
+    body: "SNS·검색·이동통신 데이터에서 관광객이 몰릴 신호를 미리 잡아내고, 그 상황에 맞는 대응 조치를 매뉴얼 근거와 함께 전달합니다. 혼잡이 벌어진 뒤 수습하는 게 아니라, 벌어지기 전에 준비할 시간을 만드는 것이 목표입니다.",
+    points: [
+      "지금 우리 지역이 어느 경보 단계인지",
+      "왜 그렇게 판단했는지 — 출처가 다른 신호 3개",
+      "오늘 무엇을 해야 하는지 — 매뉴얼 쪽수까지",
+      "그 대응이 실제로 효과가 있었는지",
+    ],
+    note: "화면의 모든 수치에는 출처와 실측·샘플 표시가 붙습니다. 조치 문구는 매뉴얼 원문을 그대로 인용하며, 없는 내용을 지어내지 않습니다.",
+  },
+  {
     selector: ".scan-input-wrap",
     title: "담당 지역을 고릅니다",
     body: "여기서 지역을 바꾸면 아래 모든 화면과 오른쪽 대화창이 함께 바뀝니다. 지역을 바꾸면 대화 기록도 새로 시작됩니다.",
@@ -94,6 +109,11 @@ export default function GuideTour({ open, onClose }) {
 
   const measure = useCallback(() => {
     if (!step) return;
+    // 소개 단계는 비출 대상이 없다 -- 구멍 없이 전체를 어둡게 두고 카드만 가운데 띄운다.
+    if (!step.selector) {
+      setRect(null);
+      return;
+    }
     const el = findTarget(step.selector);
     if (!el) return;
     const r = el.getBoundingClientRect();
@@ -117,7 +137,8 @@ export default function GuideTour({ open, onClose }) {
     const timer = setTimeout(() => {
       // 지금 화면에 실제로 존재하는 단계만 남긴다 -- 지역마다 없는 패널이 있다
       // (영월은 브리핑이 없고, 충주는 생애주기 스키마라 구성이 다르다).
-      setSteps(STEPS.filter((s) => findTarget(s.selector)));
+      // selector가 없는 소개 단계는 조건 없이 남긴다.
+      setSteps(STEPS.filter((s) => !s.selector || findTarget(s.selector)));
       setIndex(0);
     }, 150);
     return () => clearTimeout(timer);
@@ -127,6 +148,11 @@ export default function GuideTour({ open, onClose }) {
   // 구멍이 뚫리므로 스크롤 이벤트가 잦아들 때까지 몇 프레임 더 따라간다.
   useLayoutEffect(() => {
     if (!open || !step) return;
+    // 소개 단계는 비출 대상이 없으므로 스크롤도 측정도 하지 않는다.
+    if (!step.selector) {
+      setRect(null);
+      return;
+    }
     const el = findTarget(step.selector);
     if (!el) return;
     el.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -228,12 +254,24 @@ export default function GuideTour({ open, onClose }) {
       {/* 구멍이 아직 측정 전이면 전체를 덮어 화면이 번쩍이지 않게 한다 */}
       {(!hole || hole.height <= 0) && <div className="tour__backdrop" />}
 
-      <div className="tour__card" style={cardStyle} ref={cardRef}>
+      <div
+        className={`tour__card${step.intro ? " tour__card--intro" : ""}`}
+        style={step.intro ? undefined : cardStyle}
+        ref={cardRef}
+      >
         <p className="tour__progress">
           {index + 1} / {steps.length}
         </p>
         <p className="tour__title">{step.title}</p>
         <p className="tour__body">{step.body}</p>
+        {step.points && (
+          <ul className="tour__points">
+            {step.points.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+        )}
+        {step.note && <p className="tour__note">{step.note}</p>}
         <div className="tour__buttons">
           <button type="button" className="tour__skip" onClick={finish}>
             건너뛰기
@@ -245,7 +283,7 @@ export default function GuideTour({ open, onClose }) {
               </button>
             )}
             <button type="button" className="btn-primary" onClick={next}>
-              {index + 1 === steps.length ? "시작하기" : "다음"}
+              {index + 1 === steps.length ? "시작하기" : step.intro ? "둘러보기" : "다음"}
             </button>
           </div>
         </div>
