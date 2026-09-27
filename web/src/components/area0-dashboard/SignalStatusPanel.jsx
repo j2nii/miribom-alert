@@ -1,20 +1,9 @@
+import { formatDateWithWeekday } from "../../lib/format.js";
+import { ALERT_STAGES, ALERT_COLOR, ALERT_MEANING } from "../../lib/alertLevels.js";
 import StageGauge from "../common/StageGauge.jsx";
 import SourceBadge from "../common/SourceBadge.jsx";
 import CaveatNote from "../common/CaveatNote.jsx";
 import ManualRefCite from "../common/ManualRefCite.jsx";
-
-const ALERT_STAGES = [
-  { key: "관심", label: "관심", color: "var(--alert-관심)" },
-  { key: "주의", label: "주의", color: "var(--alert-주의)" },
-  { key: "경계", label: "경계", color: "var(--alert-경계)" },
-  { key: "심각", label: "심각", color: "var(--alert-심각)" },
-];
-const ALERT_COLOR = {
-  관심: "var(--alert-관심)",
-  주의: "var(--alert-주의)",
-  경계: "var(--alert-경계)",
-  심각: "var(--alert-심각)",
-};
 
 export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
   const d = envelope.data;
@@ -22,6 +11,10 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
 
   return (
     <div>
+      {/* 게이지 + 단계 배지 + 기준일 + 단계의 뜻을 한 덩어리로 묶는다. 사용법 투어가 이
+          영역을 통째로 비추기 때문에(GuideTour의 .alert-summary 단계), 바늘만 밖에 남거나
+          설명만 비춰지는 일이 없어야 한다. */}
+      <div className="alert-summary">
       <StageGauge stages={ALERT_STAGES} currentKey={d.alert_level} />
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
@@ -34,8 +27,14 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
           </span>
         )}
         <span style={{ fontSize: 12, color: "var(--ink-soft)", fontFamily: "var(--font-mono)" }}>
-          기준일 {d.as_of}
+          기준일 {formatDateWithWeekday(d.as_of)}
         </span>
+      </div>
+
+      {/* 단계 이름만으로는 무엇을 해야 하는지 알 수 없다 -- 단계의 뜻을 게이지 바로 밑에 붙인다. */}
+      {ALERT_MEANING[d.alert_level] && (
+        <p className="alert-meaning">{ALERT_MEANING[d.alert_level]}</p>
+      )}
       </div>
 
       {/* agents 브랜치 계약 변경: congestion_level·density는 실데이터에서 둘 다
@@ -60,9 +59,9 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
 
       {todayForecast && (
         <div className="info-box">
-          {todayForecast.date} 예측 외지인 방문자 <strong>{todayForecast.predicted.toLocaleString()}</strong>명
+          {formatDateWithWeekday(todayForecast.date)} 예측 외지인 방문자 <strong>{todayForecast.predicted.toLocaleString()}</strong>명
           <span style={{ color: "var(--ink-soft)" }}>
-            {" "}(80% 구간 {todayForecast.lower.toLocaleString()}~{todayForecast.upper.toLocaleString()}명, 데이터 기준일 다음 날) — 7일 예측은 아래 '신호 추이·예측'에서 확인
+            {" "}(80% 구간 {todayForecast.lower.toLocaleString()}~{todayForecast.upper.toLocaleString()}명, 데이터 기준일 다음 날) — 7일 예측은 아래 '추이·예측'에서 확인
           </span>
         </div>
       )}

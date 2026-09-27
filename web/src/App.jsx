@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { REGIONS } from "./data/manifest.js";
 import Header from "./components/common/Header.jsx";
+import GuideTour, { hasSeenTour } from "./components/common/GuideTour.jsx";
 import Area0Dashboard from "./pages/Area0Dashboard.jsx";
 import SignalTrend from "./pages/SignalTrend.jsx";
 import Area1SignalScan from "./pages/Area1SignalScan.jsx";
@@ -20,13 +21,31 @@ export default function App() {
     const asked = new URLSearchParams(window.location.search).get("region");
     return REGIONS.some((r) => r.key === asked) ? asked : "yeongwol";
   });
+  const [tourOpen, setTourOpen] = useState(false);
+  // 좁은 화면에서 상단 내비의 "물어보기"가 여는 대화창(하단 시트). Header와 ChatWidget이
+  // 형제가 아니라 여기서 상태를 들고 양쪽에 내려준다.
+  const [askOpen, setAskOpen] = useState(false);
+
+  // 첫 방문이면 사용법 투어를 자동으로 연다. 바로 열지 않고 한 박자 기다리는 이유:
+  // 투어 단계가 화면에 실제로 있는 요소만 골라 잡는데, 정적 JSON이 도착하기 전에는
+  // "오늘의 결론" 카드 같은 단계가 아직 렌더되지 않아 통째로 빠진다.
+  useEffect(() => {
+    if (hasSeenTour()) return;
+    const timer = setTimeout(() => setTourOpen(true), 900);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="app">
-      <Header />
+      <Header onReplayTour={() => setTourOpen(true)} onAsk={() => setAskOpen(true)} />
       <div className="app-grid">
         <section id="area0" className="panel panel-dashboard">
-          <Area0Dashboard region={region} onRegionChange={setRegion} />
+          <Area0Dashboard
+            region={region}
+            onRegionChange={setRegion}
+            askOpen={askOpen}
+            onAskClose={() => setAskOpen(false)}
+          />
         </section>
 
         <section id="trend" className="panel panel-trend">
@@ -54,6 +73,8 @@ export default function App() {
         content_type 포함)를 모두 반영했고, 영월군은 실측 신호 상태·타임라인(signal_status·timeline)을 중심으로
         한 메인 사례이며 나머지 항목은 준비 전입니다. 값 옆의 배지로 출처와 목업 여부를 항상 확인하세요.
       </footer>
+
+      <GuideTour open={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 }
