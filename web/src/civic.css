@@ -19,6 +19,12 @@
 .app .hero-copy h1 { font-size: clamp(25px, 2.5vw, 32px); font-weight: 700; letter-spacing: -.025em; }
 .app .hero-kicker { color: #ffffff; font-size: 13px; font-weight: 500; }
 .app .hero-description { color: #ffffff; font-size: 14px; font-weight: 400; }
+.app .hero-inner { padding-top: 20px; }
+.app .hero-copy { padding: 30px 0 34px; }
+@media(max-width:700px) {
+  .app .hero-inner { padding-top: 18px; }
+  .app .hero-copy { padding: 24px 0 28px; }
+}
 .app .hero-radar { display: block; opacity: .3; }
 .app .workflow-nav { border: 1px solid #eee9f5; border-radius: 12px; }
 .app .workflow-step { border-radius: 4px; color: #463952; }
@@ -127,3 +133,34 @@
 .app .report-evidence > .morning-window:last-child { margin-bottom:0; }
 .app .brand-radar { display:block; width:46px; height:46px; flex-shrink:0; margin-right:10px; color:var(--portal-accent); }
 @media(max-width:700px) { .app .brand-radar { width:40px; height:40px; margin-right:8px; } }
+.app .peak-review-summary { margin-top:16px; padding:14px 16px; border-left:3px solid var(--portal-accent); border-radius:4px 8px 8px 4px; background:#f7f3fc; }
+.app .peak-review-heading { display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
+.app .peak-review-heading strong { font-size:15px; color:#554173; }
+.app .peak-review-heading span, .app .peak-review-summary > small { font-size:11px; color:#786b84; }
+.app .peak-review-summary p { margin:7px 0; font-size:13px; line-height:1.7; color:#51465d; }
+.app .peak-review-action b { margin-right:8px; color:#65519d; }
+/* Compact spacing without reducing text size or control hit areas. */
+.app .app-grid { margin-top:12px; gap:12px; }
+.app .panel { padding:16px; }
+.app .panel-head { margin-bottom:10px; padding-bottom:8px; }
+.app .panel-eyebrow { margin-bottom:3px; }
+.app .daily-peak { padding:12px 14px; }
+.app .daily-peak-heading { margin-top:8px; gap:10px; }
+.app .daily-peak-stats { margin-top:8px; gap:12px; }
+.app .daily-peak-readout { margin-top:6px; }
+.app .daily-peak-svg { max-height:230px; }
+.app .daily-peak-legend { margin-block:4px; gap:12px; }
+.app .peak-review-summary { margin-top:8px; padding:10px 12px; }
+.app .peak-review-summary p { margin:4px 0; }
+.app .daily-peak-next { margin-top:10px; gap:10px; }
+.app .daily-peak-next a { padding:12px 14px; }
+.app .daily-peak-next small { margin-top:4px; }
+.app .daily-peak-disclosure { margin-top:5px; }
+.app .summary-details { margin-top:8px; }
+.app .summary-details > summary { padding:10px 12px; }
+.app .summary-details-body { padding:14px; }
+@media(max-width:700px) {
+  .app .panel { padding:12px; }
+  .app .daily-peak { padding:10px; }
+  .app .daily-peak-svg { max-height:none; }
+}

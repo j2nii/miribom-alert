@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRegionData } from "../../hooks/useRegionData.js";
 import DataState from "../common/DataState.jsx";
+import { mockReviewSummary } from "./mockReviewSummary.js";
 
 export default function DailyPeakChart({ region }) {
   const result = useRegionData("daily_peak", region);
@@ -10,6 +11,7 @@ export default function DailyPeakChart({ region }) {
 function PeakPlot({ envelope }) {
   const [hovered, setHovered] = useState(null);
   const { points, baseline, as_of } = envelope.data;
+  const review = mockReviewSummary(envelope);
   const last = points.at(-1);
   const previous = points.filter((point) => point.date >= baseline.start && point.date <= baseline.end && Number.isFinite(point.value));
   const average = previous.length ? previous.reduce((sum, point) => sum + point.value, 0) / previous.length : null;
@@ -22,12 +24,12 @@ function PeakPlot({ envelope }) {
   let sustained = 0;
   for (let i = points.length - 1; i >= 0 && Number.isFinite(points[i].value) && points[i].value > baseline.upper; i--) sustained++;
   const startIndex = sustained ? points.length - sustained : -1;
-  const max = Math.max(baseline.upper, ...points.map((p) => p.value ?? 0), 1) * 1.25;
+  const max = Math.max(baseline.upper, ...points.map((p) => p.value ?? 0), 400) * 1.25;
   const x = (i) => 52 + i * 650 / Math.max(1, points.length - 1);
   const y = (value) => 232 - value / max * 200;
   const active = points[hovered ?? points.length - 1];
   const path = points.map((p, i) => Number.isFinite(p.value) ? `${i === 0 || !Number.isFinite(points[i - 1].value) ? "M" : "L"}${x(i)},${y(p.value)}` : "").join(" ");
-  return <section className={`daily-peak${settled ? " is-settled" : ""}`} aria-label="일별 SNS 언급량 변화 예시">
+  return <section className={`daily-peak${!peak ? " is-settled" : ""}`} aria-label="일별 SNS 언급량 변화 예시">
     <div className="daily-peak-meta"><span className="daily-peak-mock">{envelope._mock ? "목업 · 화면 설명용 예시" : "관측 데이터"}</span><span>{envelope._mock ? "예시 " : ""}기준일 {as_of}</span></div>
     <div className="daily-peak-heading"><div><h3>{!Number.isFinite(last.value) ? "자료 수집 대기" : peak ? "우리 지역 언급이 늘어나고 있어요" : settled ? "우리 지역 언급이 평소 수준으로 돌아왔어요" : "우리 지역 언급은 평소 수준이에요"}</h3></div><span className={`daily-peak-status${peak ? " is-peak" : ""}`}>{!Number.isFinite(last.value) ? "자료 미수집" : sustained > 1 ? `${sustained}일째 관심 증가` : peak ? "관심 증가" : settled ? `${normalDays}일째 평소 수준` : "평소 수준"}{envelope._mock && " · 예시"}</span></div>
     <div className="daily-peak-stats"><span>평소 <strong>{average == null ? "—" : Math.round(average).toLocaleString("ko-KR")}건</strong></span><span aria-hidden="true">→</span><span>{envelope._mock ? "예시 기준일" : "최근 관측일"} <strong>{last.value == null ? "—" : last.value.toLocaleString("ko-KR")}건</strong></span>{ratio != null && <b>평소의 {ratio.toFixed(1)}배</b>}</div>
@@ -52,6 +54,11 @@ function PeakPlot({ envelope }) {
       </g>}
     </svg>
     <div className="daily-peak-legend"><span><i />일별 언급량</span><span><i />평소 범위</span><span><i />관심 증가 구간</span></div>
+    {review && <div className="peak-review-summary" aria-label="목업 기준 검토 상태와 권고사항">
+      <div className="peak-review-heading"><strong>{review.label}</strong><span>목업 기준 · 관심·방문 신호 모두 가상 설정</span></div>
+      <p>{review.summary}</p>
+      <p className="peak-review-action"><b>현재 권고</b>{review.action}</p>
+    </div>}
     <div className="daily-peak-next">
       <a href="#area2"><span><strong>관련 콘텐츠 확인</strong><small>우리 지역이 어떤 이야기로 언급되는지 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
       <a href="#area3"><span><strong>대응 준비</strong><small>담당자가 먼저 확인하고 준비할 일을 살펴보세요.</small></span><span aria-hidden="true">→</span></a>

@@ -87,9 +87,9 @@ export const REGION_MANIFEST = {
 };
 
 export const REGIONS = [
-  { key: "yeongwol", label: "영월군" },
-  { key: "geoje", label: "거제시" },
-  { key: "chungju", label: "충주시" },
+  { key: "yeongwol", label: "영월군", region_id: "51750" },
+  { key: "geoje", label: "거제시", region_id: "48310" },
+  { key: "chungju", label: "충주시", region_id: "43130" },
 ];
 
 export function getManifestEntry(region, dataType) {

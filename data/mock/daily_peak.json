@@ -16,6 +16,7 @@
     "평소 범위와 급증 판정은 화면 설명을 위해 정한 가상 값입니다. 실제 경보 또는 대응 판단에 사용하지 않습니다."
   ],
   "data": {
+    "review_matrix_example": { "online_watch_active": true, "visitor_anomaly_active": false },
     "as_of": "2026-09-27",
     "baseline": {
       "label": "관심 증가 전 14일 평균",

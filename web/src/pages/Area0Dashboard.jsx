@@ -16,7 +16,8 @@ function DashboardContent({ region }) {
   const forecast = useRegionData("forecast", region);
   const content = useRegionData("content_type", region);
   const timeline = useRegionData("timeline", region);
-  const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
+  const selectedRegion = REGIONS.find((r) => r.key === region);
+  const regionLabel = selectedRegion?.label ?? region;
 
   return (
     <div>
@@ -26,7 +27,7 @@ function DashboardContent({ region }) {
       </div>
       <DailyPeakChart region={region} />
       <details className="summary-details">
-        <summary>현재 연결된 지역 자료와 과거 사례 보기</summary>
+        <summary>별도 기준의 지역 자료·과거 사례 보기</summary>
         <div className="summary-details-body">
       <DataState result={signalStatus} render={({ envelope }) => <>
         <RegionSummary envelope={envelope} contentResult={content} timelineResult={timeline} />

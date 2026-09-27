@@ -1,6 +1,6 @@
 const EXAMPLES = {
   yeongwol: { keyword: "영월 여행", values: [30, 34, 40, 55, 62, 72, 90] },
-  geoje: { keyword: "거제 여행", values: [85, 68, 52, 40, 33, 31, 30] },
+  geoje: { keyword: "거제 여행", values: [30, 32, 29, 31, 30, 32, 31] },
   chungju: { keyword: "충주 여행", values: [38, 42, 41, 48, 52, 57, 63] },
 };
 
@@ -15,7 +15,7 @@ export default function DailySearchSummary({ region }) {
   return <section className="report-evidence" aria-label="네이버 일별 검색지수 예시">
     <h3 className="report-channel">네이버 · 일별 검색 추이</h3>
     <div className="morning-meta"><span>목업 · 실제 API 미연결</span><span>예시 기준 2026.09.26</span></div>
-    <h3>{region === "geoje" ? "검색 관심이 잦아들고 있어요" : "검색 관심이 전날보다 늘었어요"}</h3>
+    <h3>{region === "geoje" ? "검색 관심은 평소 수준이에요" : "검색 관심이 전날보다 늘었어요"}</h3>
     <div className="report-search-value"><strong>{last}<small>지수</small></strong><span>전일 {previous} → {last} · {difference > 0 ? "+" : ""}{difference}p</span></div>
     <svg className="report-search-chart" viewBox="0 0 350 150" role="img" aria-label={`검색지수 목업. 9월 20일부터 26일까지 ${sample.values.join(', ')}. 검색 건수가 아닙니다.`}>
       {[0, 50, 100].map(value => <g key={value}><line x1="28" x2="322" y1={y(value)} y2={y(value)} stroke="#e9e2f0" /><text x="22" y={y(value) + 4} textAnchor="end" fontSize="10" fill="#756589">{value}</text></g>)}
