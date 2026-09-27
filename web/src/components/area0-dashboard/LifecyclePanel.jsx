@@ -39,7 +39,11 @@ export default function LifecyclePanel({ envelope }) {
 
   return (
     <div>
-      <StageGauge stages={LIFECYCLE_STAGES} currentKey={d.lifecycle_stage} />
+      {/* SignalStatusPanel과 같은 클래스 -- 사용법 투어가 지역 스키마와 무관하게 같은
+          "지금 상태" 영역을 비출 수 있게 한다. */}
+      <div className="alert-summary">
+        <StageGauge stages={LIFECYCLE_STAGES} currentKey={d.lifecycle_stage} />
+      </div>
 
       <ConfidenceBox
         matchedCount={d.confidence.matched_count}

@@ -21,7 +21,7 @@ import json
 import re
 import sys
 from collections import Counter
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -156,16 +156,36 @@ def render_situation(signal: dict) -> str:
     return " ".join(out)
 
 
+def metric_text(metric: dict) -> str:
+    """MAPE는 %, MAE·RMSE는 방문자 수(명)다."""
+    unit = "%" if metric["name"] == "MAPE" else "명"
+    return f"검증 {metric['name']} {metric['value']:,}{unit}"
+
+
+def forecast_basis(forecast: dict) -> str:
+    base = date.fromisoformat(forecast["period"]["start"]) - timedelta(days=1)
+    return f"{base.month}월 {base.day}일"
+
+
 def render_outlook(forecast: dict, checklist: dict) -> str:
     f = forecast["data"]
     daily = {d["date"]: d for d in f["daily"]}
     top, *others = f["peak_days"][:3]
     day = daily[top["date"]]
-    metric = f["model"]["metric"]
-    head = (f"최대 피크는 {kdate(top['date'])} {top['predicted']:,}명(80% 구간 {day['lower']:,}~{day['upper']:,}명)으로 "
-            f"예상 경보 {top['expected_alert_level']}")
-    perf = f"(검증 {metric['name']} {metric['value']}%)"
-    if others:
+    perf = f"({metric_text(f['model']['metric'])})"
+    # 실측 forecast는 일별 경보 단계가 없다(경보는 월별 판정, D-13) — 그때는 예측 인원만 쓴다
+    if "expected_alert_level" not in top:
+        head = (f"{forecast_basis(forecast)}까지의 자료로 본 7일 예측에서 최대 피크는 {kdate(top['date'])} "
+                f"{top['predicted']:,}명(80% 구간 {day['lower']:,}~{day['upper']:,}명)")
+        rest = "".join(f", {kdate(p['date'])} {p['predicted']:,}명" for p in others)
+        out = [f"{head}{rest}이다{perf}."]
+        head = None
+    else:
+        head = (f"최대 피크는 {kdate(top['date'])} {top['predicted']:,}명(80% 구간 {day['lower']:,}~{day['upper']:,}명)으로 "
+                f"예상 경보 {top['expected_alert_level']}")
+    if head is None:
+        pass
+    elif others:
         levels = {p["expected_alert_level"] for p in others}
         if len(levels) == 1:
             lvl = levels.pop()
@@ -221,14 +241,16 @@ def build_facts(inputs: dict) -> list[dict]:
     f = inputs["forecast"][0]["data"]
     daily = {d["date"]: d for d in f["daily"]}
     metric = f["model"]["metric"]
-    add("예측 모델 성능", f"검증 {metric['name']} {metric['value']}%", "방문객 예측", "forecast")
+    add("예측 모델 성능", metric_text(metric), "방문객 예측", "forecast")
     top_peak, *others = f["peak_days"][:3]
     day = daily[top_peak["date"]]
+    level = lambda p: f", 예상 경보 {p['expected_alert_level']}" if "expected_alert_level" in p else ""  # noqa: E731
     add("최대 피크 예상일", f"{kdate(top_peak['date'])} {top_peak['predicted']:,}명 "
-        f"(80% 구간 {day['lower']:,}~{day['upper']:,}명), 예상 경보 {top_peak['expected_alert_level']}", "방문객 예측", "forecast")
+        f"(80% 구간 {day['lower']:,}~{day['upper']:,}명){level(top_peak)}", "방문객 예측", "forecast")
     if others:
-        add("그 밖의 피크 예상일", ", ".join(f"{kdate(p['date'])} 예상 경보 {p['expected_alert_level']}" for p in others),
+        add("그 밖의 피크 예상일", ", ".join(f"{kdate(p['date'])} {p['predicted']:,}명{level(p)}" for p in others),
             "방문객 예측", "forecast")
+    add("예측 기준", f"{forecast_basis(inputs['forecast'][0])}까지의 자료로 본 7일 앞 예측", "방문객 예측", "forecast")
 
     assessment = inputs["checklist"][0]["data"].get("assessment", {})
     if assessment.get("situation_types"):

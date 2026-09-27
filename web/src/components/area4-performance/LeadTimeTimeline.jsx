@@ -26,7 +26,7 @@ export default function LeadTimeTimeline({ timelineData }) {
 
   return (
     <div>
-      <p style={{ fontSize: 14, fontWeight: 700 }}>{title}</p>
+      <p className="subsection-title">{title}</p>
       {subtitle && <p style={{ fontSize: 12, color: "var(--muted)", marginBottom: 12 }}>{subtitle}</p>}
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>

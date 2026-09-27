@@ -28,7 +28,7 @@ export default function BriefingGenerator({ briefingData, regionLabel }) {
 
       {briefingData.paragraphs.map((p, i) => (
         <div key={i} style={{ marginBottom: 8 }}>
-          <strong style={{ fontSize: 12, color: "var(--ink-soft)" }}>{p.heading}</strong>
+          <p className="subsection-title" style={{ color: "var(--ink-soft)" }}>{p.heading}</p>
           <p style={{ fontSize: 13, whiteSpace: "pre-wrap", margin: "2px 0 0" }}>{p.text}</p>
         </div>
       ))}

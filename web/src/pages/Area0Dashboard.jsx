@@ -1,16 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useRegionData } from "../hooks/useRegionData.js";
-import { REGIONS } from "../data/manifest.js";
+import { useMediaQuery, NARROW_QUERY } from "../hooks/useMediaQuery.js";
+import { getRegionCoverage, isRegionCode } from "../data/manifest.js";
+import { useRegionLabel } from "../data/regionIndex.js";
+import RegionSearch from "../components/area0-dashboard/RegionSearch.jsx";
 import DataState from "../components/common/DataState.jsx";
 import MockBanner from "../components/common/MockBanner.jsx";
 import ChatWidget from "../components/common/ChatWidget.jsx";
 import SignalStatusPanel from "../components/area0-dashboard/SignalStatusPanel.jsx";
 import LifecyclePanel from "../components/area0-dashboard/LifecyclePanel.jsx";
+import TodayActionCard from "../components/area0-dashboard/TodayActionCard.jsx";
 
-export default function Area0Dashboard({ region, onRegionChange }) {
+export default function Area0Dashboard({ region, onRegionChange, askOpen, onAskClose }) {
   const signalStatus = useRegionData("signal_status", region);
   const forecast = useRegionData("forecast", region);
-  const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
+  // 오늘의 결론 카드용. 둘 다 정적 JSON이라 AREA3와 중복 요청이 되지만 브라우저 캐시가
+  // 받아주고, 대신 AREA0가 AREA3의 결론을 먼저 보여줄 수 있게 된다.
+  const checklist = useRegionData("checklist", region);
+  const briefing = useRegionData("briefing", region);
+  const regionLabel = useRegionLabel(region);
   // Watched by ChatWidget: as long as any part of this row is still on
   // screen, the chat stays docked in its 2-column spot -- only once the
   // whole row (both columns) has scrolled fully past does it switch to
@@ -27,6 +35,12 @@ export default function Area0Dashboard({ region, onRegionChange }) {
   // rendered height in JS and applying it as an explicit pixel height is
   // unambiguous -- ChatWidget then has a real height to overflow against.
   const [mainHeight, setMainHeight] = useState(null);
+  // 이 측정값의 목적은 "옆 칼럼과 높이를 맞추는 것"이다. 좁은 화면에서는 두 칼럼이
+  // 위아래로 쌓여 옆 칼럼이라는 개념 자체가 없어지는데, 그래도 높이를 넘기면 대화창이
+  // 게이지 패널만큼(수백 px) 빈 채로 세로를 차지한다 -- QA의 "빈 대화창이 화면 절반을
+  // 먹는다"가 그 증상이다. 좁은 화면에서는 높이 강제를 끄고 내용만큼만 차지하게 한다.
+  const isNarrow = useMediaQuery(NARROW_QUERY);
+  const coverage = getRegionCoverage(region);
 
   useEffect(() => {
     const el = mainRef.current;
@@ -42,22 +56,25 @@ export default function Area0Dashboard({ region, onRegionChange }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">AREA 0 · CONTROL DASHBOARD</p>
+        <p className="panel-eyebrow">
+          <span className="panel-eyebrow__code">AREA 0</span>
+          지금 상황
+        </p>
         <h2>관제 대시보드</h2>
-        <p className="panel-subtitle">지역을 선택해 경보 상태를 한눈에 확인합니다. 여기서 바꾸는 지역은 화면 전체(AREA1~4)에 적용됩니다.</p>
+        <p className="panel-subtitle">담당 지역의 오늘 경보 단계를 확인하고, 옆 대화창으로 근거를 되물어보는 화면입니다. 여기서 바꾼 지역은 화면 전체(AREA1~4)와 대화창에 함께 적용됩니다.</p>
       </div>
 
       <div className="scan-form">
-        <div className="scan-input-wrap">
-          <select value={region} onChange={(e) => onRegionChange(e.target.value)}>
-            {REGIONS.map((r) => (
-              <option key={r.key} value={r.key}>
-                {r.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <RegionSearch region={region} onRegionChange={onRegionChange} />
+        {/* 지역마다 준비된 데이터 종류가 달라 어떤 화면은 비어 있다. 그 이유를 고르는
+            자리에서 바로 알려 준다 -- 빈 화면을 고장으로 읽지 않도록. */}
+        <span className="region-coverage" title="9종 데이터 계약 중 이 지역에 준비된 수">
+          데이터 {coverage.available}/{coverage.total}종
+          <span className="region-coverage__real">실측 {coverage.real}</span>
+        </span>
       </div>
+
+      <RegionModeNote region={region} onRegionChange={onRegionChange} />
 
       <div className="area0-layout" ref={layoutRef}>
         <div className="area0-layout__main" ref={mainRef}>
@@ -80,10 +97,50 @@ export default function Area0Dashboard({ region, onRegionChange }) {
               )
             }
           />
+
+          <TodayActionCard
+            region={region}
+            checklist={checklist}
+            briefing={briefing}
+            alertLevel={
+              signalStatus.status === "ok" ? signalStatus.envelope.data.alert_level : null
+            }
+          />
         </div>
 
-        <ChatWidget region={region} regionLabel={regionLabel} boundaryRef={layoutRef} maxHeight={mainHeight} />
+        <ChatWidget
+          region={region}
+          regionLabel={regionLabel}
+          boundaryRef={layoutRef}
+          maxHeight={isNarrow ? null : mainHeight}
+          sheetOpen={askOpen}
+          onSheetClose={onAskClose}
+        />
       </div>
     </>
+  );
+}
+
+// 이 지역에서 무엇을 볼 수 있는지 한 줄로. 전국 시군구는 데이터랩·이동통신·검색지수만 쓰는
+// 기본 분석(경보·신호 추이·7일 예측)이고, 크롤링 자료가 붙은 심층 분석은 사례 지역에만 있다.
+function RegionModeNote({ region, onRegionChange }) {
+  if (!isRegionCode(region)) {
+    return (
+      <p className="region-mode region-mode--case">
+        <b>심층 분석 사례 지역</b> — 데이터랩 지표에 유튜브·기사 등 수집 자료까지 연결해 콘텐츠 원인·체크리스트·브리핑을 함께 봅니다.
+      </p>
+    );
+  }
+  return (
+    <p className="region-mode">
+      <b>데이터랩 기본 분석</b> — 공개 데이터(데이터랩·이동통신·검색지수)만으로 경보 판정·신호 추이·7일 예측을 제공합니다. 콘텐츠 원인·체크리스트·브리핑은
+      심층 사례 지역에서 볼 수 있습니다:{" "}
+      {[["yeongwol", "영월"], ["geoje", "거제"]].map(([key, label], i) => (
+        <span key={key}>
+          {i > 0 && " · "}
+          <button type="button" className="region-mode__link" onClick={() => onRegionChange(key)}>{label}</button>
+        </span>
+      ))}
+    </p>
   );
 }

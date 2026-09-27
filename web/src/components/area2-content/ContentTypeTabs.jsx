@@ -2,10 +2,13 @@ import { useState } from "react";
 import VideoCard from "./VideoCard.jsx";
 import ContentTypeSummary from "./ContentTypeSummary.jsx";
 
+// `substitute`: 이 탭 전용 데이터가 아직 스키마에 없어서 AREA1의 다른 계약을 끌어다 대신
+// 보여주는 탭. 회색 본문 문장만으로 알리면 훑어보며 놓치고 "AREA2도 실측 수치"라고
+// 오해하게 되므로(QA 피드백), 탭 버튼에 "준비 중" 배지를, 본문 머리에 경고 톤 박스를 둔다.
 const TABS = [
   { key: "youtube", label: "유튜브" },
-  { key: "sns", label: "SNS 언급량" },
-  { key: "places", label: "실제 검색 장소" },
+  { key: "sns", label: "SNS 언급량", substitute: true },
+  { key: "places", label: "실제 검색 장소", substitute: true },
   { key: "summary", label: "콘텐츠 유형 요약" },
 ];
 
@@ -23,6 +26,7 @@ export default function ContentTypeTabs({ contentTypeData, crossValidationSignal
             className={"tab-btn" + (tab === t.key ? " is-active" : "")}
           >
             {t.label}
+            {t.substitute && <span className="tab-btn__badge">준비 중</span>}
           </button>
         ))}
       </div>
@@ -42,9 +46,9 @@ export default function ContentTypeTabs({ contentTypeData, crossValidationSignal
 
       {tab === "sns" && (
         <div>
-          <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 8 }}>
-            AREA 0/1의 3중 교차검증에 쓰이는 신호 중 SNS·언급량 계열만 다시 보여줍니다(별도 지점별 세분화
-            데이터는 아직 스키마에 없음).
+          <p className="substitute-note">
+            <strong>전용 데이터 준비 중</strong> — 지점별로 세분화된 SNS 언급량 데이터는 아직 스키마에
+            없습니다. AREA 0/1의 3중 교차검증에 쓰이는 신호 중 SNS·언급량 계열만 다시 보여줍니다.
           </p>
           {crossValidationSignals
             ?.filter((s) => s.signal.includes("유튜브") || s.signal.includes("언급"))
@@ -60,9 +64,9 @@ export default function ContentTypeTabs({ contentTypeData, crossValidationSignal
 
       {tab === "places" && (
         <div>
-          <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 8 }}>
-            검색 의도 기준 장소별 세분화 데이터는 아직 없어, 방문 기준 랭킹(AREA 1 인기 관광지)으로 대신
-            표시합니다.
+          <p className="substitute-note">
+            <strong>전용 데이터 준비 중</strong> — 검색 의도 기준 장소별 세분화 데이터가 없어, AREA 1의
+            방문 기준 랭킹(인기 관광지)으로 대신 표시합니다. 검색량이 아니라 실제 방문자 수입니다.
           </p>
           {hotspotsData?.ranking.slice(0, 5).map((p) => (
             <div key={p.rank} style={{ fontSize: 13, marginBottom: 4 }}>

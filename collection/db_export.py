@@ -43,9 +43,12 @@ QUERIES = {
         from fact_signal
         where region_id in ({','.join(repr(r) for r in CASE_REGIONS)}) and observed_date >= '2022-01-01'
     """,
+    # description/tags는 2026-09-27부터 데이터 담당이 적재하기 시작했다 (그 전엔 컬럼
+    # 자체가 없어 agent2_apply.py가 collection/youtube_collect.py로 직접 재수집해 우회했다 —
+    # docs/j2nii_진행상황.md §23 참고). 거제(48310)는 여전히 비어 있다(적재 이전 스냅샷).
     "youtube_case": """
         select video_id, region_id, source_region_name, keyword_text, published_at, window_month,
-               view_rank, title, channel_name, view_count, like_count, comment_count
+               view_rank, title, channel_name, description, tags, view_count, like_count, comment_count
         from youtube_video
     """,
     "datalab_monthly_panel": "select * from datalab_monthly_panel",

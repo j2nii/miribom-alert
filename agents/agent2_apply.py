@@ -12,14 +12,21 @@ agent5_briefing.py와 같은 패턴: LLM은 판정(유형·신뢰도·근거·�
 하고, video_id/title/channel/published_at/view_count 등 정적 필드는 코드가 원본에서
 그대로 채운다(D-08).
 
-입력은 DB 스냅샷(youtube_case.csv, description/tags 없음)이 아니라 collection/
-youtube_collect.py로 재수집한 원본을 쓴다 — DB의 youtube_video 테이블 자체에
-description/tags 컬럼이 없어서(팀 공유용 기록: docs/j2nii_진행상황.md §23),
-프롬프트가 요구하는 입력(제목·설명·태그)을 DB로는 채울 수 없다.
+기본 입력은 collection/youtube_collect.py로 재수집한 원본(data/raw/youtube/*.json)이다 —
+DB의 youtube_video 테이블 자체에 description/tags 컬럼이 없어서(팀 공유용 기록:
+docs/j2nii_진행상황.md §23) 시작한 우회다.
+
+데이터 담당이 2026-09-27부터 description/tags 적재를 시작했지만(--source db 옵션으로
+data/raw/db/youtube_case.csv를 쓸 수 있다), 확인해보니 아직 지역당 최근 90일 상위
+50건 기준 14~46%만 채워져 있다(전체가 아니라 최근 몇 달치만, 그것도 부분적으로 —
+2026-09-27 실측 확인). 로컬 재수집은 가져오는 영상 전부에 description/tags가 차 있어
+지금은 이쪽이 커버리지가 낫다 — 그래서 기본값은 그대로 local이고, DB 경로는 백필이
+더 진행됐을 때 바로 쓸 수 있도록 미리 만들어만 둔다.
 
 사용법:
     uv run python collection/youtube_collect.py --region 여수   # 지역별 재수집, 필요시
     uv run python agents/agent2_apply.py --provider upstage
+    uv run python agents/agent2_apply.py --provider upstage --source db   # DB 백필이 충분해지면
     uv run python agents/agent2_apply.py --dump-prompt          # LLM 호출 없이 요청만 저장
 """
 
@@ -27,8 +34,10 @@ import argparse
 import json
 import sys
 from collections import Counter
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
+
+import pandas as pd
 
 sys.stdout.reconfigure(encoding="utf-8")
 sys.stderr.reconfigure(encoding="utf-8")
@@ -42,7 +51,8 @@ from common import load_prompt  # noqa: E402
 from llm_client import LLMError, complete_json  # noqa: E402
 from jsonschema import Draft7Validator  # noqa: E402
 
-RAW_DIR = ROOT / "data" / "raw" / "youtube"
+RAW_DIR = ROOT / "data" / "raw" / "youtube"  # 거제 RESULTS의 원본(RAW_FILE)만 여기서 읽는다
+DB_DIR = ROOT / "data" / "raw" / "db"
 PROD = ROOT / "data" / "prod"
 RUNS_DIR = ROOT / "agents" / "runs"
 OUT = PROD / "content_type.json"
@@ -74,6 +84,9 @@ OTHER_RAW_FILES = {
     "51810": ("인제군", "인제_20260924_0119.json"),
 }
 TOP_N_OTHER = 50
+DESCRIPTION_MAX_CHARS = 1500  # collection/youtube_collect.py의 simplify()와 동일하게 맞춘다
+TAGS_MAX = 20
+DB_LOOKBACK_DAYS = 90  # --source db일 때 후보 풀을 as_of 기준 최근 N일로 좁힌다(아래 load_db_videos 참고)
 
 # 수요 쏠림/이탈 신호 (설계결정 D-02).
 # 관광무관으로 분류된 영상도 신호는 가질 수 있다 — 집계에서 빠지는 것과
@@ -341,21 +354,65 @@ def classify_batch(region_name: str, videos: list[dict], args, prompt_version: s
     return {"judgments": judgments, "model": model_info[0], "provider": model_info[1]}
 
 
-def build_other(region: str, region_name: str, args) -> dict | None:
-    filename = OTHER_RAW_FILES[region][1]
-    raw_path = RAW_DIR / filename
-    if not raw_path.exists():
-        print(f"[건너뜀] {filename}이 없다 — collection/youtube_collect.py --region {region_name[:2]}로 재수집 필요")
-        return None
-    raw = json.loads(raw_path.read_text(encoding="utf-8"))
+def load_db_videos(region: str, as_of: str) -> list[dict]:
+    """data/raw/db/youtube_case.csv에서 지역별 영상을 읽어 프롬프트가 쓰는 필드로 정리한다.
 
-    # 재수집은 "오늘로부터 최근 90일"이라 signal_status 등 다른 실측 계약(데이터랩 8월분까지만
-    # 공개돼 있어 as_of가 그 이전에 멈춰 있음)보다 최신 영상까지 잡힌다. 같은 지역 화면에서
-    # "8월 기준 경보" 옆에 "9월 콘텐츠"가 뜨는 시점 불일치를 막기 위해, signal_status의
-    # as_of 이후 업로드분은 분류 대상에서 제외한다(하드코딩 아님 — as_of가 갱신되면 자동으로 따라간다).
+    --source db일 때만 쓴다(기본은 local). youtube_video는 지역당 1,000여 건이 2025-01부터
+    누적돼 있어, 필터 없이 조회수로만 정렬하면 1년 전 평생 누적 조회수 영상이 상위를
+    차지해 "지금 왜 뜨는가"라는 목적과 안 맞는다 — as_of 기준 최근 DB_LOOKBACK_DAYS일로
+    후보 풀 자체를 좁힌다(로컬 재수집의 "최근 90일" 취지와 맞춘 것).
+
+    description/tags는 데이터 담당이 2026-09-27부터 적재하기 시작해 아직 지역당 일부
+    영상만 채워져 있다(나머지는 NULL) — 없으면 빈 문자열/빈 배열로 둔다(발명 금지:
+    없는 값을 추정해서 채우지 않는다). 2026-09-27 실측: 이 좁힌 후보 풀의 조회수 상위
+    50건 기준으로도 지역별 14~46%만 description이 있었다 — 로컬 재수집(거의 100%)보다
+    낮다. 신뢰도가 낮게 나올 수 있다는 점은 caveat에 남긴다.
+    """
+    df = pd.read_csv(DB_DIR / "youtube_case.csv", dtype={"region_id": str})
+    start = (date.fromisoformat(as_of) - timedelta(days=DB_LOOKBACK_DAYS)).isoformat()
+    rows = df[(df["region_id"] == region) & (df["published_at"] >= start) & (df["published_at"] <= as_of)]
+    rows = rows.drop_duplicates("video_id")
+    videos = []
+    for _, r in rows.iterrows():
+        tags = json.loads(r["tags"]) if pd.notna(r["tags"]) else []
+        videos.append({
+            "video_id": r["video_id"],
+            "title": r["title"],
+            "channel": r["channel_name"],
+            "published_at": str(r["published_at"])[:10],
+            "description": (r["description"] if pd.notna(r["description"]) else "")[:DESCRIPTION_MAX_CHARS],
+            "tags": tags[:TAGS_MAX],
+            "view_count": int(r["view_count"]) if pd.notna(r["view_count"]) else 0,
+            "like_count": int(r["like_count"]) if pd.notna(r["like_count"]) else 0,
+            "comment_count": int(r["comment_count"]) if pd.notna(r["comment_count"]) else 0,
+        })
+    return videos
+
+
+def build_other(region: str, region_name: str, args) -> dict | None:
+    # signal_status 등 다른 실측 계약(데이터랩 8월분까지만 공개돼 있어 as_of가 그 이전에
+    # 멈춰 있음)과 시점을 맞추기 위해, signal_status의 as_of 이후 업로드분은 분류 대상에서
+    # 제외한다(하드코딩 아님 — as_of가 갱신되면 자동으로 따라간다).
     signal_path = PROD / f"signal_status_{region}.json"
     as_of = json.loads(signal_path.read_text(encoding="utf-8"))["data"]["as_of"]
-    all_videos = raw["videos"]
+
+    source = getattr(args, "source", "local")
+    raw = None
+    if source == "db":
+        all_videos = load_db_videos(region, as_of)
+        if not all_videos:
+            print(f"[건너뜀] {region_name}({region}) 영상이 data/raw/db/youtube_case.csv "
+                  f"최근 {DB_LOOKBACK_DAYS}일 범위에 없다 — collection/db_export.py 재실행 필요")
+            return None
+    else:
+        filename = OTHER_RAW_FILES[region][1]
+        raw_path = RAW_DIR / filename
+        if not raw_path.exists():
+            print(f"[건너뜀] {filename}이 없다 — collection/youtube_collect.py --region {region_name[:2]}로 재수집 필요")
+            return None
+        raw = json.loads(raw_path.read_text(encoding="utf-8"))
+        all_videos = raw["videos"]
+
     eligible = [v for v in all_videos if v["published_at"] <= as_of]
     excluded_recent = len(all_videos) - len(eligible)
 
@@ -405,32 +462,56 @@ def build_other(region: str, region_name: str, args) -> dict | None:
         items.append(item)
 
     counted, summary = summarize(items)
+
+    if source == "db":
+        db_exported_at = json.loads((DB_DIR / "manifest.json").read_text(encoding="utf-8"))["exported_at"]
+        items_with_desc = sum(1 for v in videos if v["description"])
+        source_block = [{
+            "name": "YouTube Data API v3 (팀 DB youtube_video 적재분)",
+            "provider": "Google — 팀 DB youtube_video",
+            "retrieved_at": db_exported_at[:10],
+            "note": f"최근 {DB_LOOKBACK_DAYS}일 {len(all_videos)}건 중 {as_of} 이전 업로드 {len(eligible)}건 중 조회수 상위 {len(items)}건 분류",
+        }]
+        desc_caveat = (
+            f"description/tags는 팀 DB가 2026-09-27부터 적재를 시작해 아직 일부만 채워져 있다 — 분류 대상 {len(items)}건 중 "
+            f"{items_with_desc}건만 description이 있었고, 나머지는 제목만으로 판정했다(신뢰도가 상대적으로 낮을 수 있다)."
+        )
+        view_caveat = "조회수는 DB 적재 시점 기준이며 이후 계속 변동한다."
+    else:
+        source_block = [{
+            "name": "YouTube Data API v3",
+            "provider": "Google",
+            "retrieved_at": raw["collected_at"][:10],
+            "note": f"검색어 {', '.join(raw['queries'])} / 최근 {raw['period_days']}일 업로드분 {raw['count']}건 중 "
+                    f"{as_of} 이전 업로드 {len(eligible)}건 중 조회수 상위 {len(items)}건 분류",
+        }]
+        desc_caveat = None
+        view_caveat = "조회수는 수집 시점 기준이며 이후 계속 변동한다."
+
+    caveats = [
+        f"영상은 signal_status 기준일(as_of={as_of}) 이전 업로드분만 포함했다 — 다른 실측 계약(signal_status/"
+        f"visitor_profile/hotspots)과 시점을 맞추기 위함이다. 이후 업로드된 {excluded_recent}건은 제외했다.",
+        f"수집된 영상 중 조회수 상위 {TOP_N_OTHER}건만 분류했다(기준일 이전 {len(eligible)}건 중). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+        view_caveat,
+    ]
+    if desc_caveat:
+        caveats.append(desc_caveat)
+    caveats += [
+        "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+        "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+        "분류는 제목·설명·태그 텍스트만으로 수행했으며 영상 내용을 시청해 검증하지 않았다.",
+    ]
+
     return {
         "_mock": False,
         "generated_at": datetime.now().astimezone().replace(microsecond=0).isoformat(),
-        "source": [
-            {
-                "name": "YouTube Data API v3",
-                "provider": "Google",
-                "retrieved_at": raw["collected_at"][:10],
-                "note": f"검색어 {', '.join(raw['queries'])} / 최근 {raw['period_days']}일 업로드분 {raw['count']}건 중 "
-                        f"{as_of} 이전 업로드 {len(eligible)}건 중 조회수 상위 {len(items)}건 분류",
-            }
-        ],
+        "source": source_block,
         "period": {
             "start": min(i["published_at"] for i in items),
             "end": max(i["published_at"] for i in items),
             "granularity": "일",
         },
-        "caveat": [
-            f"영상은 signal_status 기준일(as_of={as_of}) 이전 업로드분만 포함했다 — 다른 실측 계약(signal_status/"
-            f"visitor_profile/hotspots)과 시점을 맞추기 위함이다. 이후 업로드된 {excluded_recent}건은 제외했다.",
-            f"수집된 영상 중 조회수 상위 {TOP_N_OTHER}건만 분류했다(기준일 이전 {len(eligible)}건 중). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
-            "조회수는 수집 시점 기준이며 이후 계속 변동한다.",
-            "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
-            "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
-            "분류는 제목·설명·태그 텍스트만으로 수행했으며 영상 내용을 시청해 검증하지 않았다.",
-        ],
+        "caveat": caveats,
         "data": {
             "region": {"code": region, "name": region_name},
             "model": {"name": model_info[0], "provider": model_info[1], "prompt_version": prompt_version},
@@ -452,6 +533,9 @@ def main() -> None:
     parser.add_argument("--dump-prompt", action="store_true", help="LLM을 호출하지 않고 요청만 저장")
     parser.add_argument("--region", action="append",
                         help="특정 지역 코드만 처리(반복 지정 가능). 기본: 전체(거제 포함)")
+    parser.add_argument("--source", choices=["local", "db"], default="local",
+                        help="거제 외 지역의 영상 후보 출처. local(기본)=collection/youtube_collect.py 재수집 파일, "
+                             "db=data/raw/db/youtube_case.csv(description/tags 백필이 아직 부분적 — 2026-09-27 기준)")
     args = parser.parse_args()
     regions = set(args.region) if args.region else None
 

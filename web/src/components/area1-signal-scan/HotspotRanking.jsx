@@ -1,3 +1,5 @@
+import Term from "../common/Term.jsx";
+
 export default function HotspotRanking({ hotspotsData, deadZonePois = [] }) {
   return (
     <ul className="rank-list">
@@ -12,7 +14,7 @@ export default function HotspotRanking({ hotspotsData, deadZonePois = [] }) {
                   {poi.poi_name}
                   {isDeadZone && (
                     <span className="dept-chip" style={{ marginLeft: 6 }}>
-                      분산 후보지
+                      <Term name="분산 후보지">분산 후보지</Term>
                     </span>
                   )}
                 </span>
