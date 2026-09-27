@@ -1,5 +1,5 @@
 import { useRegionData } from "../hooks/useRegionData.js";
-import { REGIONS } from "../data/manifest.js";
+import { useRegionLabel } from "../data/regionIndex.js";
 import DataState from "../components/common/DataState.jsx";
 import MockBanner from "../components/common/MockBanner.jsx";
 import SourceBadge from "../components/common/SourceBadge.jsx";
@@ -12,7 +12,7 @@ export default function Area3Briefing({ region }) {
   const checklist = useRegionData("checklist", region);
   const precedent = useRegionData("precedent", region);
   const briefing = useRegionData("briefing", region);
-  const regionLabel = REGIONS.find((r) => r.key === region)?.label ?? region;
+  const regionLabel = useRegionLabel(region);
 
   return (
     <>

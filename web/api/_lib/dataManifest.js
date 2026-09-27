@@ -62,6 +62,28 @@ export const REGION_MANIFEST = {
   },
 };
 
+// 전국 시군구: 사례 지역이 아닌 곳은 지역 키가 5자리 지역코드("51150")다. 데이터랩·이동통신·검색지수만으로
+// 만드는 3종(경보 판정·신호 추이·7일 예측)을 data/prod/regions/에서 읽는다. 목록은 regions/index.json
+// (scripts/build_region_index.py)이 가지고 있고, 여기서는 파일 경로 규칙만 안다.
+export const NATIONAL_TYPES = ["signal_status", "signal_series", "forecast"];
+// 사례 지역의 지역코드 → 화면 키. ?region=51750처럼 코드로 들어와도 사례 화면으로 보낸다
+export const SHOWCASE_CODES = {
+  51750: "yeongwol",
+  48310: "geoje",
+  12130: "yeosu",
+  51210: "sokcho",
+  51810: "inje",
+  47940: "ulleung",
+};
+
+export function isRegionCode(region) {
+  return /^\d{5}$/.test(region ?? "");
+}
+
 export function getManifestEntry(region, dataType) {
-  return REGION_MANIFEST[region]?.[dataType] ?? null;
+  if (REGION_MANIFEST[region]) return REGION_MANIFEST[region][dataType] ?? null;
+  if (isRegionCode(region) && NATIONAL_TYPES.includes(dataType)) {
+    return { url: `/prod/regions/${dataType}_${region}.json`, kind: "real" };
+  }
+  return null;
 }

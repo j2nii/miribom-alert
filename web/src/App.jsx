@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { REGIONS } from "./data/manifest.js";
+import { normalizeRegionKey, useRegionIndex } from "./data/regionIndex.js";
+import { isRegionCode } from "./data/manifest.js";
 import Header from "./components/common/Header.jsx";
 import GuideTour, { hasSeenTour } from "./components/common/GuideTour.jsx";
 import Area0Dashboard from "./pages/Area0Dashboard.jsx";
@@ -16,11 +17,23 @@ import Area4Performance from "./pages/Area4Performance.jsx";
 // exactly one .panel, same as the reference demo (not one panel per
 // sub-feature).
 export default function App() {
-  // ?region=geoje 처럼 지역을 주소에 실어 공유·시연 링크로 쓸 수 있다. 없거나 모르는 값이면 영월
-  const [region, setRegion] = useState(() => {
-    const asked = new URLSearchParams(window.location.search).get("region");
-    return REGIONS.some((r) => r.key === asked) ? asked : "yeongwol";
-  });
+  // ?region=geoje 또는 ?region=51150(지역코드)처럼 지역을 주소에 실어 공유·시연 링크로 쓴다.
+  // 지역을 바꾸면 주소도 따라 바뀌어, 지금 보는 화면을 그대로 복사해 보낼 수 있다
+  const [region, setRegion] = useState(
+    () => normalizeRegionKey(new URLSearchParams(window.location.search).get("region")) ?? "yeongwol"
+  );
+  // 주소로 들어온 지역코드가 사전에 없으면(오타·폐지된 코드) 기본 지역으로 돌린다
+  const { index } = useRegionIndex();
+  useEffect(() => {
+    if (index && isRegionCode(region) && !index.byKey.has(region)) setRegion("yeongwol");
+  }, [index, region]);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("region") === region) return;
+    url.searchParams.set("region", region);
+    window.history.replaceState(null, "", url);
+  }, [region]);
   const [tourOpen, setTourOpen] = useState(false);
   // 좁은 화면에서 상단 내비의 "물어보기"가 여는 대화창(하단 시트). Header와 ChatWidget이
   // 형제가 아니라 여기서 상태를 들고 양쪽에 내려준다.
