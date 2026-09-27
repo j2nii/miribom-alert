@@ -32,7 +32,7 @@ export default function DataState({ result, render }) {
     const label = DATA_LABELS[result.dataType] ?? result.dataType;
     // 전국 시군구(지역코드)는 기본 분석 지역이라 크롤링 기반 항목이 원래 없다 -- 고장이 아니라 범위 밖임을 알린다
     const hint = /^\d{5}$/.test(result.region ?? "")
-      ? "이 지역은 데이터랩 기본 분석 지역입니다. 이 항목은 영월·거제 등 심층 사례 지역에서 볼 수 있습니다."
+      ? "심층 분석 항목이라 이 지역은 준비 중입니다. 지금은 영월·거제·여수·속초·인제·울릉 6곳에서 볼 수 있습니다."
       : FALLBACK_HINT[result.dataType];
     return (
       <div className="unsupported-state">
