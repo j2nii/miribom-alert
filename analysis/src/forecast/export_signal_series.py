@@ -68,9 +68,13 @@ def daily_rows(frames: SignalFrames, backtest: pd.DataFrame, region: str, end: p
     visitors = raw.reindex(days)
     visitors_ly = raw.shift(364).reindex(days)
     pred = backtest[backtest["region_id"] == region].set_index("observed_date")["pred"].reindex(days)
-    return [{"date": d.strftime("%Y-%m-%d"), "search_stat": rnd(search[d]), "visitors_stat": rnd(visitors_stat[d]),
-             "visitors": whole(visitors[d]), "visitors_ly": whole(visitors_ly[d]), "backtest": whole(pred[d])}
-            for d in days]
+    # 값이 없는 필드는 싣지 않는다(화면은 없는 값을 결측으로 그린다). 전국 226곳을 올리므로 용량을 줄인다
+    rows = []
+    for d in days:
+        row = {"date": d.strftime("%Y-%m-%d"), "search_stat": rnd(search[d]), "visitors_stat": rnd(visitors_stat[d]),
+               "visitors": whole(visitors[d]), "visitors_ly": whole(visitors_ly[d]), "backtest": whole(pred[d])}
+        rows.append({k: v for k, v in row.items() if v is not None})
+    return rows
 
 
 def episode_rows(frames: SignalFrames, region: str) -> list[dict]:
@@ -193,7 +197,8 @@ def main() -> None:
     names = (pd.read_csv(INTERIM / "panel_daily.csv", dtype={"region_id": str}, usecols=["region_id", "region_name"])
              .drop_duplicates().set_index("region_id")["region_name"])
     if args.all:
-        args.region = sorted(r for r in backtest["region_id"].unique() if r.isdigit())  # 합산 단위 제외
+        # 합산 단위 제외, 사례 지역 파일은 기본 실행이 만든다(여기서 다시 쓰지 않는다)
+        args.region = sorted(r for r in backtest["region_id"].unique() if r.isdigit() and r not in SHOWCASE)
     frames = SignalFrames()
     ratios = paired_point_ratios(load_points())
     regions = region_monthly()
