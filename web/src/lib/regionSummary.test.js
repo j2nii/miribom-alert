@@ -10,15 +10,16 @@ function fixture(file) {
 test("Yeongwol describes search activity without claiming actual visitor growth", () => {
   const signal = fixture("data/prod/signal_status_51750.json");
   assert.match(summarizeSignals(signal.data).headline, /검색/);
-  assert.match(summarizeSignals(signal.data).description, /별도로 확인/);
+  assert.match(summarizeSignals(signal.data).description, /감지 기준을 넘었습니다/);
 });
 
 test("high-view unrelated videos are excluded from the regional issue summary", () => {
   const content = fixture("data/prod/content_type_51750.json");
   const original = JSON.stringify(content);
-  const selected = selectRegionalVideos(content);
+  const selected = selectRegionalVideos(content, 2, "영월군");
   assert.equal(selected.length, 2);
   assert.equal(selected[0].video_id, "nxukV1yfvCA");
+  assert.ok(selected.every((item) => item.title.includes("영월")));
   assert.ok(selected.every((item) => item.content_type !== "관광무관" && item.confidence >= 0.6));
   assert.equal(JSON.stringify(content), original);
 });

@@ -7,7 +7,7 @@ import ManualRefCite from "../common/ManualRefCite.jsx";
 const PHASE_ORDER = ["사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"];
 const PAGE_SIZE = 3;
 
-export default function ChecklistPanel({ checklistData }) {
+export default function ChecklistPanel({ checklistData, showDetails = true }) {
   const immediate = checklistData.items
     .filter((item) => item.status === "발동" && ["사전(예보 대응)", "오전(준비)"].includes(item.phase))
     .slice().sort((a, b) => a.rank - b.rank).slice(0, 3);
@@ -17,7 +17,6 @@ export default function ChecklistPanel({ checklistData }) {
     "CL-047": "주차·퇴장 안내 계획 준비",
   };
   return <div>
-    <p className="policy-now-note">{checklistData.matched_for.congestion_level == null ? "현장 혼잡도 미측정 · 실행 전 현장 확인" : "현재 자료 기준 · 실행 전 현장 확인"}</p>
     <ol className="policy-now-list">
       {immediate.map((item, index) => <li key={item.id}>
         <span className="policy-now-number">{index + 1}</span>
@@ -25,11 +24,11 @@ export default function ChecklistPanel({ checklistData }) {
       </li>)}
     </ol>
     {!immediate.length && <p className="policy-now-note">지금 우선 안내할 사전 준비 항목이 없습니다. 전체 자료를 확인하세요.</p>}
-    <details className="compact-details policy-full"><summary>전체 체크리스트·선정 근거</summary><FullChecklist checklistData={checklistData} /></details>
+    {showDetails && <details className="compact-details policy-full"><summary>전체 체크리스트·선정 근거</summary><FullChecklist checklistData={checklistData} /></details>}
   </div>;
 }
 
-function FullChecklist({ checklistData }) {
+export function FullChecklist({ checklistData }) {
   const { matched_for, items, excluded_count } = checklistData;
   const [expanded, setExpanded] = useState({});
 

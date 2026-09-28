@@ -50,20 +50,18 @@ function PeakPlot({ envelope }) {
       {settled && <g>
         <text x={x(pastPeakIndex)} y={y(points[pastPeakIndex].value) - 16} textAnchor="middle" fontSize="12" fontWeight="700" fill="#b6533d">지난 정점 · {points[pastPeakIndex].value}건</text>
         <rect x="610" y={y(last.value) - 44} width="140" height="27" rx="8" fill="#eee9f7" />
-        <text x="680" y={y(last.value) - 26} textAnchor="middle" fontSize="12" fontWeight="700" fill="#65519d">최근 · {last.value}건 · 평소 수준</text>
+        <text x="680" y={y(last.value) - 26} textAnchor="middle" fontSize="12" fontWeight="700" fill="#007fbe">최근 · {last.value}건 · 평소 수준</text>
       </g>}
     </svg>
     <div className="daily-peak-legend"><span><i />일별 언급량</span><span><i />평소 범위</span><span><i />관심 증가 구간</span></div>
     {review && <div className="peak-review-summary" aria-label="목업 기준 검토 상태와 권고사항">
-      <div className="peak-review-heading"><strong>{review.label}</strong><span>목업 기준 · 관심·방문 신호 모두 가상 설정</span></div>
+      <div className="peak-review-heading"><strong>{review.label}</strong></div>
       <p>{review.summary}</p>
       <p className="peak-review-action"><b>현재 권고</b>{review.action}</p>
     </div>}
     <div className="daily-peak-next">
       <a href="#area2"><span><strong>관련 콘텐츠 확인</strong><small>우리 지역이 어떤 이야기로 언급되는지 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
-      <a href="#area3"><span><strong>대응 준비</strong><small>담당자가 먼저 확인하고 준비할 일을 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
+      <a href="#area1"><span><strong>심층 보고서</strong><small>방문 신호의 근거와 정책 브리핑을 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
     </div>
-    <p className="daily-peak-disclosure">실제 분석 결과 연결 전, 화면 설명을 위한 목업입니다.</p>
-    <p className="daily-peak-disclosure">그래프 기준 · 평소는 {baseline.start.slice(5).replace("-", "/")}~{baseline.end.slice(5).replace("-", "/")} 평균이며, 보라색 띠는 가상의 {baseline.lower}~{baseline.upper}건 범위입니다.</p>
   </section>;
 }

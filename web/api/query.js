@@ -13,7 +13,7 @@ import { getManifestEntry } from "./_lib/dataManifest.js";
 // Response is streamed as newline-delimited JSON (one `{type, ...}` object
 // per line) instead of one JSON blob at the end, so the browser can render
 // tokens as they arrive: {type:"token", text} while the model is writing
-// the final answer, then one {type:"done", usedDataTypes, envelopes} once
+// the final answer, then one {type:"done", results, envelopes} once
 // it's finished (or {type:"error", error} if something failed).
 const client = new OpenAI({
   apiKey: process.env.UPSTAGE_API_KEY,
@@ -27,7 +27,7 @@ const MODEL = process.env.UPSTAGE_MODEL || "solar-pro4";
 // it wasn't asked about.
 const TOOLS = [
   { name: "get_signal_status", dataType: "signal_status", description: "현재 경보 단계와 3중 교차검증(관심·의도·실현) 판정 결과" },
-  { name: "get_forecast", dataType: "forecast", description: "향후 90일 방문자 예측과 요일별 집중률" },
+  { name: "get_forecast", dataType: "forecast", description: "데이터 기준일 다음 7일의 외지인 방문자 예측(80% 구간·피크일·이유)과 요일별 방문 비중. 7일보다 먼 날은 예측하지 않는다" },
   { name: "get_visitor_profile", dataType: "visitor_profile", description: "방문객 성/연령, 거주지, 이동 거리, 소비 성향, 동반 유형 분포" },
   { name: "get_hotspots", dataType: "hotspots", description: "급증 지점 랭킹 (현지인/외지인 구분)" },
   { name: "get_content_type", dataType: "content_type", description: "SNS·유튜브 콘텐츠 유형 분류 결과 (핫존·데드존 신호 포함)" },
@@ -40,10 +40,17 @@ const TOOL_BY_NAME = Object.fromEntries(TOOLS.map((t) => [t.name, t]));
 
 const ANSWER_RULES = `당신은 지자체 관광 담당 공무원의 질문에 답하는 도우미입니다.
 - 제공된 데이터(JSON)에 있는 사실에만 근거해 답하세요. 없는 수치·조치를 지어내지 마세요.
+- 이전 대화가 다른 지역에 대한 것이면 전부 무시하고, 현재 조회 지역의 데이터만 근거로 삼으세요.
+- 제공된 데이터에 없는 지명·시설명·수치는 절대 언급하지 마세요. 근거가 없으면 "해당 데이터는 준비 전"이라고 답하세요.
 - 수치를 말할 때는 어떤 데이터에 근거했는지 드러나게 답하고, caveat가 있으면 함께 언급하세요.
 - 데이터가 "unsupported"(준비 전)이면 그 사실을 정직하게 답하세요.
 - 공무원에게 보고하듯 간결한 문어체로, 2~4문장 이내로 답하세요.
+- 강조는 **굵게**만 쓰고, 표·제목(#)·코드블록은 쓰지 마세요.
 - "AI가 분석한" 같은 자기 언급 표현은 쓰지 마세요.`;
+
+// 프롬프트에 싣는 최근 대화 맥락의 상한(메시지 개수 = Q&A 10턴).
+// web/src/components/common/ChatWidget.jsx의 MAX_HISTORY_MESSAGES와 같은 값.
+const MAX_HISTORY_MESSAGES = 20;
 
 function buildToolSpecs() {
   return TOOLS.map((t) => ({
@@ -106,9 +113,12 @@ async function streamAnswer(res, messages, state) {
 
 // Primary path: let the model pick which of the 9 tools it needs, run
 // exactly those, then stream the answer from the results.
+// Returns null (nothing streamed) if the model didn't call any tool -- see
+// the handler below, which then falls back to answerWithAllData so that no
+// answer ever goes out without having read at least one data contract.
 async function answerWithToolCalling(req, res, region, baseMessages, state) {
   const messages = [...baseMessages];
-  const usedDataTypes = [];
+  const results = [];
   const envelopes = {};
 
   const first = await client.chat.completions.create({
@@ -123,14 +133,12 @@ async function answerWithToolCalling(req, res, region, baseMessages, state) {
   const firstMessage = first.choices?.[0]?.message;
   const toolCalls = firstMessage?.tool_calls ?? [];
 
-  if (toolCalls.length === 0) {
-    const text = firstMessage?.content?.trim();
-    if (text) {
-      state.started = true;
-      writeLine(res, { type: "token", text });
-    }
-    return { answer: text, usedDataTypes, envelopes };
-  }
+  // 도구를 하나도 부르지 않았다면 모델은 데이터를 한 번도 읽지 않고 답하려는 것이다.
+  // 이전 대화(특히 다른 지역 이력)가 프롬프트에 있으면 "이미 아는 내용"이라 판단해 이
+  // 경로로 빠지는데, 그게 QA에서 재현된 환각의 실제 발생 경로였고 동시에 "답변에 출처가
+  // 없다"는 원인이기도 했다. 이 응답은 버리고(아직 아무것도 스트리밍하지 않았으므로
+  // 안전하다) 호출자가 전체 데이터 경로로 폴백하게 한다.
+  if (toolCalls.length === 0) return null;
 
   messages.push(firstMessage);
 
@@ -140,34 +148,34 @@ async function answerWithToolCalling(req, res, region, baseMessages, state) {
       ? await fetchEnvelope(req, region, tool.dataType)
       : { dataType: call.function?.name, status: "error", error: "unknown tool" };
 
-    usedDataTypes.push(result.dataType);
+    results.push({ dataType: result.dataType, status: result.status });
     if (result.status === "ok") envelopes[result.dataType] = result.envelope;
 
     messages.push({ role: "tool", tool_call_id: call.id, content: JSON.stringify(result) });
   }
 
   const answer = await streamAnswer(res, messages, state);
-  return { answer, usedDataTypes, envelopes };
+  return { answer, results, envelopes };
 }
 
-// Safety net: if tool-calling itself errors out (network hiccup, unexpected
-// response shape) *before* anything was streamed, fetch all 9 contracts
-// directly and answer from a single call. The files are small, so stuffing
-// all of them is cheap and reliable.
+// Used both as a safety net (tool-calling itself errored out before anything
+// was streamed) and as the deliberate fallback when the model called no tool
+// at all: fetch all 9 contracts directly and answer from a single call. The
+// files are small, so stuffing all of them is cheap and reliable.
 async function answerWithAllData(req, res, region, baseMessages, state) {
-  const results = await Promise.all(TOOLS.map((t) => fetchEnvelope(req, region, t.dataType)));
+  const fetched = await Promise.all(TOOLS.map((t) => fetchEnvelope(req, region, t.dataType)));
   const envelopes = {};
-  const usedDataTypes = results.map((r) => {
+  const results = fetched.map((r) => {
     if (r.status === "ok") envelopes[r.dataType] = r.envelope;
-    return r.dataType;
+    return { dataType: r.dataType, status: r.status };
   });
 
   const messages = [
     ...baseMessages,
-    { role: "user", content: `참고 데이터(JSON):\n${JSON.stringify(results, null, 2)}` },
+    { role: "user", content: `참고 데이터(JSON):\n${JSON.stringify(fetched, null, 2)}` },
   ];
   const answer = await streamAnswer(res, messages, state);
-  return { answer, usedDataTypes, envelopes };
+  return { answer, results, envelopes };
 }
 
 export default async function handler(req, res) {
@@ -186,7 +194,16 @@ export default async function handler(req, res) {
     return;
   }
 
-  const trimmedHistory = Array.isArray(history) ? history.slice(-6) : [];
+  // 클라이언트가 지역 전환 시 대화를 리셋하지만(ChatWidget.jsx), 서버는 넘어온 이력을
+  // 무조건 믿지 않는다 -- 다른 지역에서 나눈 대화가 섞여 들어오면 그 지역에는 없는
+  // 수치·지명을 지어내는 원인이 되므로 여기서 한 번 더 걸러낸다. region을 달지 않은
+  // 구버전 클라이언트의 이력은 통과시킨다.
+  const scopedHistory = Array.isArray(history)
+    ? history.filter((m) => !m.region || m.region === region)
+    : [];
+  const trimmedHistory = scopedHistory
+    .slice(-MAX_HISTORY_MESSAGES)
+    .map(({ role, content }) => ({ role, content }));
   const baseMessages = [
     { role: "system", content: ANSWER_RULES },
     { role: "system", content: `현재 조회 지역: ${regionLabel ?? region} (${region})` },
@@ -201,18 +218,30 @@ export default async function handler(req, res) {
 
   const state = { started: false };
   try {
-    let result;
+    let result = null;
     try {
       result = await answerWithToolCalling(req, res, region, baseMessages, state);
     } catch (err) {
       if (state.started) throw err; // a partial answer is already on the wire -- don't also send a second one
+    }
+    // null = 도구 호출이 없었거나(근거 없는 답변 경로) 도구 호출 자체가 실패한 경우.
+    // 어느 쪽이든 아직 스트리밍 전이므로 전체 데이터를 읽고 다시 답한다.
+    if (!result) {
       result = await answerWithAllData(req, res, region, baseMessages, state);
     }
 
     if (!result.answer) {
       writeLine(res, { type: "error", error: "empty response from model" });
     } else {
-      writeLine(res, { type: "done", usedDataTypes: result.usedDataTypes, envelopes: result.envelopes });
+      // results: [{dataType, status}] -- status가 ok가 아닌 데이터(준비 전/조회 실패)까지
+      // 내려보내야 화면이 "forecast 준비 전" 같은 칩을 붙일 수 있다. usedDataTypes는
+      // 구버전 클라이언트 호환용으로 함께 남긴다.
+      writeLine(res, {
+        type: "done",
+        results: result.results,
+        usedDataTypes: result.results.map((r) => r.dataType),
+        envelopes: result.envelopes,
+      });
     }
   } catch (err) {
     writeLine(res, { type: "error", error: err?.message ?? String(err) });

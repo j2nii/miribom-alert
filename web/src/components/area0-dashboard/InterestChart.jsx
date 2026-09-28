@@ -24,9 +24,9 @@ function MentionTrend({ envelope }) {
       {[0, 0.5, 1].map((n) => <g key={n}><line x1="64" x2="672" y1={y(ceiling * n)} y2={y(ceiling * n)} stroke="#e9e5f0" /><text x="55" y={y(ceiling * n) + 4} textAnchor="end" fontSize="11" fill="#746e7d">{Math.round(ceiling * n).toLocaleString("ko-KR")}</text></g>)}
       <polygon points={`64,210 ${line} 672,210`} fill="#f0eaf9" />
       <line x1="64" x2="672" y1={y(average)} y2={y(average)} stroke="#8c8396" strokeDasharray="5 5" />
-      <polyline points={line} fill="none" stroke="#8777bb" strokeWidth="3" />
+      <polyline points={line} fill="none" stroke="#007fbe" strokeWidth="3" />
       {points.map((p, i) => <g key={p.month}>
-        <circle cx={x(i)} cy={y(p.mentions)} r={i === (selected ?? points.length - 1) ? 7 : 5} fill="#65519d" stroke="white" strokeWidth="2" tabIndex="0" role="img" aria-label={`${p.month} ${p.mentions}건`} onMouseEnter={() => setSelected(i)} onMouseLeave={() => setSelected(null)} onFocus={() => setSelected(i)} onBlur={() => setSelected(null)}><title>{p.month}: {fmt(p.mentions)}건</title></circle>
+        <circle cx={x(i)} cy={y(p.mentions)} r={i === (selected ?? points.length - 1) ? 7 : 5} fill="#007fbe" stroke="white" strokeWidth="2" tabIndex="0" role="img" aria-label={`${p.month} ${p.mentions}건`} onMouseEnter={() => setSelected(i)} onMouseLeave={() => setSelected(null)} onFocus={() => setSelected(i)} onBlur={() => setSelected(null)}><title>{p.month}: {fmt(p.mentions)}건</title></circle>
         <text x={x(i)} y="237" textAnchor="middle" fontSize="11" fill="#746e7d">{p.month.slice(5)}월</text>
       </g>)}
     </svg>
@@ -45,13 +45,10 @@ export default function InterestChart({ signalEnvelope, timelineResult }) {
   const rows = [{ label: "전년 비교 기준", value: 1, note: "364일 전 같은 요일을 기준으로 한 배율" }, ...checks.map((item) => ({ label: item.note, value: item.max_value, note: `${item.window_start} ~ ${item.window_end} · 최고일 ${item.max_date}` }))];
   return <section className="interest-chart">
     <div className="interest-chart-heading"><div><p className="summary-eyebrow">{envelope._mock ? "예시 데이터" : "과거 사례"} · 검색 관심 비교</p><h3>검색 관심이 얼마나 커졌을까요?</h3></div><strong>{fmt(strongest.max_value)}배<small>분석 기간 중 최고 비교 배율</small></strong></div>
-    <p className="summary-caption">{envelope.data.title} · 현재 SNS 언급량이 아닌 네이버 검색지수 비교입니다.</p>
+    <p className="summary-caption">{envelope.data.title} · 네이버 검색지수 비교</p>
     <div className="interest-bars" role="img" aria-label={rows.map((row) => `${row.label}: ${row.value}배`).join(". ")}>
       {rows.map((row, i) => <div className="interest-bar-row" key={i}><div className="interest-bar-label"><span>{row.label}</span><strong>{fmt(row.value)}배</strong></div><div className="interest-bar-track"><div className={i === 0 ? "interest-bar-baseline" : "interest-bar-value"} style={{ width: `${row.value / max * 100}%` }} /></div><p>{row.note}</p></div>)}
     </div>
-    <p className="interest-chart-caution">검색 증가가 관광객 증가를 뜻하지는 않습니다. 날씨·사건 보도 등 다른 이유로도 검색이 늘 수 있습니다.</p>
-    <details className="interest-method"><summary>비교 기준과 해석 시 주의</summary><p>{envelope.data.signal_rule?.statistic}. 막대는 각 기간의 최고값이며 기간 평균이나 일별 추이가 아닙니다. 1배는 전년 비교 수준, 막대 길이는 0부터 시작합니다.</p>{envelope.caveat?.map((note, i) => <p key={i}>{note}</p>)}</details>
     <SourceBadge envelope={envelope} />
-    <p className="summary-caption">월별 SNS 언급 건수는 아직 연결되지 않았습니다. 해당 시계열이 연결되면 이전 평균과 최근 언급량을 선 그래프로 비교할 수 있습니다.</p>
   </section>;
 }

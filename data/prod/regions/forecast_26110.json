@@ -1,0 +1,167 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-26T23:42:12+09:00",
+  "source": [
+    {
+      "name": "이동통신 기반 시군구 일별 방문자",
+      "provider": "한국관광공사(공공데이터포털 15101972)",
+      "retrieved_at": "2026-09-26",
+      "url": "https://www.data.go.kr/data/15101972/openapi.do",
+      "note": "외지인 방문자수. 팀 DB vw_daily_core_signal"
+    },
+    {
+      "name": "한국관광 데이터랩 월간 지표",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-26",
+      "url": "https://datalab.visitkorea.or.kr/",
+      "note": "익월 17일 공개 시점을 지켜 결합"
+    },
+    {
+      "name": "네이버 데이터랩 검색어 트렌드",
+      "provider": "네이버",
+      "retrieved_at": "2026-09-26",
+      "note": "전일까지의 검색지수만 사용"
+    },
+    {
+      "name": "전국문화축제표준데이터·특일 정보",
+      "provider": "행정안전부·한국천문연구원",
+      "retrieved_at": "2026-09-26",
+      "note": "예측 대상일의 축제·공휴일"
+    }
+  ],
+  "period": {
+    "start": "2026-08-15",
+    "end": "2026-08-21",
+    "granularity": "일"
+  },
+  "caveat": [
+    "데이터 기준일 2026-08-14 기준 7일 앞 예측이다. 오늘부터의 7일이 아니다.",
+    "검증 sMAPE 8.98%(MAE 7,603명), 228개 시군구 공통 모델, 테스트 2026-01-01~2026-08-14 51,528건. 중구만 보면 sMAPE 6.31%, MAE 7,050명이다. (09-24 동결 수치 sMAPE 8.98%·MAE 7,603명과 같은 구성·같은 입력이다.)",
+    "7일 앞(h=7)만 검증했으므로 그보다 먼 날은 제공하지 않는다.",
+    "80% 구간은 중구 테스트 기간 226일의 실제/예측 비율 10·90분위다. 구간을 벗어나는 날이 5일 중 1일꼴로 생긴다.",
+    "일별 경보 단계는 제공하지 않는다. 경보는 월별 3신호 판정(D-13)이라 일별 임계가 없다."
+  ],
+  "data": {
+    "region": {
+      "code": "26110",
+      "name": "중구"
+    },
+    "model": {
+      "name": "부스팅 회귀(HistGradientBoosting) — 방문자 시차 + 달력 + 축제 + 검색 + 데이터랩 월간",
+      "trained_on": {
+        "start": "2023-01-01",
+        "end": "2025-12-31",
+        "granularity": "일"
+      },
+      "metric": {
+        "name": "MAE",
+        "value": 7603,
+        "validation_period": {
+          "start": "2026-01-01",
+          "end": "2026-08-14",
+          "granularity": "일"
+        }
+      },
+      "features": [
+        "방문자 시차(4일 지연 공개 반영)",
+        "요일·공휴일·연휴길이",
+        "축제 전후",
+        "네이버 검색지수(전일까지)",
+        "데이터랩 월간(익월 17일 공개 반영)"
+      ]
+    },
+    "daily": [
+      {
+        "date": "2026-08-15",
+        "predicted": 153007,
+        "lower": 138345,
+        "upper": 167253,
+        "is_holiday": true
+      },
+      {
+        "date": "2026-08-16",
+        "predicted": 112341,
+        "lower": 101575,
+        "upper": 122800,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-17",
+        "predicted": 116699,
+        "lower": 105516,
+        "upper": 127564,
+        "is_holiday": true
+      },
+      {
+        "date": "2026-08-18",
+        "predicted": 102953,
+        "lower": 93087,
+        "upper": 112538,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-19",
+        "predicted": 104402,
+        "lower": 94397,
+        "upper": 114122,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-20",
+        "predicted": 107941,
+        "lower": 97598,
+        "upper": 117991,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-21",
+        "predicted": 120036,
+        "lower": 108533,
+        "upper": 131211,
+        "is_holiday": false
+      }
+    ],
+    "weekday_concentration": [
+      {
+        "weekday": "월",
+        "ratio": 0.1301
+      },
+      {
+        "weekday": "화",
+        "ratio": 0.1326
+      },
+      {
+        "weekday": "수",
+        "ratio": 0.1319
+      },
+      {
+        "weekday": "목",
+        "ratio": 0.1357
+      },
+      {
+        "weekday": "금",
+        "ratio": 0.1524
+      },
+      {
+        "weekday": "토",
+        "ratio": 0.176
+      },
+      {
+        "weekday": "일",
+        "ratio": 0.1413
+      }
+    ],
+    "peak_days": [
+      {
+        "date": "2026-08-15",
+        "predicted": 153007,
+        "reason": "토요일 · 광복절 · 3일 연휴"
+      },
+      {
+        "date": "2026-08-21",
+        "predicted": 120036,
+        "reason": "금요일"
+      }
+    ]
+  }
+}

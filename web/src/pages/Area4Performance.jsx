@@ -13,7 +13,6 @@ export default function Area4Performance({ region }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">05 · 대응 기록</p>
         <h2>지난 이슈와 대응 기록</h2>
       </div>
 
@@ -33,7 +32,7 @@ export default function Area4Performance({ region }) {
         />
       </div>
 
-      <div className="section-block">
+      {beforeAfter.status !== "unsupported" && <div className="section-block">
         <p className="section-title">조치 전후 비교</p>
         <DataState
           result={beforeAfter}
@@ -45,7 +44,7 @@ export default function Area4Performance({ region }) {
             </>
           )}
         />
-      </div>
+      </div>}
     </>
   );
 }

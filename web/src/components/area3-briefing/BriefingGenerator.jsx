@@ -24,7 +24,7 @@ export default function BriefingGenerator({ briefingData, regionLabel }) {
 
   return (
     <div>
-      <p className="section-title">정책 브리핑 (agent5_briefing.py)</p>
+      <p className="section-title">정책 보고문</p>
 
       {briefingData.paragraphs.map((p, i) => (
         <div key={i} style={{ marginBottom: 8 }}>
@@ -34,7 +34,7 @@ export default function BriefingGenerator({ briefingData, regionLabel }) {
       ))}
 
       <p style={{ fontSize: 11, color: "var(--ink-soft)" }}>
-        글자 수 {briefingData.char_count}자 (목표 400~600자) · 기준일 {briefingData.as_of}
+        기준일 {briefingData.as_of}
       </p>
 
       <div style={{ display: "flex", gap: 8 }}>

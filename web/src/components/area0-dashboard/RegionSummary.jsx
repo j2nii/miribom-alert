@@ -8,11 +8,11 @@ const SIGNAL_LABELS = [
   ["실현", "실제 방문", "외지인 방문자 수의 변화"],
 ];
 
-export default function RegionSummary({ envelope, contentResult, timelineResult }) {
+export default function RegionSummary({ envelope, contentResult, timelineResult, regionLabel }) {
   const data = envelope.data;
   const summary = summarizeSignals(data);
   const content = contentResult.status === "ok" ? contentResult.envelope : null;
-  const videos = selectRegionalVideos(content);
+  const videos = selectRegionalVideos(content, 2, regionLabel);
   const date = data.as_of ?? envelope.period?.end;
 
   return (
@@ -26,7 +26,6 @@ export default function RegionSummary({ envelope, contentResult, timelineResult 
         <h3>{summary.headline}</h3>
         <p>{summary.description}</p>
       </div>
-      <p className="summary-freshness">오늘의 실시간 소식이 아닌, 표시된 기준일까지의 분석입니다. 온라인 조회수만으로 관광객 증가를 판단할 수 없습니다.</p>
       {data.alert_level && <div className="summary-signals">
         {SIGNAL_LABELS.map(([stage, label, help]) => {
           const signal = data.cross_validation?.find((item) => item.stage === stage);
@@ -51,7 +50,7 @@ export default function RegionSummary({ envelope, contentResult, timelineResult 
             <p>{video.channel} · 게시 {video.published_at ?? "일자 미제공"}</p>
           </article>)}
           {!videos.length && <p className="summary-empty">{contentResult.status === "loading" ? "지역 관련 영상을 확인하고 있습니다…" : contentResult.status === "error" ? "영상 자료를 불러오지 못했습니다. 아래 콘텐츠 분석에서 상태를 확인해 주세요." : contentResult.status === "unsupported" ? "이 지역의 영상 자료는 아직 준비되지 않았습니다." : "수집 자료에서 소개할 지역 관련 영상을 찾지 못했습니다."}</p>}
-          {content && <><p className="summary-caption">제목·설명 기반 분류로 관련성을 다시 확인해야 합니다. 조회수는 수집 시점 기준이며, 실시간 인기 순위가 아닙니다.</p><SourceBadge envelope={content} /></>}
+          {content && <SourceBadge envelope={content} />}
         </section>
         <section className="summary-actions" aria-labelledby="summary-actions-heading">
           <div className="summary-section-head"><h3 id="summary-actions-heading">담당자는 무엇부터 하면 될까요?</h3></div>
@@ -59,7 +58,6 @@ export default function RegionSummary({ envelope, contentResult, timelineResult 
           <a href="#area2"><span className="summary-action-number">1</span><div><strong>영상 속 장소와 내용을 확인하세요</strong><p>우리 지역의 어떤 장소·먹거리가 소개됐는지 확인</p></div><span aria-hidden="true">→</span></a>
           <a href="#area1"><span className="summary-action-number">2</span><div><strong>방문 흐름과 현장 문의를 대조하세요</strong><p>관광지별 자료를 살펴보고 현장 담당자에게 확인</p></div><span aria-hidden="true">→</span></a>
           <a href="#area3"><span className="summary-action-number">3</span><div><strong>관광 안내와 대응 항목을 점검하세요</strong><p>운영시간·교통·주차 안내와 대응 체크리스트 확인</p></div><span aria-hidden="true">→</span></a>
-          <p className="summary-action-note">현장 혼잡을 확인한 뒤 대응 수준을 결정하세요. 지역별로 준비된 자료가 다를 수 있습니다.</p>
         </section>
       </div>
     </div>

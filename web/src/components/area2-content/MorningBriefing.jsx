@@ -2,8 +2,13 @@ import { MORNING_BRIEFINGS } from "../../data/morningBriefing.js";
 import DataState from "../common/DataState.jsx";
 import SourceBadge from "../common/SourceBadge.jsx";
 import DailySearchSummary from "./DailySearchSummary.jsx";
+import RealMorningBriefing from "./RealMorningBriefing.jsx";
 
-export default function MorningBriefing({ region, signalStatus }) {
+export default function MorningBriefing({ region, signalStatus, signalSeries, contentType }) {
+  if (region !== "chungju") {
+    if (contentType.status !== "ok" || contentType.envelope._mock) return null;
+    return <RealMorningBriefing region={region} signalStatus={signalStatus} signalSeries={signalSeries} contentType={contentType} />;
+  }
   const briefing = MORNING_BRIEFINGS[region];
   if (!briefing) return null;
   return <section className="morning-briefing" aria-label="유튜브와 네이버 일별 지역 보고서">

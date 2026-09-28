@@ -14,7 +14,7 @@ export function summarizeSignals(data) {
   };
   if (detected("의도")) return {
     headline: "방문지를 찾는 검색 움직임이 감지됐습니다",
-    description: "방문지 검색 지표가 감지 기준을 넘었습니다. 실제 방문 증가 여부는 별도로 확인해야 합니다.",
+    description: "방문지 검색 지표가 감지 기준을 넘었습니다.",
   };
   if (detected("관심")) return {
     headline: "온라인에서 지역을 언급하는 움직임이 감지됐습니다",
@@ -26,9 +26,10 @@ export function summarizeSignals(data) {
   };
 }
 
-export function selectRegionalVideos(envelope, limit = 2) {
+export function selectRegionalVideos(envelope, limit = 2, regionLabel = "") {
+  const regionName = regionLabel.replace(/[시군구]$/, "");
   return (envelope?.data?.items ?? [])
-    .filter((item) => item.content_type && item.content_type !== "관광무관" && Number.isFinite(item.confidence) && item.confidence >= 0.6)
+    .filter((item) => item.content_type && item.content_type !== "관광무관" && Number.isFinite(item.confidence) && item.confidence >= 0.6 && (!regionName || item.title?.includes(regionName)))
     .slice()
     .sort((a, b) => (b.view_count ?? 0) - (a.view_count ?? 0))
     .slice(0, limit);

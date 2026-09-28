@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { REGIONS } from "../../data/manifest.js";
+import { useEffect, useState } from "react";
+import RegionSearchPicker from "./RegionSearchPicker.jsx";
 
 const STEPS = [
   { label: "현황 확인", note: "지역의 경보 상태", icon: "M4 18V10m5 8V6m5 12v-5m5 5V3" },
@@ -9,8 +9,17 @@ const STEPS = [
   { label: "성과 확인", note: "대응 이후의 변화", icon: "M4 3v17h17M7 15l4-4 4 2 5-7m-5 0h5v5" },
 ];
 
+const NAV_ITEMS = [
+  { href: "#area0", label: "이슈 브리핑", icon: STEPS[0].icon },
+  { href: "#area2", label: "관련 콘텐츠", icon: STEPS[2].icon },
+  { href: "#area3", label: "대응 준비", icon: STEPS[3].icon },
+  { href: "#area1", label: "심층 분석", icon: STEPS[1].icon },
+  { href: "#area4", label: "대응 기록", icon: STEPS[4].icon },
+];
+
 export default function Header({ region, onRegionChange }) {
   const [selectedRegion, setSelectedRegion] = useState(region);
+  useEffect(() => setSelectedRegion(region), [region]);
 
   function showRegion(event) {
     event.preventDefault();
@@ -22,7 +31,7 @@ export default function Header({ region, onRegionChange }) {
   return (
     <>
       <a className="skip-link" href="#area0">지역 현황 바로가기</a>
-      <div className="portal-utility"><div className="portal-width"><span>지자체 관광 업무 지원 서비스</span><span>DEMO · 실데이터 / 예시 데이터</span></div></div>
+      <div className="portal-utility"><div className="portal-width"><span>지역 관광 데이터 브리핑</span></div></div>
       <header className="app-header">
         <div className="portal-width portal-header-row">
           <a className="portal-brand" href="#" aria-label="관광레이더 홈">
@@ -41,30 +50,29 @@ export default function Header({ region, onRegionChange }) {
           </a>
           <form className="header-region-picker" onSubmit={showRegion}>
             <label htmlFor="active-region">관심 지역 선택</label>
-            <select id="active-region" value={selectedRegion} onChange={(e) => setSelectedRegion(e.target.value)}>
-              {REGIONS.map((r) => <option key={r.key} value={r.key}>{r.label}</option>)}
-            </select>
+            <RegionSearchPicker selected={selectedRegion} current={region} onSelect={setSelectedRegion} />
             <button type="submit">현황 보기 <span aria-hidden="true">→</span></button>
           </form>
         </div>
       </header>
-      <section className="portal-hero" aria-labelledby="service-title">
-        <div className="portal-width hero-inner">
-          <nav className="workflow-nav" aria-label="서비스 이용 순서">
-            {[0, 2, 3, 1, 4].map((area, i) => {
-              const step = STEPS[area];
-              return <a className="workflow-step" key={step.label} href={`#area${area}`}>
-                <span className="workflow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={step.icon} /></svg></span>
-                <span className="workflow-label"><small>0{i + 1}</small>{["이슈 브리핑", "관련 콘텐츠", "대응 준비", "지역 참고자료", "대응 기록"][i]}</span>
+      <nav className="portal-navigation" aria-label="서비스 메뉴">
+        <div className="portal-width">
+          <div className="workflow-nav">
+            {NAV_ITEMS.map((item, i) => {
+              return <a className="workflow-step" key={item.href} href={item.href}>
+                <span className="workflow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={item.icon} /></svg></span>
+                <span className="workflow-label"><small>0{i + 1}</small>{item.label}</span>
               </a>
             })}
-          </nav>
-          <div className="hero-copy">
-            <p className="hero-kicker">우리 지역의 변화, 한발 먼저</p>
-            <h1 id="service-title">우리 지역 온라인 이슈, <br />놓치지 않고 대응할 수 있도록.</h1>
-            <p className="hero-description">화제가 된 콘텐츠부터 담당자가 확인할 일까지 한눈에.</p>
           </div>
-          <div className="hero-radar" aria-hidden="true"><div /><span className="radar-dot dot-one" /><span className="radar-dot dot-two" /><span className="radar-center" /></div>
+        </div>
+      </nav>
+      <section className="portal-hero" aria-labelledby="service-title">
+        <div className="portal-width hero-inner">
+          <div className="hero-copy">
+            <h1 id="service-title">우리 지역 관광 변화, 한눈에</h1>
+            <p className="hero-description">검색 흐름부터 외지인 방문과 대응 준비까지 이어서 확인하세요.</p>
+          </div>
         </div>
       </section>
     </>

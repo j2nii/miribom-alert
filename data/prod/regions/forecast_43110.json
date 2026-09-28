@@ -1,0 +1,170 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-26T23:42:16+09:00",
+  "source": [
+    {
+      "name": "이동통신 기반 시군구 일별 방문자",
+      "provider": "한국관광공사(공공데이터포털 15101972)",
+      "retrieved_at": "2026-09-26",
+      "url": "https://www.data.go.kr/data/15101972/openapi.do",
+      "note": "외지인 방문자수. 팀 DB vw_daily_core_signal"
+    },
+    {
+      "name": "한국관광 데이터랩 월간 지표",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-26",
+      "url": "https://datalab.visitkorea.or.kr/",
+      "note": "익월 17일 공개 시점을 지켜 결합"
+    },
+    {
+      "name": "네이버 데이터랩 검색어 트렌드",
+      "provider": "네이버",
+      "retrieved_at": "2026-09-26",
+      "note": "전일까지의 검색지수만 사용"
+    },
+    {
+      "name": "전국문화축제표준데이터·특일 정보",
+      "provider": "행정안전부·한국천문연구원",
+      "retrieved_at": "2026-09-26",
+      "note": "예측 대상일의 축제·공휴일"
+    }
+  ],
+  "period": {
+    "start": "2026-08-15",
+    "end": "2026-08-21",
+    "granularity": "일"
+  },
+  "caveat": [
+    "데이터 기준일 2026-08-14 기준 7일 앞 예측이다. 오늘부터의 7일이 아니다.",
+    "검증 sMAPE 8.98%(MAE 7,603명), 228개 시군구 공통 모델, 테스트 2026-01-01~2026-08-14 51,528건. 청주시만 보면 sMAPE 5.33%, MAE 17,448명이다. (09-24 동결 수치 sMAPE 8.98%·MAE 7,603명과 같은 구성·같은 입력이다.)",
+    "7일 앞(h=7)만 검증했으므로 그보다 먼 날은 제공하지 않는다.",
+    "80% 구간은 청주시 테스트 기간 226일의 실제/예측 비율 10·90분위다. 구간을 벗어나는 날이 5일 중 1일꼴로 생긴다.",
+    "일별 경보 단계는 제공하지 않는다. 경보는 월별 3신호 판정(D-13)이라 일별 임계가 없다."
+  ],
+  "data": {
+    "region": {
+      "code": "43110",
+      "name": "청주시"
+    },
+    "model": {
+      "name": "부스팅 회귀(HistGradientBoosting) — 방문자 시차 + 달력 + 축제 + 검색 + 데이터랩 월간",
+      "trained_on": {
+        "start": "2023-01-01",
+        "end": "2025-12-31",
+        "granularity": "일"
+      },
+      "metric": {
+        "name": "MAE",
+        "value": 7603,
+        "validation_period": {
+          "start": "2026-01-01",
+          "end": "2026-08-14",
+          "granularity": "일"
+        }
+      },
+      "features": [
+        "방문자 시차(4일 지연 공개 반영)",
+        "요일·공휴일·연휴길이",
+        "축제 전후",
+        "네이버 검색지수(전일까지)",
+        "데이터랩 월간(익월 17일 공개 반영)"
+      ]
+    },
+    "daily": [
+      {
+        "date": "2026-08-15",
+        "predicted": 434212,
+        "lower": 397105,
+        "upper": 469278,
+        "is_holiday": true,
+        "event": "힙한 청주 페스티벌 in 제조창"
+      },
+      {
+        "date": "2026-08-16",
+        "predicted": 353894,
+        "lower": 323650,
+        "upper": 382473,
+        "is_holiday": false,
+        "event": "힙한 청주 페스티벌 in 제조창"
+      },
+      {
+        "date": "2026-08-17",
+        "predicted": 344091,
+        "lower": 314685,
+        "upper": 371879,
+        "is_holiday": true
+      },
+      {
+        "date": "2026-08-18",
+        "predicted": 294195,
+        "lower": 269053,
+        "upper": 317954,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-19",
+        "predicted": 304919,
+        "lower": 278861,
+        "upper": 329543,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-20",
+        "predicted": 327693,
+        "lower": 299689,
+        "upper": 354157,
+        "is_holiday": false
+      },
+      {
+        "date": "2026-08-21",
+        "predicted": 362931,
+        "lower": 331915,
+        "upper": 392241,
+        "is_holiday": false,
+        "event": "한여름밤의 오싹 호러페스티벌"
+      }
+    ],
+    "weekday_concentration": [
+      {
+        "weekday": "월",
+        "ratio": 0.1289
+      },
+      {
+        "weekday": "화",
+        "ratio": 0.1327
+      },
+      {
+        "weekday": "수",
+        "ratio": 0.1306
+      },
+      {
+        "weekday": "목",
+        "ratio": 0.1331
+      },
+      {
+        "weekday": "금",
+        "ratio": 0.1498
+      },
+      {
+        "weekday": "토",
+        "ratio": 0.1732
+      },
+      {
+        "weekday": "일",
+        "ratio": 0.1517
+      }
+    ],
+    "peak_days": [
+      {
+        "date": "2026-08-15",
+        "predicted": 434212,
+        "reason": "토요일 · 광복절 · 3일 연휴 · 힙한 청주 페스티벌 in 제조창 기간 · 한여름밤의 오싹 호러페스티벌(8/21 시작) 직전"
+      },
+      {
+        "date": "2026-08-21",
+        "predicted": 362931,
+        "reason": "금요일 · 한여름밤의 오싹 호러페스티벌 기간 · 국가유산 미디어아트(8/28 시작) 직전"
+      }
+    ]
+  }
+}

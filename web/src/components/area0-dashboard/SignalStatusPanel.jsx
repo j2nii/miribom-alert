@@ -18,7 +18,8 @@ const ALERT_COLOR = {
 
 export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
   const d = envelope.data;
-  const todayForecast = forecastEnvelope?.data?.daily?.[0];
+  const today = new Date().toISOString().slice(0, 10);
+  const todayForecast = forecastEnvelope?.data?.daily?.find((day) => day.date === today);
 
   return (
     <div>
@@ -61,8 +62,7 @@ export default function SignalStatusPanel({ envelope, forecastEnvelope }) {
       {todayForecast && (
         <div className="info-box">
           오늘({todayForecast.date}) 예측 방문객 <strong>{todayForecast.predicted.toLocaleString()}</strong>명
-          · 예상 경보 <strong>{todayForecast.expected_alert_level}</strong>
-          <span style={{ color: "var(--ink-soft)" }}> — 90일 전체 예측은 AREA 1에서 확인</span>
+          <span style={{ color: "var(--ink-soft)" }}> · 7일 방문 수요 예측은 방문 흐름에서 확인</span>
         </div>
       )}
 

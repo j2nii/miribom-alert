@@ -96,6 +96,7 @@ data/prod/**
 !data/prod/**/.gitkeep
 # 단, 9종 계약 산출물은 웹이 직접 읽는 제품이므로 추적한다 (건당 수 KB)
 !data/prod/*.json
+!data/prod/regions/*.json
 .env*
 
 

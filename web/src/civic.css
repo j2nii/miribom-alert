@@ -1,6 +1,6 @@
 /* Legible public-service typography with the original lavender portal palette. */
 :root {
-  --font-kr: "Noto Sans KR Variable", "Malgun Gothic", sans-serif;
+  --font-kr: "NanumSquare", "Malgun Gothic", sans-serif;
   --portal-purple: #8777bb;
   --portal-accent: #65519d;
 }
@@ -87,6 +87,7 @@
 .app .morning-topic-meta > span:first-child { background: #f0eaf8; padding: 2px 6px; border-radius: 4px; color: #65519d; }
 .app .morning-topic h4 { margin: 10px 0; font-size: 17px; color: #463952; }
 .app .morning-action { font-size: 13px; line-height: 1.7; color: #62576d; margin: 0 0 12px; }
+.app .morning-action { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
 .app .morning-action b { display: block; color: #554173; font-size: 12px; font-weight: 500; }
 .app .morning-video-label { border-top: 1px solid #eee8f4; padding-top: 10px; margin: 0 0 6px; font-size: 11px; color: #7b7084; }
 .app .morning-topic ul { padding-left: 17px; margin: 0; font-size: 13px; color: #514758; line-height: 1.8; }

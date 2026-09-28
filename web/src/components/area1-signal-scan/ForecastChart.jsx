@@ -1,85 +1,79 @@
-const WIDTH = 640;
-const HEIGHT = 180;
-const PAD = 8;
+const WIDTH = 720;
+const HEIGHT = 250;
+const LEFT = 56;
+const RIGHT = 24;
+const TOP = 26;
+const BOTTOM = 205;
+const number = new Intl.NumberFormat("ko-KR");
 
-export default function ForecastChart({ forecastData }) {
-  const { daily, model, weekday_concentration, peak_days } = forecastData;
+function curve(points) {
+  if (!points.length) return "";
+  return points.reduce((path, point, index) => {
+    if (!index) return `M${point.x},${point.y}`;
+    const previous = points[index - 1];
+    const control = (previous.x + point.x) / 2;
+    return `${path} C${control},${previous.y} ${control},${point.y} ${point.x},${point.y}`;
+  }, "");
+}
 
-  const values = daily.flatMap((d) => [d.lower, d.upper]);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const xStep = (WIDTH - PAD * 2) / (daily.length - 1);
-  const y = (v) => HEIGHT - PAD - ((v - min) / (max - min)) * (HEIGHT - PAD * 2);
-  const x = (i) => PAD + i * xStep;
+function axisValue(value) {
+  return value >= 10000 ? `${number.format(value / 10000)}만` : number.format(value);
+}
 
-  const bandPath =
-    daily.map((d, i) => `${i === 0 ? "M" : "L"}${x(i)},${y(d.upper)}`).join(" ") +
-    " " +
-    daily
-      .slice()
-      .reverse()
-      .map((d, i) => `L${x(daily.length - 1 - i)},${y(d.lower)}`)
-      .join(" ") +
-    " Z";
-  const linePath = daily.map((d, i) => `${i === 0 ? "M" : "L"}${x(i)},${y(d.predicted)}`).join(" ");
+export default function ForecastChart({ forecastData, period }) {
+  const daily = forecastData.daily ?? [];
+  if (!daily.length) return <p>예측 값이 없습니다.</p>;
+
+  const upperMax = Math.max(...daily.map((day) => day.upper));
+  const ceiling = Math.ceil(upperMax / 10000) * 10000;
+  const scale = (value) => BOTTOM - value / ceiling * (BOTTOM - TOP);
+  const x = (index) => LEFT + index * (WIDTH - LEFT - RIGHT) / Math.max(1, daily.length - 1);
+  const point = (field) => daily.map((day, index) => ({ x: x(index), y: scale(day[field]) }));
+  const predicted = point("predicted");
+  const upper = point("upper");
+  const lower = point("lower");
+  const upperPath = curve(upper);
+  const lowerPath = curve(lower.slice().reverse());
+  const band = `${upperPath} L${lower.at(-1).x},${lower.at(-1).y} ${lowerPath.replace(/^M[^C]*/, "")} Z`;
+  const peakIndex = daily.reduce((best, day, index) => day.predicted > daily[best].predicted ? index : best, 0);
+  const peak = daily[peakIndex];
+  const basis = new Date(`${daily[0].date}T00:00:00Z`);
+  basis.setUTCDate(basis.getUTCDate() - 1);
+  const tickStep = Math.max(10000, Math.floor(ceiling / 3 / 10000) * 10000);
+  const ticks = Array.from({ length: Math.floor(ceiling / tickStep) + 1 }, (_, index) => index * tickStep);
 
   return (
-    <div>
-      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} style={{ width: "100%", height: "auto" }}>
-        <path d={bandPath} fill="var(--teal)" opacity="0.12" />
-        <path d={linePath} fill="none" stroke="var(--teal)" strokeWidth="2" />
-        {daily.map(
-          (d, i) =>
-            d.is_holiday && (
-              <circle key={i} cx={x(i)} cy={y(d.predicted)} r="3" fill="var(--amber)" />
-            )
-        )}
+    <div className="forecast-view">
+      <div className="forecast-heading">
+        <div><strong>7일 방문 예측</strong><span>{basis.toISOString().slice(0, 10)} 기준 · {period?.start ?? daily[0].date} ~ {period?.end ?? daily.at(-1).date}</span></div>
+        <div className="forecast-peak-summary"><span>최고 예측일 · {peak.date.slice(5).replace("-", "/")}</span><strong>{number.format(peak.predicted)}<small>명</small></strong></div>
+      </div>
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={`일별 방문 예측. ${peak.date} 최고 ${number.format(peak.predicted)}명. 연한 영역은 80% 예측 구간.`} className="forecast-plot">
+        <defs>
+          <linearGradient id="forecast-band-gradient" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stopColor="#8cd4ef" stopOpacity=".48" />
+            <stop offset="100%" stopColor="#8cd4ef" stopOpacity=".15" />
+          </linearGradient>
+        </defs>
+        {ticks.map((value) => <g key={value} className="forecast-grid">
+          <line x1={LEFT} x2={WIDTH - RIGHT} y1={scale(value)} y2={scale(value)} />
+          <text x={LEFT - 11} y={scale(value) + 4} textAnchor="end">{axisValue(value)}</text>
+        </g>)}
+        <path d={band} fill="url(#forecast-band-gradient)" />
+        <path d={curve(predicted)} className="forecast-line" />
+        {daily.map((day, index) => <g key={day.date}>
+          {index === peakIndex && <circle cx={x(index)} cy={scale(day.predicted)} r="10" className="forecast-peak-ring" />}
+          <circle cx={x(index)} cy={scale(day.predicted)} r={index === peakIndex ? 5 : 4} className={index === peakIndex ? "forecast-dot is-peak" : "forecast-dot"} />
+          <text x={x(index)} y={HEIGHT - 13} textAnchor="middle" className="forecast-date">{day.date.slice(5).replace("-", "/")}</text>
+          <circle cx={x(index)} cy={scale(day.predicted)} r="15" fill="transparent">
+            <title>{day.date} · 예상 {number.format(day.predicted)}명 · 80% 범위 {number.format(day.lower)}~{number.format(day.upper)}명</title>
+          </circle>
+        </g>)}
+        <text x={Math.min(x(peakIndex) + 13, WIDTH - RIGHT - 60)} y={Math.max(scale(peak.predicted) - 15, TOP + 2)} className="forecast-peak-label">{number.format(peak.predicted)}명</text>
       </svg>
-      <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
-        예측 기간 {daily[0].date} ~ {daily[daily.length - 1].date} · 음영 = 검증 잔차 80% 구간 · 점 = 공휴일
-      </div>
-
-      <div style={{ display: "flex", gap: 16, marginTop: 12, fontSize: 13, flexWrap: "wrap" }}>
-        <span>
-          모델 <strong>{model.name}</strong>
-        </span>
-        <span>
-          {model.metric.name} <strong>{model.metric.value}</strong>
-        </span>
-        <span style={{ color: "var(--muted)" }}>
-          검증기간 {model.metric.validation_period.start}~{model.metric.validation_period.end}
-        </span>
-      </div>
-
-      <div style={{ marginTop: 12 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, margin: "0 0 6px" }}>요일별 집중도</p>
-        <div style={{ display: "flex", gap: 6 }}>
-          {weekday_concentration.map((w) => (
-            <div key={w.weekday} style={{ textAlign: "center", fontSize: 12 }}>
-              <div
-                style={{
-                  width: 24,
-                  height: Math.max(4, w.ratio * 300),
-                  background: "var(--teal)",
-                  borderRadius: 3,
-                  marginBottom: 4,
-                }}
-              />
-              {w.weekday}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ marginTop: 12 }}>
-        <p style={{ fontSize: 13, fontWeight: 700, margin: "0 0 6px" }}>피크 예상일 Top {peak_days.length}</p>
-        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13 }}>
-          {peak_days.map((p) => (
-            <li key={p.date}>
-              {p.date} — {p.predicted.toLocaleString()}명, 예상 경보 {p.expected_alert_level} ({p.reason})
-            </li>
-          ))}
-        </ul>
+      <div className="forecast-legend">
+        <span><i className="forecast-legend-line" />예측 방문자</span>
+        <span><i className="forecast-legend-band" />80% 예측 구간</span>
       </div>
     </div>
   );
