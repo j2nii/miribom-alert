@@ -87,6 +87,8 @@ def main() -> None:
         series = load(region_file("signal_series", r.region_id))
         forecast = load(region_file("forecast", r.region_id))
         has = [k for k, v in (("signal_status", status), ("signal_series", series), ("forecast", forecast)) if v]
+        if region_file("outlook", r.region_id).exists():
+            has.append("outlook")
         if r.region_id in SHOWCASE:
             has += [k for k in ("timeline", "hotspots", "visitor_profile", "content_type", "checklist", "precedent",
                                 "briefing") if region_file(k, r.region_id).exists()]
@@ -118,10 +120,10 @@ def main() -> None:
     OUT.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
 
     alerts = pd.Series([e.get("alert") for e in entries if not e.get("disabled")]).value_counts().to_dict()
-    missing = [e["name"] for e in entries if not e.get("disabled") and len(e["has"]) < 3]
+    missing = [e["name"] for e in entries if not e.get("disabled") and len(e["has"]) < 4]
     print(f"{payload['count']}곳 → {OUT.relative_to(ROOT)} ({OUT.stat().st_size / 1024:.0f}KB)")
     print(f"  경보 단계: {alerts} · 사례 지역 {sum(bool(e.get('case')) for e in entries)}곳")
-    print(f"  예측·신호 추이·경보 중 빠진 게 있는 지역: {missing or '없음'}")
+    print(f"  예측·전망·신호 추이·경보 중 빠진 게 있는 지역: {missing or '없음'}")
 
 
 if __name__ == "__main__":

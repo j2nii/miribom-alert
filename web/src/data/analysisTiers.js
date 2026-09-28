@@ -9,7 +9,7 @@
 export const BASIC_FEATURES = [
   { type: "signal_status", label: "경보 판정", desc: "관심·의도·실현 3중 교차검증" },
   { type: "signal_series", label: "신호 추이", desc: "검색·방문 급증과 지점 쏠림" },
-  { type: "forecast", label: "7일 방문객 예측", desc: "80% 구간 포함" },
+  { type: "forecast", label: "방문객 예측", desc: "7일 일별 + 6개월 월별 전망" },
 ];
 
 export const DEEP_FEATURES = [

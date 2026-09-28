@@ -430,3 +430,163 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ③ 예측 기간 탭 */
+.section-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.section-title-row .section-title {
+  margin: 0;
+}
+.seg-tabs {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--mist);
+}
+.seg-tabs button {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-kr);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.seg-tabs button.is-active {
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(16, 32, 47, 0.12);
+}
+
+/* 근거 패널 (OutlookChart) */
+.evidence {
+  margin-top: 12px;
+  border: 1px solid var(--teal-tint-border);
+  border-radius: 12px;
+  background: #fff;
+}
+.evidence > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.evidence > summary::-webkit-details-marker {
+  display: none;
+}
+.evidence > summary::after {
+  content: "▾";
+  margin-left: auto;
+  color: var(--ink-soft);
+}
+.evidence[open] > summary::after {
+  content: "▴";
+}
+.evidence__badge {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--teal);
+  font-size: 11px;
+  color: #fff;
+}
+.evidence__body {
+  display: grid;
+  gap: 14px;
+  padding: 0 12px 12px;
+}
+.evidence__body h4 {
+  margin: 0 0 6px;
+  font-size: 12.5px;
+  font-weight: 800;
+}
+.evidence__formula {
+  margin: 0 0 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--teal-tint-bg);
+  font-size: 12.5px;
+}
+.evidence__note {
+  margin: 6px 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.evidence__table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+.evidence__table th,
+.evidence__table td {
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  white-space: nowrap;
+}
+.evidence__table th:first-child,
+.evidence__table td:first-child {
+  text-align: left;
+}
+.evidence__table th {
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+.evidence__table td.evidence__reason {
+  text-align: left;
+  white-space: normal;
+  min-width: 160px;
+  color: var(--ink-soft);
+}
+.evidence__table td.is-up {
+  color: var(--teal);
+  font-weight: 700;
+}
+.evidence__table td.is-down {
+  color: var(--crimson-tint-text);
+  font-weight: 700;
+}
+.evidence__table td.is-best {
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.evidence__table tr.is-chosen td {
+  background: var(--teal-tint-bg);
+}
+.evidence__pick {
+  margin-right: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--teal);
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+}
+.evidence__list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.evidence__list b {
+  color: var(--ink);
+}

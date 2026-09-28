@@ -4,7 +4,9 @@ import SourceBadge from "../components/common/SourceBadge.jsx";
 import CaveatNote from "../components/common/CaveatNote.jsx";
 import SignalTrendChart from "../components/trend/SignalTrendChart.jsx";
 import PointVsTotalChart from "../components/trend/PointVsTotalChart.jsx";
+import { useState } from "react";
 import ForecastChart from "../components/trend/ForecastChart.jsx";
+import OutlookChart from "../components/trend/OutlookChart.jsx";
 import { fmtMD, fmtYM, fix } from "../components/common/chart/chartKit.js";
 import "../components/trend/trend.css";
 
@@ -14,18 +16,22 @@ export default function SignalTrend({ region }) {
   const series = useRegionData("signal_series", region);
   const forecast = useRegionData("forecast", region);
   const timeline = useRegionData("timeline", region);
+  const outlook = useRegionData("outlook", region);
+  const [tab, setTab] = useState("outlook");
 
   const s = series.status === "ok" ? series.envelope.data : null;
   const tl = timeline.status === "ok" ? timeline.envelope.data : null;
   const fc = forecast.status === "ok" ? forecast.envelope.data : null;
+  const ol = outlook.status === "ok" ? outlook.envelope.data : null;
 
   return (
     <>
       <div className="panel-head">
         <p className="panel-eyebrow">SIGNAL TREND · 신호 추이와 예측</p>
-        <h2>무엇이 튀었고, 어디서 났고, 앞으로 7일은 어떤가</h2>
+        <h2>무엇이 튀었고, 어디서 났고, 앞으로는 어떤가</h2>
         <p className="panel-subtitle">
-          검색·방문 신호의 실제 움직임, 관광지점과 시군구 총량의 차이, 7일 방문객 예측을 한 화면에서 봅니다. 모든 값은 실측 자료이며 목업이 없습니다.
+          검색·방문 신호의 실제 움직임, 관광지점과 시군구 총량의 차이, 7일 예측과 6개월 월별 전망을 한 화면에서 봅니다. 모든 값은 실측 자료이며 목업이 없습니다.
+          전망은 행사 기획·예산 편성 참고용이고, 어떻게 계산했는지는 '근거 보기'에서 확인할 수 있습니다.
         </p>
       </div>
 
@@ -37,7 +43,7 @@ export default function SignalTrend({ region }) {
           result={series}
           render={({ envelope }) => (
             <>
-              <SignalTrendChart series={envelope.data} timeline={tl} />
+              <SignalTrendChart series={envelope.data} timeline={tl} outlook={ol} />
               <SourceBadge envelope={envelope} />
             </>
           )}
@@ -50,23 +56,48 @@ export default function SignalTrend({ region }) {
           <DataState
             result={series}
             render={({ envelope }) => (
-              <PointVsTotalChart points={envelope.data.points} regionName={envelope.data.region.name} />
+              <PointVsTotalChart points={envelope.data.points} regionName={envelope.data.region.name} outlook={ol} />
             )}
           />
         </div>
 
         <div className="section-block">
-          <p className="section-title">③ 7일 방문객 예측</p>
-          <DataState
-            result={forecast}
-            render={({ envelope }) => (
-              <>
-                <ForecastChart forecast={envelope.data} series={s} />
-                <SourceBadge envelope={envelope} />
-                <CaveatNote envelope={envelope} />
-              </>
-            )}
-          />
+          <div className="section-title-row">
+            <p className="section-title">③ 방문객 예측</p>
+            <div className="seg-tabs" role="tablist" aria-label="예측 기간">
+              {[
+                ["outlook", "6개월 월별 전망"],
+                ["forecast", "7일 일별 예측"],
+              ].map(([key, label]) => (
+                <button key={key} type="button" role="tab" aria-selected={tab === key} className={tab === key ? "is-active" : ""} onClick={() => setTab(key)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          {tab === "outlook" ? (
+            <DataState
+              result={outlook}
+              render={({ envelope }) => (
+                <>
+                  <OutlookChart outlook={envelope.data} />
+                  <SourceBadge envelope={envelope} />
+                  <CaveatNote envelope={envelope} />
+                </>
+              )}
+            />
+          ) : (
+            <DataState
+              result={forecast}
+              render={({ envelope }) => (
+                <>
+                  <ForecastChart forecast={envelope.data} series={s} />
+                  <SourceBadge envelope={envelope} />
+                  <CaveatNote envelope={envelope} />
+                </>
+              )}
+            />
+          )}
         </div>
       </div>
 

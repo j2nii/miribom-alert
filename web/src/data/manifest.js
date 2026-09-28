@@ -40,6 +40,8 @@ function agentRegion(code) {
     // analysis/src/forecast/export_forecast.py · export_signal_series.py (228개 시군구 공통 모델)
     forecast: real("forecast"),
     signal_series: real("signal_series"),
+    // analysis/src/forecast/monthly_outlook.py -- 6개월 월별 방문객 전망
+    outlook: real("outlook"),
   };
 }
 
@@ -62,6 +64,7 @@ export const REGION_MANIFEST = {
     forecast: { url: "/prod/forecast_51750.json", kind: "real" },
     // analysis/src/forecast/export_signal_series.py -- 신호 추이·예측 패널의 차트 입력.
     signal_series: { url: "/prod/signal_series_51750.json", kind: "real" },
+    outlook: { url: "/prod/outlook_51750.json", kind: "real" },
     // agents/agent4_precedent.py --region 51750 (연구보고서 사례, 원문 인용).
     precedent: { url: "/prod/precedent_51750.json", kind: "real" },
     // briefing/before_after는 아직 파일이 없다 -- "unsupported" 처리.
@@ -75,6 +78,7 @@ export const REGION_MANIFEST = {
     // analysis/src/forecast/export_forecast.py (7일 예측, 09-26 실측화 -- 목업 대체).
     forecast: { url: "/prod/forecast.json", kind: "real" },
     signal_series: { url: "/prod/signal_series.json", kind: "real" },
+    outlook: { url: "/prod/outlook.json", kind: "real" },
     // agent_visitor_profile.py, agent_hotspots.py 실행 결과 (refactor/agents_db-full연동).
     visitor_profile: { url: "/prod/visitor_profile.json", kind: "real" },
     hotspots: { url: "/prod/hotspots.json", kind: "real" },
@@ -126,7 +130,7 @@ export const REGIONS = [
 // 전국 시군구: 사례 지역이 아닌 곳은 지역 키가 5자리 지역코드("51150")다. 데이터랩·이동통신·검색지수만으로
 // 만드는 3종(경보 판정·신호 추이·7일 예측)을 data/prod/regions/에서 읽는다. 목록은 regions/index.json
 // (scripts/build_region_index.py)이 가지고 있고, 여기서는 파일 경로 규칙만 안다.
-export const NATIONAL_TYPES = ["signal_status", "signal_series", "forecast"];
+export const NATIONAL_TYPES = ["signal_status", "signal_series", "forecast", "outlook"];
 // 사례 지역의 지역코드 → 화면 키. ?region=51750처럼 코드로 들어와도 사례 화면으로 보낸다
 export const SHOWCASE_CODES = {
   51750: "yeongwol",

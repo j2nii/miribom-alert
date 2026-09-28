@@ -7,10 +7,12 @@ import { COLOR, fmtInt, fmtYM, log2Scale, useElementWidth, fix } from "../common
 const M = { top: 18, right: 112, bottom: 28, left: 44 };
 const PLOT_H = 230;
 
-export default function PointVsTotalChart({ points, regionName }) {
+// outlook이 있으면 시군구 총량선을 6개월 전망(작년 같은 달 대비 배율)까지 잇는다. 지점은 예측하지
+// 않는다 — 지점 급증을 미리 가려내는 판별력이 없었다(AUC 0.482).
+export default function PointVsTotalChart({ points, regionName, outlook }) {
   const [ref, width] = useElementWidth(520);
   const [hover, setHover] = useState(null);
-  const model = useMemo(() => buildModel(points), [points]);
+  const model = useMemo(() => buildModel(points, outlook), [points, outlook]);
 
   if (!model) {
     return (
@@ -19,7 +21,7 @@ export default function PointVsTotalChart({ points, regionName }) {
       </div>
     );
   }
-  const { months, total, attractions, lead, headline, yMax, yMin } = model;
+  const { months, total, attractions, lead, headline, yMax, yMin, firstFuture } = model;
   const innerW = Math.max(160, width - M.left - M.right);
   const step = months.length > 1 ? innerW / (months.length - 1) : innerW;
   const x = (i) => M.left + i * step;
@@ -103,6 +105,23 @@ export default function PointVsTotalChart({ points, regionName }) {
             <path key={a.name} d={lineOf(a.values)} fill="none" stroke={COLOR.context} strokeWidth="1.5" opacity="0.8" />
           ))}
           <path d={lineOf(lead.values)} fill="none" stroke={COLOR.accent} strokeWidth="2" strokeLinejoin="round" />
+          {firstFuture >= 0 && (
+            <g>
+              <rect x={x(firstFuture) - step / 2} y={M.top} width={M.left + innerW - x(firstFuture) + step / 2} height={PLOT_H} fill="rgba(0, 137, 122, 0.05)" />
+              <text x={(x(firstFuture) - step / 2 + M.left + innerW) / 2} y={M.top + PLOT_H - 22} className="chart-note chart-note--strong" textAnchor="middle">
+                총량 전망
+              </text>
+              <text x={(x(firstFuture) - step / 2 + M.left + innerW) / 2} y={M.top + PLOT_H - 8} className="chart-note" textAnchor="middle">
+                지점은 예측 안 함(AUC 0.482)
+              </text>
+              <path d={lineOf(total.forecastPath)} fill="none" stroke={COLOR.total} strokeWidth="2.5" strokeDasharray="6 4" />
+              {months.map((m, i) =>
+                total.forecast.get(m) == null ? null : (
+                  <circle key={`f${m}`} cx={x(i)} cy={y(total.forecast.get(m))} r="3.5" fill="#fff" stroke={COLOR.total} strokeWidth="2" />
+                )
+              )}
+            </g>
+          )}
           <path d={lineOf(total.values)} fill="none" stroke={COLOR.total} strokeWidth="3" strokeLinejoin="round" />
           {months.map((m, i) =>
             total.values.get(m) == null ? null : (
@@ -122,7 +141,7 @@ export default function PointVsTotalChart({ points, regionName }) {
 
           <line x1={M.left} x2={M.left + innerW} y1={M.top + PLOT_H} y2={M.top + PLOT_H} stroke={COLOR.axis} />
           {months.map((m, i) =>
-            months.length > 8 && i % 2 === 1 && i !== months.length - 1 ? null : (
+            (months.length > 16 ? i % 3 !== (months.length - 1) % 3 : months.length > 8 && i % 2 === 1 && i !== months.length - 1) ? null : (
               <text key={`mx${m}`} x={x(i)} y={M.top + PLOT_H + 18} className="chart-tick" textAnchor="middle">{fmtYM(m)}</text>
             )
           )}
@@ -138,8 +157,14 @@ export default function PointVsTotalChart({ points, regionName }) {
             <p className="chart-tooltip__date">{hMonth} · 전년 같은 달 대비</p>
             <p className="chart-tooltip__row">
               <i style={{ background: COLOR.total }} />
-              <span>{regionName} 총량</span>
-              <b>{total.values.get(hMonth) == null ? "자료 없음" : `${fix(total.values.get(hMonth), 2)}배`}</b>
+              <span>{regionName} 총량{total.forecast.has(hMonth) ? " (전망)" : ""}</span>
+              <b>
+                {total.forecast.has(hMonth)
+                  ? `${fix(total.forecast.get(hMonth), 2)}배`
+                  : total.values.get(hMonth) == null
+                    ? "자료 없음"
+                    : `${fix(total.values.get(hMonth), 2)}배`}
+              </b>
             </p>
             {attractions
               .map((a) => ({ a, v: a.values.get(hMonth), raw: a.raw.get(hMonth) }))
@@ -189,10 +214,28 @@ export default function PointVsTotalChart({ points, regionName }) {
   );
 }
 
-function buildModel(points) {
+function buildModel(points, outlook) {
   if (!points?.attractions?.length || !points.months?.length) return null;
-  const months = points.months;
   const total = { values: new Map(points.region_total.filter((r) => r.ratio != null).map((r) => [r.month, r.ratio])) };
+  total.forecast = new Map();
+  let months = points.months;
+  let firstFuture = -1;
+  if (outlook?.outlook?.length) {
+    // 지점 자료가 끝난 뒤 ~ 전망 끝까지 달을 늘리고, 그 사이 실측 총량은 전망 파일의 월별 실측으로 채운다
+    const last = months[months.length - 1];
+    const end = outlook.outlook[outlook.outlook.length - 1].month;
+    const extra = [];
+    for (let m = nextMonth(last); m <= end; m = nextMonth(m)) extra.push(m);
+    months = [...months, ...extra];
+    for (const h of outlook.history) {
+      if (h.full && h.ly && !total.values.has(h.month) && extra.includes(h.month)) total.values.set(h.month, h.visitors / h.ly);
+    }
+    for (const f of outlook.outlook) total.forecast.set(f.month, f.yoy);
+    firstFuture = months.indexOf(outlook.outlook[0].month);
+  }
+  // 전망 점선은 마지막 실측 점에서 시작해 이어지게
+  const lastActual = [...total.values.keys()].filter((m) => !total.forecast.has(m)).sort().pop();
+  total.forecastPath = new Map([...(lastActual ? [[lastActual, total.values.get(lastActual)]] : []), ...total.forecast]);
   const attractions = points.attractions.map((a) => ({
     name: a.name,
     max: a.max_ratio,
@@ -207,10 +250,15 @@ function buildModel(points) {
   }
   if (headline) headline.totalRatio = total.values.get(headline.month) ?? null;
 
-  const all = [...total.values.values(), ...attractions.flatMap((a) => [...a.values.values()])];
+  const all = [...total.values.values(), ...total.forecast.values(), ...attractions.flatMap((a) => [...a.values.values()])];
   const yMax = 2 ** Math.ceil(Math.log2(Math.max(4, ...all) * 1.05));
   const yMin = Math.min(0.5, 2 ** Math.floor(Math.log2(Math.min(...all) * 0.95)));
-  return { months, total, attractions, lead, headline, yMax, yMin: Math.max(yMin, 0.125) };
+  return { months, total, attractions, lead, headline, yMax, yMin: Math.max(yMin, 0.125), firstFuture };
+}
+
+function nextMonth(m) {
+  const [y, mo] = m.split("-").map(Number);
+  return mo === 12 ? `${y + 1}-01` : `${y}-${String(mo + 1).padStart(2, "0")}`;
 }
 
 function lastY(values, months, y) {
