@@ -84,11 +84,11 @@ export default function Area1SignalScan({ region }) {
 
     <div className="regional-top-grid">
       {hotspots.status !== "unsupported" && <section className="section-block" aria-labelledby="hotspots-title">
-        <div className="regional-section-head"><div><span className="regional-step">02 · 장소</span><h3 id="hotspots-title">인기 관광지 상위</h3></div></div>
+        <div className="regional-section-head"><div><h3 id="hotspots-title">인기 관광지 상위</h3></div></div>
         <DataState result={hotspots} render={({ envelope }) => <TopHotspots envelope={envelope} />} />
       </section>}
       {visitorProfile.status !== "unsupported" && <section className="section-block" aria-labelledby="visitor-profile-title">
-        <div className="regional-section-head"><div><span className="regional-step">03 · 방문객</span><h3 id="visitor-profile-title">방문객 구성 상위</h3></div></div>
+        <div className="regional-section-head"><div><h3 id="visitor-profile-title">방문객 구성 상위</h3></div></div>
         <DataState result={visitorProfile} render={({ envelope }) => <TopProfile envelope={envelope} />} />
       </section>}
     </div>

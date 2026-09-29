@@ -49,7 +49,7 @@ export default function App() {
             <a href="#visit-analysis">방문 흐름·예측</a>
             <a href="#signal-evidence">신호 판정 근거</a>
             {getManifestEntry(region, "content_type") && <a href="#content-analysis">콘텐츠 유형</a>}
-            {getManifestEntry(region, "checklist") && <a href="#policy-report">정책 브리핑</a>}
+            {getManifestEntry(region, "checklist") && <a href="#policy-report">대응 체크리스트</a>}
           </nav>
         </div>
 

@@ -9,29 +9,31 @@ export default function RealMorningBriefing({ region, signalStatus, signalSeries
   const envelope = contentType.envelope;
   const briefing = buildContentBriefing(envelope);
   if (!briefing) return null;
-  const comparisons = [
-    { label: "기준일 게시", value: briefing.today },
-    { label: "전일 게시", value: briefing.previous },
-    { label: "이전 7일 일평균", value: briefing.previousAverage },
-  ];
-  const max = Math.max(...comparisons.map((item) => item.value), 1);
-
   return <section className="morning-briefing" aria-label="유튜브와 네이버 지역 보고서">
-    <p className="report-intro">분류된 영상과 일별 검색 흐름을 각 자료의 기준일에 맞춰 확인하세요.</p>
+    <p className="report-intro">분류된 영상과 월별 검색 흐름을 각 자료의 기준일에 맞춰 확인하세요.</p>
     <div className="report-evidence-grid">
-      <section className="report-evidence" aria-label="분류 영상 게시일 분포">
+      <section className="report-evidence youtube-video-report" aria-label="최근 7일 게시 영상">
         <h3 className="report-channel">유튜브 · 분류 영상</h3>
-        <div className="morning-meta"><span className="report-observed">수집 자료</span><span>게시 기준 {formatDate(briefing.end)}</span></div>
-        <h3>기준일 분류 영상 {briefing.today}건</h3>
-        <div className="youtube-comparison" aria-label="분류 대상 영상의 게시일별 건수">
-          {comparisons.map((item, index) => <div className="youtube-comparison-row" key={item.label}>
-            <div><span>{item.label}</span><strong>{Number.isInteger(item.value) ? item.value : item.value.toFixed(1)}<small>건</small></strong></div>
-            <div className="youtube-comparison-track" aria-hidden="true"><span className={index === 0 ? "is-current" : ""} style={{ width: `${item.value / max * 100}%` }} /></div>
-          </div>)}
-        </div>
-        <p className="morning-window">지역 관련 분류 영상 {briefing.total}건의 게시일을 집계했습니다.</p>
+        <div className="morning-meta"><span>게시 기준 {formatDate(briefing.end)}</span></div>
+        <div className="youtube-recent-total"><span>최근 7일 게시 영상</span><strong>{briefing.recentVideos.length}<small>건</small></strong></div>
+        {briefing.recentVideos.length ? <div className="youtube-video-list-wrap"><ul className="youtube-recent-videos" aria-label="최근 7일 게시 영상, 최신순">
+          {briefing.recentVideos.map((video) => {
+            const validId = /^[\w-]{11}$/.test(video.video_id ?? "");
+            const details = <>
+              <span className="youtube-recent-video-meta"><time dateTime={video.published_at}>{formatDate(video.published_at)}</time> · {video.content_type || "기타"}</span>
+              <strong>{video.title}</strong>
+              <span className="youtube-recent-video-channel">{video.channel}</span>
+            </>;
+            return <li key={video.video_id}>
+              {validId ? <a href={`https://www.youtube.com/watch?v=${video.video_id}`} target="_blank" rel="noopener noreferrer">
+                <img src={`https://i.ytimg.com/vi/${video.video_id}/mqdefault.jpg`} alt="" loading="lazy" />
+                <span className="youtube-recent-video-details">{details}<span className="sr-only"> (새 탭)</span></span>
+              </a> : <div className="youtube-recent-video-details">{details}</div>}
+            </li>;
+          })}
+        </ul>{briefing.recentVideos.length > 3 && <span className="youtube-list-status" aria-hidden="true">목록 안에서 스크롤 ↓</span>}</div> : <p className="morning-window">최근 7일에 게시된 지역 관련 영상이 없습니다.</p>}
       </section>
-      <DailySearchSummary region={region} signalSeries={signalSeries} />
+      <DailySearchSummary signalSeries={signalSeries} />
     </div>
     <details className="compact-details report-monthly" key={`sns-${region}`}>
       <summary>SNS 언급량 · 월별 참고자료</summary>
@@ -50,19 +52,5 @@ export default function RealMorningBriefing({ region, signalStatus, signalSeries
         }} />
       </section>
     </details>
-    <div className="report-topics-heading"><h3>어떤 영상이 올라왔나요?</h3><span>지역 관련성이 확인된 분류 영상 · 최신순</span></div>
-    <div className="morning-topics">
-      {briefing.topics.map((topic) => {
-        const latest = topic.items[0];
-        return <article className="morning-topic" key={topic.name}>
-          <div className="morning-topic-meta"><span>최근 게시 {formatDate(topic.latest)}</span><span>전체 분류 <strong>{topic.items.length}건</strong></span></div>
-          <h4>{topic.name}</h4>
-          <p className="morning-action"><b>분류 근거</b> {latest.evidence || "영상 제목과 지역 관련성을 확인했습니다."}</p>
-          <p className="morning-video-label">최근 영상 · {latest.channel}</p>
-          <ul><li><a href={`https://www.youtube.com/watch?v=${encodeURIComponent(latest.video_id)}`} target="_blank" rel="noopener noreferrer">{latest.title}</a></li></ul>
-        </article>;
-      })}
-    </div>
-    {!briefing.topics.length && <p className="morning-window">지역 관련성이 확인된 영상이 없습니다. 업로드 영상 목록에서 전체 수집본을 확인해 주세요.</p>}
   </section>;
 }

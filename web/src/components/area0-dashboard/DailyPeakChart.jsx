@@ -61,7 +61,7 @@ function PeakPlot({ envelope }) {
     </div>}
     <div className="daily-peak-next">
       <a href="#area2"><span><strong>관련 콘텐츠 확인</strong><small>우리 지역이 어떤 이야기로 언급되는지 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
-      <a href="#area1"><span><strong>심층 보고서</strong><small>방문 신호의 근거와 정책 브리핑을 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
+      <a href="#area1"><span><strong>심층 보고서</strong><small>방문 신호의 근거와 대응 체크리스트를 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
     </div>
   </section>;
 }

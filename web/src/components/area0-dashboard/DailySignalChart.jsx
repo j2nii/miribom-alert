@@ -154,7 +154,7 @@ export default function DailySignalChart({ envelope, forecastEnvelope, statusEnv
     <div className={forecastEnvelope?.data?.daily?.length ? "daily-peak-next has-forecast" : "daily-peak-next"}>
       <a href="#area2"><span><strong>관련 콘텐츠 확인</strong><small>지역 관련 콘텐츠의 수집 결과를 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
       {forecastEnvelope?.data?.daily?.length > 0 && <a href="#forecast"><span><strong>7일 예측 확인</strong><small>앞으로 7일간의 방문 예측을 살펴보세요.</small></span><span aria-hidden="true">→</span></a>}
-      <a href="#area1"><span><strong>심층 보고서</strong><small>방문 신호의 근거와 정책 브리핑을 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
+      <a href="#area1"><span><strong>심층 보고서</strong><small>방문 신호의 근거와 대응 체크리스트를 살펴보세요.</small></span><span aria-hidden="true">→</span></a>
     </div>
     <div className="actual-signal-source"><SourceBadge envelope={envelope} /><CaveatNote envelope={envelope} /></div>
   </section>;

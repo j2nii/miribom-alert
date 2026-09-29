@@ -11,8 +11,8 @@ export default function MorningBriefing({ region, signalStatus, signalSeries, co
   }
   const briefing = MORNING_BRIEFINGS[region];
   if (!briefing) return null;
-  return <section className="morning-briefing" aria-label="유튜브와 네이버 일별 지역 보고서">
-    <p className="report-intro">새 영상과 네이버 일별 검색 변화를 함께 확인하세요.</p>
+  return <section className="morning-briefing" aria-label="유튜브와 네이버 지역 보고서">
+    <p className="report-intro">새 영상과 월별 검색 흐름을 함께 확인하세요.</p>
     <div className="report-evidence-grid">
     <section className="report-evidence" aria-label="유튜브 게시 변화 예시">
     <h3 className="report-channel">유튜브 · 새 영상</h3>
@@ -30,9 +30,9 @@ export default function MorningBriefing({ region, signalStatus, signalSeries, co
     </div>
     <p className="morning-window">게시 기준 09/26 08:00~09/27 08:00 · 뒤늦게 발견한 이전 영상 {briefing.discoveredOlder}건은 제외</p>
     </section>
-    <DailySearchSummary region={region} />
+    <DailySearchSummary />
     </div>
-    <p className="report-comparison-note">일별 비교 화면의 목업입니다. 유튜브는 최근 24시간, 네이버는 전일 하루 기준이며 실제 수집 결과 연결 전입니다.</p>
+    <p className="report-comparison-note">유튜브 게시 변화는 목업이며, 월별 검색 자료는 아직 연결되지 않았습니다.</p>
     <details className="compact-details report-monthly" key={`sns-${region}`}>
     <summary>SNS 언급량 · 월별 참고자료</summary>
     <section className="report-evidence" aria-label="SNS 언급량 지표">
