@@ -770,4 +770,47 @@
 .app .policy-checklist-item-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
 .app .policy-checklist-action { display: flex; align-items: start; gap: 11px; min-width: 0; cursor: pointer; }
 .app .policy-checklist-action input { flex: 0 0 auto; width: 18px; height: 18px; margin: 3px 0 0; accent-color: #007bbd; cursor: pointer; }
+/* 진행률 막대와 저장 안내는 진행 상자 안에서 아랫줄로 내려간다. */
+.app .policy-checklist-progress { flex-wrap: wrap; }
+.app .policy-checklist-progress__bar {
+  flex: 0 0 100%;
+  height: 6px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: #dbeaf2;
+  overflow: hidden;
+}
+.app .policy-checklist-progress__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #007bbd;
+}
+.app .policy-checklist-progress__note {
+  flex: 0 0 100%;
+  color: #5d7c8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+/* 구간 제목 옆 완료 수 */
+.app .policy-checklist-phase h4 small {
+  margin-left: 8px;
+  color: #5d7c8b;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* 이 조치가 뽑힌 이유 */
+.app .policy-checklist-reason {
+  margin: 6px 0 0;
+  color: #4a6a7a;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.app .policy-checklist-matched {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
 .app .policy-checklist-excluded { margin: 14px 0 0; color: #526c7a; font-size: 13px; font-weight: 700; }
