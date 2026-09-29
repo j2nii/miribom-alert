@@ -262,6 +262,37 @@
 .app .panel-summary .tab-btn:hover:not(.is-active) { background: #e2f2f9; }
 .app .footer-link-btn { color: #006fae; background: #eaf6fb; }
 .app .chat-popup-launcher, .app .chat-popup-header { background: #007bbd; }
+/* 예시 질문 칩 -- 빈 대화창의 시작점. 팝업이 ui 것이므로 팝업 색을 따른다. */
+.app .chat-popup-suggestions { display: grid; gap: 6px; margin: 10px 0 2px; }
+.app .chat-popup-suggestions button {
+  padding: 9px 12px;
+  border: 1px solid #cde2ec;
+  border-radius: 8px;
+  background: #f7fbfd;
+  color: #1c4457;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.app .chat-popup-suggestions button:hover:not(:disabled) { border-color: #7fb6d3; background: #eaf6fb; }
+.app .chat-popup-suggestions button:disabled { opacity: .5; cursor: default; }
+/* 답변이 무엇을 근거로 섰는지 -- 실측 / 샘플 / 준비 전·조회 실패를 색으로 가른다. */
+.app .chat-popup-sources { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.app .chat-popup-source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.app .chat-popup-source-chip b { font-weight: 800; }
+.app .chat-popup-source-chip.is-real { background: #e6f4fb; color: #1c5673; }
+.app .chat-popup-source-chip.is-sample { background: #fdf2e3; color: #7d5312; }
+.app .chat-popup-source-chip.is-none { background: #eef1f3; color: #5c6b74; }
 .app .chat-popup-panel { border-color: #bddae6; }
 .app .caveat-note { background: #f8fcfd; border-color: #dce7ed; }
 .app :is(.morning-metrics, .report-evidence, .report-sns-value, .youtube-comparison) { border-color: #dce7ed; }
