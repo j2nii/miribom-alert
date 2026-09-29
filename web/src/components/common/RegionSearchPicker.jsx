@@ -161,7 +161,7 @@ export default function RegionSearchPicker({ selected, current, onSelect }) {
               onPointerDown={(event) => { event.preventDefault(); choose(entry); }}
               onClick={() => choose(entry)}
             >
-              <span className="region-result-name">{entry.label}<small>{entry.sido_short}</small></span>
+              <span className="region-result-name">{entry.name}<small>{entry.sido_short}</small></span>
               <span className="region-result-badges">
                 {entry.case && <span className="region-depth-badge">심층 분석</span>}
                 {entry.alert && <span className="region-alert-badge" data-level={entry.alert}><i className="region-alert-dot" data-level={entry.alert} aria-hidden="true" />{entry.alert}</span>}
