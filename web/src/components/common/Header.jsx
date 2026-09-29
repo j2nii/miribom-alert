@@ -17,7 +17,7 @@ const NAV_ITEMS = [
   { href: "#area4", label: "대응 기록", icon: STEPS[4].icon },
 ];
 
-export default function Header({ region, onRegionChange }) {
+export default function Header({ region, onRegionChange, onReplayTour }) {
   const [selectedRegion, setSelectedRegion] = useState(region);
   useEffect(() => setSelectedRegion(region), [region]);
 
@@ -53,6 +53,9 @@ export default function Header({ region, onRegionChange }) {
             <RegionSearchPicker selected={selectedRegion} current={region} onSelect={setSelectedRegion} />
             <button type="submit">현황 보기 <span aria-hidden="true">→</span></button>
           </form>
+          {/* 투어 재생 버튼은 form 밖에 둔다 -- 안에 두면 .header-region-picker button
+              규칙이 잡아 "현황 보기" submit 버튼과 생김새가 같아진다. */}
+          <button type="button" className="header-tour-replay" onClick={onReplayTour}>사용법 보기</button>
         </div>
       </header>
       <nav className="portal-navigation" aria-label="서비스 메뉴">
