@@ -3,8 +3,10 @@ import SourceBadge from "../common/SourceBadge.jsx";
 import CaveatNote from "../common/CaveatNote.jsx";
 import { alignedSignalSeries } from "../../lib/alignedSignalSeries.js";
 import { summarizeVisitorSignal } from "../../lib/visitorSignal.js";
+import { svgFit } from "../../lib/svgViewport.js";
 
 const WIDTH = 360;
+const HEIGHT = 108;
 const RANGES = [
   { days: 7, label: "1주" },
   { days: 30, label: "1개월" },
@@ -13,6 +15,19 @@ const RANGES = [
 
 const labelDate = (date) => date?.slice(5).replace("-", "/") ?? "—";
 const formatCount = (value) => Math.round(value).toLocaleString("ko-KR");
+
+// 마우스 위치를 데이터 인덱스로 바꾸고, 그 지점을 툴팁 wrap div 기준 px로
+// 옮기는 데 쓸 스케일·여백도 함께 반환한다. svgFit이 실제 렌더 박스와
+// viewBox 사이의 letterbox/pillarbox 여백을 반영해준다 -- 박스 크기만 보고
+// 비율로 계산하면 max-height 등으로 눌린 차트에서 좌표가 어긋난다.
+function pointFromMouse(event, rowsLength, left, right) {
+  const box = event.currentTarget.getBoundingClientRect();
+  const { scale, offsetX, offsetY } = svgFit(box.width, box.height, WIDTH, HEIGHT);
+  const localX = (event.clientX - box.left - offsetX) / scale;
+  const ratio = (localX - left) / (WIDTH - left - right);
+  const index = Math.max(0, Math.min(rowsLength - 1, Math.round(ratio * (rowsLength - 1))));
+  return { index, scale, offsetX, offsetY };
+}
 
 function ChartGrid({ left, right, top, height }) {
   const plotWidth = WIDTH - left - right;
@@ -39,6 +54,7 @@ function compactChangeLabel(change) {
 }
 
 function VisitorCountChart({ rows, previousAverage }) {
+  const [hover, setHover] = useState(null);
   const left = 45;
   const right = 8;
   const top = 21;
@@ -48,17 +64,33 @@ function VisitorCountChart({ rows, previousAverage }) {
   const x = (index) => left + index * (WIDTH - left - right) / Math.max(1, rows.length - 1);
   const y = (value) => top + height * (1 - value / ceiling);
   const path = rows.map((row, index) => `${index ? "L" : "M"}${x(index).toFixed(1)},${y(row.visitors).toFixed(1)}`).join(" ");
-  return <svg viewBox={`0 0 ${WIDTH} 108`} className="daily-peak-svg" role="img" aria-label={`${rows[0].date}부터 ${rows.at(-1).date}까지 일별 외지인 방문자 수. 최근 ${formatCount(rows.at(-1).visitors)}명.`}>
-    <ChartGrid left={left} right={right} top={top} height={height} />
-    {[0, 1].map((fraction) => <text key={fraction} x={left - 6} y={y(ceiling * fraction) + 3} textAnchor="end" fill="#75828b" fontSize="9">{formatCount(ceiling * fraction)}</text>)}
-    {Number.isFinite(previousAverage) && <line x1={left} x2={WIDTH - right} y1={y(previousAverage)} y2={y(previousAverage)} stroke="#bc9279" strokeDasharray="5 5" />}
-    <path d={path} fill="none" stroke="#287da6" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
-    {rows.length <= 7 && rows.map((row, index) => <circle key={row.date} cx={x(index)} cy={y(row.visitors)} r="3.4" fill="#287da6"><title>{row.date} · {formatCount(row.visitors)}명</title></circle>)}
-    <circle cx={x(rows.length - 1)} cy={y(rows.at(-1).visitors)} r="5" fill="#287da6" stroke="white" strokeWidth="2" />
-  </svg>;
+  const hoverRow = hover != null ? rows[hover.index] : null;
+  return <div className="daily-peak-chart-wrap">
+    <svg
+      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      className="daily-peak-svg"
+      role="img"
+      aria-label={`${rows[0].date}부터 ${rows.at(-1).date}까지 일별 외지인 방문자 수. 최근 ${formatCount(rows.at(-1).visitors)}명.`}
+      onMouseMove={(event) => setHover(pointFromMouse(event, rows.length, left, right))}
+      onMouseLeave={() => setHover(null)}
+    >
+      <ChartGrid left={left} right={right} top={top} height={height} />
+      {[0, 1].map((fraction) => <text key={fraction} x={left - 6} y={y(ceiling * fraction) + 3} textAnchor="end" fill="#75828b" fontSize="9">{formatCount(ceiling * fraction)}</text>)}
+      {Number.isFinite(previousAverage) && <line x1={left} x2={WIDTH - right} y1={y(previousAverage)} y2={y(previousAverage)} stroke="#bc9279" strokeDasharray="5 5" />}
+      <path d={path} fill="none" stroke="#287da6" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+      {hoverRow && <line x1={x(hover.index)} x2={x(hover.index)} y1={top} y2={top + height} stroke="#9aa7ad" strokeDasharray="3 3" />}
+      {hoverRow && <rect x={x(hover.index) - 3.6} y={y(hoverRow.visitors) - 3.6} width="7.2" height="7.2" fill="#287da6" stroke="white" strokeWidth="1.2" />}
+      <circle cx={x(rows.length - 1)} cy={y(rows.at(-1).visitors)} r="5" fill="#287da6" stroke="white" strokeWidth="2" />
+    </svg>
+    {hoverRow && <div className="daily-peak-tooltip" style={{ left: hover.offsetX + x(hover.index) * hover.scale, top: hover.offsetY + y(hoverRow.visitors) * hover.scale }}>
+      <strong>{hoverRow.date}</strong>
+      <span>{formatCount(hoverRow.visitors)}명</span>
+    </div>}
+  </div>;
 }
 
 function SearchIndexChart({ rows, previousAverage, field, isRatio }) {
+  const [hover, setHover] = useState(null);
   const left = 40;
   const right = 8;
   const top = 21;
@@ -74,14 +106,29 @@ function SearchIndexChart({ rows, previousAverage, field, isRatio }) {
   const digits = isRatio ? 2 : 1;
   const metricLabel = isRatio ? "전년 같은 요일 대비 검색 배율의 7일 중앙값" : "지역 검색지수";
   const path = rows.map((row, index) => `${index ? "L" : "M"}${x(index).toFixed(1)},${y(row[field]).toFixed(1)}`).join(" ");
-  return <svg viewBox={`0 0 ${WIDTH} 108`} className="daily-peak-svg" role="img" aria-label={`${rows[0].date}부터 ${rows.at(-1).date}까지 일별 ${metricLabel}. 최근 ${rows.at(-1)[field].toFixed(digits)}.${previousAverage == null ? " 직전 7일 비교 자료 없음." : ` 점선은 직전 7일 평균 ${previousAverage.toFixed(digits)}.`}`}>
-    <ChartGrid left={left} right={right} top={top} height={height} />
-    {[floor, ceiling].map((value) => <text key={value} x={left - 8} y={y(value) + 4} textAnchor="end" fill="#67808e" fontSize="10">{value.toFixed(isRatio ? 1 : 0)}</text>)}
-    {Number.isFinite(previousAverage) && previousAverage >= floor && previousAverage <= ceiling && <line x1={left} x2={WIDTH - right} y1={y(previousAverage)} y2={y(previousAverage)} stroke="#7ebbd6" strokeDasharray="4 5" />}
-    <path d={path} fill="none" stroke="#007fbe" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
-    {rows.length <= 7 && rows.map((row, index) => <circle key={row.date} cx={x(index)} cy={y(row[field])} r="3.4" fill="#007fbe"><title>{row.date} · {metricLabel} {row[field].toFixed(digits)}</title></circle>)}
-    <circle cx={x(rows.length - 1)} cy={y(rows.at(-1)[field])} r="5" fill="#007fbe" stroke="white" strokeWidth="2" />
-  </svg>;
+  const hoverRow = hover != null ? rows[hover.index] : null;
+  return <div className="daily-peak-chart-wrap">
+    <svg
+      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+      className="daily-peak-svg"
+      role="img"
+      aria-label={`${rows[0].date}부터 ${rows.at(-1).date}까지 일별 ${metricLabel}. 최근 ${rows.at(-1)[field].toFixed(digits)}.${previousAverage == null ? " 직전 7일 비교 자료 없음." : ` 점선은 직전 7일 평균 ${previousAverage.toFixed(digits)}.`}`}
+      onMouseMove={(event) => setHover(pointFromMouse(event, rows.length, left, right))}
+      onMouseLeave={() => setHover(null)}
+    >
+      <ChartGrid left={left} right={right} top={top} height={height} />
+      {[floor, ceiling].map((value) => <text key={value} x={left - 8} y={y(value) + 4} textAnchor="end" fill="#67808e" fontSize="10">{value.toFixed(isRatio ? 1 : 0)}</text>)}
+      {Number.isFinite(previousAverage) && previousAverage >= floor && previousAverage <= ceiling && <line x1={left} x2={WIDTH - right} y1={y(previousAverage)} y2={y(previousAverage)} stroke="#7ebbd6" strokeDasharray="4 5" />}
+      <path d={path} fill="none" stroke="#007fbe" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+      {hoverRow && <line x1={x(hover.index)} x2={x(hover.index)} y1={top} y2={top + height} stroke="#9aa7ad" strokeDasharray="3 3" />}
+      {hoverRow && <rect x={x(hover.index) - 3.6} y={y(hoverRow[field]) - 3.6} width="7.2" height="7.2" fill="#007fbe" stroke="white" strokeWidth="1.2" />}
+      <circle cx={x(rows.length - 1)} cy={y(rows.at(-1)[field])} r="5" fill="#007fbe" stroke="white" strokeWidth="2" />
+    </svg>
+    {hoverRow && <div className="daily-peak-tooltip" style={{ left: hover.offsetX + x(hover.index) * hover.scale, top: hover.offsetY + y(hoverRow[field]) * hover.scale }}>
+      <strong>{hoverRow.date}</strong>
+      <span>{hoverRow[field].toFixed(digits)}{isRatio ? "배" : ""}</span>
+    </div>}
+  </div>;
 }
 
 function alertAt(data, asOf) {
