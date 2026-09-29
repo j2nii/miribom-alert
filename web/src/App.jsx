@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "./components/common/Header.jsx";
+import GuideTour, { hasSeenTour } from "./components/common/GuideTour.jsx";
 import ChatWidget from "./components/common/ChatWidget.jsx";
 import { getManifestEntry, isRegionCode } from "./data/manifest.js";
 import { normalizeRegionKey, regionLabelOf, useRegionIndex } from "./data/regionIndex.js";
@@ -26,9 +27,19 @@ export default function App() {
     window.history.replaceState(null, "", url);
   }, [region]);
 
+  const [tourOpen, setTourOpen] = useState(false);
+  // 첫 방문이면 사용법 투어를 연다. 한 박자 기다리는 이유: 투어는 화면에 실제로 있는
+  // 요소만 골라 잡는데, 정적 JSON이 도착하기 전에는 "오늘의 결론" 같은 단계가 아직
+  // 렌더되지 않아 통째로 빠진다.
+  useEffect(() => {
+    if (hasSeenTour()) return undefined;
+    const timer = setTimeout(() => setTourOpen(true), 900);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="app">
-      <Header region={region} onRegionChange={setRegion} />
+      <Header region={region} onRegionChange={setRegion} onReplayTour={() => setTourOpen(true)} />
       <main className="app-grid">
         <section id="area0" className="panel panel-dashboard">
           <Area0Dashboard region={region} />
@@ -70,6 +81,7 @@ export default function App() {
         </section>
       </main>
       <ChatWidget key={region} region={region} regionLabel={regionLabelOf(region, index)} />
+      <GuideTour open={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 }

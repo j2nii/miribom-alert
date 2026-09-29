@@ -855,3 +855,168 @@
   font-weight: 700;
 }
 .app .policy-checklist-excluded { margin: 14px 0 0; color: #526c7a; font-size: 13px; font-weight: 700; }
+
+/* 헤더의 투어 재생 버튼. form 밖에 있어 .header-region-picker button 규칙이 닿지 않으므로
+   여기서 따로 칠한다 -- "현황 보기" submit과 구분되는 조용한 보조 버튼. */
+.app .header-tour-replay {
+  padding: 10px 14px;
+  border: 1px solid #bfd3de;
+  border-radius: 5px;
+  background: #fff;
+  color: #2a5a72;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.app .header-tour-replay:hover {
+  border-color: #7fb6d3;
+  background: #f2f9fc;
+  color: #11374a;
+}
+
+/* ============================================================
+   사용법 투어 (GuideTour)
+   develop의 .tour* 규칙(index.css)은 클래스 이름을 guide-tour*로 바꿔 닿지 않는다.
+   여기서 데이터랩 테마 톤으로 새로 칠한다 -- 강조 #007bbd, 본문 #17323f,
+   보조 #4a6a7a, 테두리 #dce7ed, 반경 6~10px.
+   ============================================================ */
+.app .guide-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+/* 스포트라이트: 대상만 남기고 나머지를 덮는다. 큰 그림자 하나로 구멍을 만든다. */
+.app .guide-tour__hole {
+  position: fixed;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px #0c2a3ab8;
+  outline: 2px solid #4ca9d8;
+  outline-offset: 3px;
+  pointer-events: none;
+  transition: top .18s ease, left .18s ease, width .18s ease, height .18s ease;
+}
+.app .guide-tour__backdrop {
+  position: fixed;
+  inset: 0;
+  background: #0c2a3ab8;
+}
+.app .guide-tour__card {
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 18px 20px 16px;
+  border: 1px solid #cfe0e9;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 16px 36px #0b2b3d33;
+}
+.app .guide-tour__card--intro {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  transform: translate(-50%, -50%);
+}
+.app .guide-tour__progress {
+  margin: 0 0 6px;
+  color: #6a8494;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.app .guide-tour__title {
+  margin: 0 0 8px;
+  color: #17323f;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.app .guide-tour__body {
+  margin: 0;
+  color: #40606f;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.app .guide-tour__points {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: #34576a;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+.app .guide-tour__note {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid #007bbd;
+  border-radius: 0 6px 6px 0;
+  background: #f0f8fc;
+  color: #315367;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.app .guide-tour__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+.app .guide-tour__nav {
+  display: flex;
+  gap: 8px;
+}
+.app .guide-tour__skip {
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  color: #6a8494;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.app .guide-tour__skip:hover {
+  color: #315367;
+  text-decoration: underline;
+}
+.app :is(.guide-tour__back, .guide-tour__next) {
+  padding: 9px 16px;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.app .guide-tour__back {
+  border: 1px solid #bfd3de;
+  background: #fff;
+  color: #2a5a72;
+}
+.app .guide-tour__back:hover {
+  border-color: #7fb6d3;
+  background: #f2f9fc;
+}
+.app .guide-tour__next {
+  border: 1px solid #007bbd;
+  background: #007bbd;
+  color: #fff;
+}
+.app .guide-tour__next:hover {
+  border-color: #006ca6;
+  background: #006ca6;
+}
+@media (max-width: 860px) {
+  .app .guide-tour__card--intro {
+    top: auto;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    transform: none;
+  }
+}
