@@ -56,6 +56,12 @@ export default function AreaDeepAnalysis({ region }) {
   const contentType = useRegionData("content_type", region);
   const recentContentType = useRegionData("recent_content_type", region);
   const contentAnalysis = recentContentType.status === "unsupported" ? contentType : recentContentType;
+  // 분산 후보지(데드존) 칩은 content_type 계약에만 있다. HotspotRanking은 이 prop을
+  // 받도록 돼 있었는데 아무도 넘기지 않아 칩이 한 번도 뜨지 않았다.
+  // recent_content_type에는 zone_signals가 없으므로 원본 content_type에서만 읽는다.
+  const deadZonePois = contentType.status === "ok"
+    ? contentType.envelope.data.zone_signals?.["데드존_지점"] ?? []
+    : [];
 
   return <div className="deep-analysis-body">
     <section className="analysis-report-block" id="signal-evidence">
@@ -66,7 +72,7 @@ export default function AreaDeepAnalysis({ region }) {
     {(hotspots.status !== "unsupported" || visitorProfile.status !== "unsupported") && <div className="analysis-report-pair">
       {hotspots.status !== "unsupported" && <section className="analysis-report-block" id="place-analysis">
         <div className="analysis-block-heading"><h3>어느 관광지로 몰렸나요?</h3><p>상위 관광지의 입장객, 전년 대비 변화와 장소 특성을 봅니다.</p></div>
-        <DataState result={hotspots} render={({ envelope }) => <><p className="analysis-data-date">{dateLabel(envelope.period?.end)} 월별 입장객</p><HotspotRanking hotspotsData={envelope.data} /><SourceBadge envelope={envelope} /></>} />
+        <DataState result={hotspots} render={({ envelope }) => <><p className="analysis-data-date">{dateLabel(envelope.period?.end)} 월별 입장객</p><HotspotRanking hotspotsData={envelope.data} deadZonePois={deadZonePois} /><SourceBadge envelope={envelope} /></>} />
       </section>}
       {visitorProfile.status !== "unsupported" && <section className="analysis-report-block" id="audience-analysis">
         <div className="analysis-block-heading"><h3>누가 방문했나요?</h3><p>거주지, 이동 거리, 소비와 동행 유형의 분포를 확인합니다.</p></div>

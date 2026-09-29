@@ -2,8 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import SourceBadge from "./SourceBadge.jsx";
 import CaveatNote from "./CaveatNote.jsx";
+import { normalizeMarkdown } from "../../lib/markdown.js";
 
 const INPUT_MIN_HEIGHT = 56;
+// 프롬프트에 실리는 분량만 자른다. 화면의 대화는 이 값과 무관하게 남는다.
+// web/api/query.js에도 같은 이름의 상한이 있다 -- 두 값을 따로 두면 서버가
+// 자른 뒤 클라이언트가 또 잘라 맥락이 조용히 짧아진다.
+const MAX_HISTORY_MESSAGES = 20;
 const INPUT_MAX_HEIGHT = 120;
 
 export default function ChatWidget({ region, regionLabel }) {
@@ -51,7 +56,7 @@ export default function ChatWidget({ region, regionLabel }) {
     const question = input.trim();
     if (!question || loading) return;
 
-    const history = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }));
+    const history = messages.slice(-MAX_HISTORY_MESSAGES).map((m) => ({ role: m.role, content: m.content }));
     setMessages((prev) => [...prev, { role: "user", content: question }, { role: "assistant", content: "", streaming: true }]);
     setInput("");
     setLoading(true);
@@ -149,7 +154,7 @@ export default function ChatWidget({ region, regionLabel }) {
                   {isPendingFirstToken ? (
                     <p>답변 준비 중…</p>
                   ) : m.role === "assistant" ? (
-                    <ReactMarkdown>{m.content}</ReactMarkdown>
+                    <ReactMarkdown>{normalizeMarkdown(m.content)}</ReactMarkdown>
                   ) : (
                     <p>{m.content}</p>
                   )}

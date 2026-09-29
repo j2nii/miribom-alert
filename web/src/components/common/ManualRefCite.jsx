@@ -10,9 +10,12 @@ export default function ManualRefCite({ manualRef, alwaysVisible = false }) {
   </p>;
   const citation = quote ? <blockquote className="manual-ref-cite__quote">“{quote}”</blockquote> : null;
 
+  // 원문 인용이 이 컴포넌트의 존재 이유다(조치가 매뉴얼에서 나왔다는 증거).
+  // alwaysVisible이라고 quote를 빼면 출처 줄만 남아 근거 역할을 못 한다.
   if (alwaysVisible) return <div className="manual-ref-cite manual-ref-cite--visible">
     <strong>매뉴얼 근거</strong>
     {source}
+    {citation}
   </div>;
 
   return (
