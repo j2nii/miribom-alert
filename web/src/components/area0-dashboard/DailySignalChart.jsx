@@ -58,27 +58,29 @@ function VisitorCountChart({ rows, previousAverage }) {
   </svg>;
 }
 
-function SearchIndexChart({ rows, previousAverage }) {
+function SearchIndexChart({ rows, previousAverage, field, isRatio }) {
   const left = 40;
   const right = 8;
   const top = 21;
   const height = 78;
-  const values = rows.map((row) => row.search_index);
+  const values = rows.map((row) => row[field]);
   const minimum = Math.min(...values);
   const maximum = Math.max(...values);
-  const padding = Math.max((maximum - minimum) * 0.25, 2);
+  const padding = Math.max((maximum - minimum) * 0.25, isRatio ? 0.05 : 2);
   const floor = Math.max(0, minimum - padding);
   const ceiling = maximum + padding;
   const x = (index) => left + index * (WIDTH - left - right) / Math.max(1, rows.length - 1);
   const y = (value) => top + height * (1 - (value - floor) / (ceiling - floor));
-  const path = rows.map((row, index) => `${index ? "L" : "M"}${x(index).toFixed(1)},${y(row.search_index).toFixed(1)}`).join(" ");
-  return <svg viewBox={`0 0 ${WIDTH} 108`} className="daily-peak-svg" role="img" aria-label={`${rows[0].date}부터 ${rows.at(-1).date}까지 일별 지역 검색지수. 최근 ${rows.at(-1).search_index.toFixed(1)}.${previousAverage == null ? " 직전 7일 비교 자료 없음." : ` 점선은 직전 7일 평균 ${previousAverage.toFixed(1)}.`}`}>
+  const digits = isRatio ? 2 : 1;
+  const metricLabel = isRatio ? "전년 같은 요일 대비 검색 배율의 7일 중앙값" : "지역 검색지수";
+  const path = rows.map((row, index) => `${index ? "L" : "M"}${x(index).toFixed(1)},${y(row[field]).toFixed(1)}`).join(" ");
+  return <svg viewBox={`0 0 ${WIDTH} 108`} className="daily-peak-svg" role="img" aria-label={`${rows[0].date}부터 ${rows.at(-1).date}까지 일별 ${metricLabel}. 최근 ${rows.at(-1)[field].toFixed(digits)}.${previousAverage == null ? " 직전 7일 비교 자료 없음." : ` 점선은 직전 7일 평균 ${previousAverage.toFixed(digits)}.`}`}>
     <ChartGrid left={left} right={right} top={top} height={height} />
-    {[floor, ceiling].map((value) => <text key={value} x={left - 8} y={y(value) + 4} textAnchor="end" fill="#67808e" fontSize="10">{value.toFixed(0)}</text>)}
+    {[floor, ceiling].map((value) => <text key={value} x={left - 8} y={y(value) + 4} textAnchor="end" fill="#67808e" fontSize="10">{value.toFixed(isRatio ? 1 : 0)}</text>)}
     {Number.isFinite(previousAverage) && previousAverage >= floor && previousAverage <= ceiling && <line x1={left} x2={WIDTH - right} y1={y(previousAverage)} y2={y(previousAverage)} stroke="#7ebbd6" strokeDasharray="4 5" />}
     <path d={path} fill="none" stroke="#007fbe" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
-    {rows.length <= 7 && rows.map((row, index) => <circle key={row.date} cx={x(index)} cy={y(row.search_index)} r="3.4" fill="#007fbe"><title>{row.date} · 검색지수 {row.search_index.toFixed(1)}</title></circle>)}
-    <circle cx={x(rows.length - 1)} cy={y(rows.at(-1).search_index)} r="5" fill="#007fbe" stroke="white" strokeWidth="2" />
+    {rows.length <= 7 && rows.map((row, index) => <circle key={row.date} cx={x(index)} cy={y(row[field])} r="3.4" fill="#007fbe"><title>{row.date} · {metricLabel} {row[field].toFixed(digits)}</title></circle>)}
+    <circle cx={x(rows.length - 1)} cy={y(rows.at(-1)[field])} r="5" fill="#007fbe" stroke="white" strokeWidth="2" />
   </svg>;
 }
 
@@ -126,29 +128,31 @@ export default function DailySignalChart({ envelope, forecastEnvelope, statusEnv
   const previousTotal = completeWeeks ? previousWeek.reduce((sum, row) => sum + row.visitors, 0) : null;
   const weekChange = percentChange(recentTotal, previousTotal);
   const dayChange = percentChange(latest.visitors, previousDay?.visitors);
-  const searchValid = daily.filter((row) => Number.isFinite(row.search_index));
+  const searchField = daily.some((row) => Number.isFinite(row.search_index)) ? "search_index" : "search_stat";
+  const searchIsRatio = searchField === "search_stat";
+  const searchValid = daily.filter((row) => Number.isFinite(row[searchField]));
   const searchRows = searchValid.slice(-rangeDays);
   const search = searchRows.at(-1);
   const searchLastFourteen = searchValid.slice(-14);
   const completeSearchWeeks = searchLastFourteen.length === 14 && searchLastFourteen.every((row, index) => index === 0
     || Date.parse(`${row.date}T00:00:00Z`) - Date.parse(`${searchLastFourteen[index - 1].date}T00:00:00Z`) === 86400000);
-  const searchWeekAverage = completeSearchWeeks ? searchLastFourteen.slice(-7).reduce((sum, row) => sum + row.search_index, 0) / 7 : null;
-  const previousSearchAverage = completeSearchWeeks ? searchLastFourteen.slice(0, 7).reduce((sum, row) => sum + row.search_index, 0) / 7 : null;
+  const searchWeekAverage = completeSearchWeeks ? searchLastFourteen.slice(-7).reduce((sum, row) => sum + row[searchField], 0) / 7 : null;
+  const previousSearchAverage = completeSearchWeeks ? searchLastFourteen.slice(0, 7).reduce((sum, row) => sum + row[searchField], 0) / 7 : null;
   const searchWeekChange = percentChange(searchWeekAverage, previousSearchAverage);
   const searchPreviousWeekday = completeSearchWeeks ? searchLastFourteen[6] : null;
-  const searchDayChange = percentChange(search?.search_index, searchPreviousWeekday?.search_index);
+  const searchDayChange = percentChange(search?.[searchField], searchPreviousWeekday?.[searchField]);
   const searchMovement = searchWeekChange === null ? "최근 검색 흐름을 확인하세요" : `최근 7일 검색 관심 ${changeLabel(searchWeekChange)}`;
 
   return <section className="daily-peak actual-signal" aria-label="오늘의 방문·검색 브리핑">
     <div className="daily-peak-meta"><span className="daily-peak-mock">검색·방문 현황</span><span>자료 기준 {latest.date}</span></div>
     <div className="daily-peak-heading"><h3>{searchMovement}</h3><div className="daily-peak-range" role="group" aria-label="추이 기간 선택">{RANGES.map((range) => <button key={range.days} type="button" className={rangeDays === range.days ? "is-active" : ""} aria-pressed={rangeDays === range.days} onClick={() => setRangeDays(range.days)}>{range.label}</button>)}</div></div>
     <div className="daily-peak-stats briefing-stats">
-      <span>지역 검색지수 <strong>{search?.search_index?.toFixed(1) ?? "—"}</strong><small>전주 동요일 {compactChangeLabel(searchDayChange)} · 최근 7일 {compactChangeLabel(searchWeekChange)}</small></span>
+      <span>{searchIsRatio ? "지역 검색 배율" : "지역 검색지수"} <strong>{search ? `${search[searchField].toFixed(searchIsRatio ? 2 : 1)}${searchIsRatio ? "배" : ""}` : "—"}</strong><small>전주 동요일 {compactChangeLabel(searchDayChange)} · 최근 7일 {compactChangeLabel(searchWeekChange)}</small></span>
       <span>외지인 방문 <strong>{formatCount(latest.visitors)}명</strong><small>전주 동요일 {compactChangeLabel(dayChange)} · 최근 7일 {compactChangeLabel(weekChange)}</small></span>
       <ForecastSummary envelope={forecastEnvelope} statusEnvelope={statusEnvelope} statusAsOf={latest.date} visitorIncreaseSignal={visitorIncreaseSignal} />
     </div>
     <div className="brief-chart-grid">
-      {searchRows.length > 0 && <div className="brief-chart-card search-chart-card"><div className="brief-chart-title"><strong>지역 검색 추이</strong><span>일별 상대 검색지수</span></div><SearchIndexChart rows={searchRows} previousAverage={previousSearchAverage} /></div>}
+      {searchRows.length > 0 && <div className="brief-chart-card search-chart-card"><div className="brief-chart-title"><strong>지역 검색 추이</strong><span>{searchIsRatio ? "전년 같은 요일 대비 · 7일 중앙값" : "일별 상대 검색지수"}</span></div><SearchIndexChart rows={searchRows} previousAverage={previousSearchAverage} field={searchField} isRatio={searchIsRatio} /></div>}
       <div className="brief-chart-card visitor-chart-card"><div className="brief-chart-title"><strong>외지인 방문 추이</strong><span>일별 방문자 · 명</span></div><VisitorCountChart rows={visitorRows} previousAverage={previousTotal === null ? null : previousTotal / 7} /></div>
     </div>
     <div className={forecastEnvelope?.data?.daily?.length ? "daily-peak-next has-forecast" : "daily-peak-next"}>
