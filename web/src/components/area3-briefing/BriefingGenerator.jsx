@@ -35,6 +35,7 @@ export default function BriefingGenerator({ briefingData, regionLabel }) {
 
       <p style={{ fontSize: 11, color: "var(--ink-soft)" }}>
         기준일 {briefingData.as_of}
+        {Number.isFinite(briefingData.char_count) && ` · ${briefingData.char_count.toLocaleString("ko-KR")}자`}
       </p>
 
       <div style={{ display: "flex", gap: 8 }}>

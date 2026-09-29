@@ -2,6 +2,7 @@ import { useRegionData } from "../hooks/useRegionData.js";
 import DataState from "../components/common/DataState.jsx";
 import MockBanner from "../components/common/MockBanner.jsx";
 import SourceBadge from "../components/common/SourceBadge.jsx";
+import CaveatNote from "../components/common/CaveatNote.jsx";
 import ChecklistPanel from "../components/area3-briefing/ChecklistPanel.jsx";
 
 export default function Area3Briefing({ region }) {
@@ -25,6 +26,7 @@ export default function Area3Briefing({ region }) {
               <a className="policy-report-link" href="#policy-report">대응 체크리스트 보기 <span aria-hidden="true">→</span></a>
               <details className="compact-details"><summary>출처 보기</summary>
               <SourceBadge envelope={envelope} />
+              <CaveatNote envelope={envelope} />
               </details>
             </>
           )}

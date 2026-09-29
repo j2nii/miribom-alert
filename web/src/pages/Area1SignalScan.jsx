@@ -2,6 +2,7 @@ import { useRegionData } from "../hooks/useRegionData.js";
 import { summarizeVisitorSignal } from "../lib/visitorSignal.js";
 import DataState from "../components/common/DataState.jsx";
 import SourceBadge from "../components/common/SourceBadge.jsx";
+import CaveatNote from "../components/common/CaveatNote.jsx";
 import AreaTrendForecast from "./AreaTrendForecast.jsx";
 
 const number = new Intl.NumberFormat("ko-KR");
@@ -25,6 +26,7 @@ function VisitorSignal({ envelope }) {
     </div>
     {Number.isFinite(threshold) && <p className="regional-signal-method">전년 같은 요일 대비 방문 배율의 7일 중앙값이 {threshold}배를 {duration}일 연속 넘으면 증가 신호로 표시합니다.</p>}
     <SourceBadge envelope={envelope} />
+    <CaveatNote envelope={envelope} />
   </>;
 }
 
@@ -41,6 +43,7 @@ function TopHotspots({ envelope }) {
     </ol>
     {!ranking.length && <p className="regional-empty">표시할 관광지 자료가 없습니다.</p>}
     <SourceBadge envelope={envelope} />
+    <CaveatNote envelope={envelope} />
   </>;
 }
 
@@ -64,6 +67,7 @@ function TopProfile({ envelope }) {
       })}
     </div>
     <SourceBadge envelope={envelope} />
+    <CaveatNote envelope={envelope} />
   </>;
 }
 
