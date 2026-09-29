@@ -3,6 +3,7 @@ import { useRegionLabel } from "../data/regionIndex.js";
 import DataState from "../components/common/DataState.jsx";
 import DailyPeakChart from "../components/area0-dashboard/DailyPeakChart.jsx";
 import DailySignalChart from "../components/area0-dashboard/DailySignalChart.jsx";
+import TodayConclusion from "../components/area0-dashboard/TodayConclusion.jsx";
 
 export default function Area0Dashboard({ region }) {
   // Reset expanded details and chat history when switching to another region.
@@ -23,6 +24,7 @@ function DashboardContent({ region }) {
       {region === "chungju"
         ? <DailyPeakChart region={region} />
         : <DataState result={signalSeries} render={({ envelope }) => <DailySignalChart envelope={envelope} forecastEnvelope={forecast.status === "ok" ? forecast.envelope : null} statusEnvelope={signalStatus.status === "ok" ? signalStatus.envelope : null} />} />}
+      <TodayConclusion region={region} />
     </div>
   );
 }

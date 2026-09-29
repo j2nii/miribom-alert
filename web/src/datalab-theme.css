@@ -802,6 +802,16 @@
 .app .policy-checklist-action { display: flex; align-items: start; gap: 11px; min-width: 0; cursor: pointer; }
 .app .policy-checklist-action input { flex: 0 0 auto; width: 18px; height: 18px; margin: 3px 0 0; accent-color: #007bbd; cursor: pointer; }
 /* 진행률 막대와 저장 안내는 진행 상자 안에서 아랫줄로 내려간다. */
+/* 오늘의 결론 -- AREA0 브리핑 카드 안 접기. develop의 .today-action 계열은 쓰지 않고
+   ui 브리핑 카드 톤(흰 배경 · #007bbd 강조 · 얇은 청회색 테두리)을 따른다. */
+.app .today-conclusion { margin-top: 14px; }
+.app .today-conclusion__situations { display: grid; gap: 8px; margin: 10px 0 12px; }
+.app .today-conclusion__situations > div { padding: 10px 12px; border: 1px solid #dce7ed; border-radius: 6px; background: #f8fbfd; }
+.app .today-conclusion__situations p { margin: 6px 0 0; color: #43616f; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.app .today-conclusion__actions { display: grid; gap: 10px; list-style: none; margin: 0 0 12px; padding: 0; }
+.app .today-conclusion__actions li { display: flex; align-items: start; gap: 10px; }
+.app .today-conclusion__actions strong { display: block; color: #17323f; font-size: 13px; font-weight: 800; line-height: 1.45; }
+.app .today-conclusion__actions p { margin: 4px 0 0; color: #4a6a7a; font-size: 12px; font-weight: 700; line-height: 1.5; }
 .app .policy-checklist-progress { flex-wrap: wrap; }
 .app .policy-checklist-progress__bar {
   flex: 0 0 100%;

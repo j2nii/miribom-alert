@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ManualRefCite from "../common/ManualRefCite.jsx";
+import { readChecklistDone, writeChecklistDone } from "../../lib/checklistDone.js";
 
 // 알려진 단계는 운영 순서대로 표시하고, 새 단계는 데이터에 나타난 순서로 덧붙인다.
 const PHASE_ORDER = ["사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"];
@@ -18,15 +19,6 @@ function MatchedFor({ matchedFor }) {
     matchedFor.profile_tags?.length ? matchedFor.profile_tags.join(", ") : null,
   ].filter(Boolean);
   return <p className="info-box policy-checklist-matched">이 조건으로 매칭됨 — {parts.join(" · ")}</p>;
-}
-
-function storedCompleted(key) {
-  try {
-    const value = JSON.parse(window.localStorage.getItem(`tourism-radar-checklist:${key}`) ?? "[]");
-    return Array.isArray(value) ? value : [];
-  } catch {
-    return [];
-  }
 }
 
 export default function ChecklistPanel({ checklistData, showDetails = true }) {
@@ -72,13 +64,10 @@ function ChecklistRow({ item, checked, onToggle }) {
 
 export function FullChecklist({ checklistData, storageKey = checklistData.region?.code ?? "region" }) {
   const { items, excluded_count } = checklistData;
-  const [completed, setCompleted] = useState(() => storedCompleted(storageKey));
+  const [completed, setCompleted] = useState(() => readChecklistDone(storageKey));
+  // AREA0 "오늘의 결론"이 같은 키를 읽는다. 저장과 함께 같은 탭에도 알린다.
   useEffect(() => {
-    try {
-      window.localStorage.setItem(`tourism-radar-checklist:${storageKey}`, JSON.stringify(completed));
-    } catch {
-      // The checklist remains usable when browser storage is unavailable.
-    }
+    writeChecklistDone(storageKey, completed);
   }, [completed, storageKey]);
 
   const [expanded, setExpanded] = useState({});
