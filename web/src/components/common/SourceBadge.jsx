@@ -1,15 +1,13 @@
-// Renders the envelope's _mock flag + source[] list, reusing the reference
-// demo's own real/sample tag language (source-tag-real / source-tag-sample)
-// -- "출처 없는 값은 표시되지 않는다" (data/schema/_envelope.schema.json).
+// Keep source details available while omitting the redundant "실측" tag.
+// Sample and forecast labels remain visible where they clarify the data type.
 export default function SourceBadge({ envelope, label }) {
   if (!envelope) return null;
   const { _mock, source = [] } = envelope;
+  const badgeLabel = label ?? (_mock ? "샘플" : "실측");
 
   return (
     <div className="source-badge">
-      <span className={_mock ? "source-tag-sample" : "source-tag-real"}>
-        {label ?? (_mock ? "샘플" : "실측")}
-      </span>
+      {badgeLabel !== "실측" && <span className={_mock ? "source-tag-sample" : "source-tag-real"}>{badgeLabel}</span>}
       <details className="source-badge__details">
         <summary>출처 {source.length}건</summary>
         <ul>
