@@ -1,12 +1,12 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-29T16:27:25+09:00",
+  "generated_at": "2026-09-29T16:41:52+09:00",
   "source": [
     {
       "name": "YouTube Data API v3",
       "provider": "Google",
       "retrieved_at": "2026-09-29",
-      "note": "거제 여행, 거제 가볼만한곳, 거제 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 채널별 최대 3건"
+      "note": "거제 여행, 거제 가볼만한곳, 거제 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 100회 이상, 조회수 상위 최대 10건, 채널별 최대 2건"
     }
   ],
   "period": {
@@ -23,454 +23,6 @@
       "name": "거제시"
     },
     "videos": [
-      {
-        "video_id": "D1Z6TuUfT00",
-        "title": "거제 #매미성 애견동반 가족여행",
-        "channel": "뿌꾸맘_긍정이tv ",
-        "published_at": "2026-09-29",
-        "view_count": 672
-      },
-      {
-        "video_id": "gD257vOUUJ8",
-        "title": "거제 외도에가면 ~!!!",
-        "channel": "올리브 Art",
-        "published_at": "2026-09-29",
-        "view_count": 468
-      },
-      {
-        "video_id": "4LMTcA3VrGw",
-        "title": "2026년 9월 29일 #eunjudiary #geojeisland #autumn #koreatravel #거제도 #여행 #가을 #이선희 #인연",
-        "channel": "Eunjudiary in Geoje Island, Korea",
-        "published_at": "2026-09-29",
-        "view_count": 35
-      },
-      {
-        "video_id": "kZoQy5rS0Lw",
-        "title": "거제여행11(추석연휴)",
-        "channel": "우리집연구소2",
-        "published_at": "2026-09-29",
-        "view_count": 0
-      },
-      {
-        "video_id": "c1GVDxuLfBA",
-        "title": "리센느 거제여행 만나는 사람마다 왜 이래?  #리센느 #kpop",
-        "channel": "K아이돌KK",
-        "published_at": "2026-09-28",
-        "view_count": 1908
-      },
-      {
-        "video_id": "oYk8eX-flu4",
-        "title": "갸루가 카페에 갔을 때 생기는 일 #브이로그 #거제야호",
-        "channel": "와일드브로",
-        "published_at": "2026-09-28",
-        "view_count": 1411
-      },
-      {
-        "video_id": "4qKdXLb_OL4",
-        "title": "명절연휴 #거제도 #애견동반여행 #노랑버덩 💛🐕💨🐾🌊",
-        "channel": "뿌꾸맘_긍정이tv ",
-        "published_at": "2026-09-28",
-        "view_count": 1307
-      },
-      {
-        "video_id": "66mA6NEkMmY",
-        "title": "브런치에 커피까지 준다고? 거가대교 야경 품은 거제 감성 숙소 #거제숙소 #거제여행 #내돈내산 #거제에어비앤비 #감성숙소 #거가대교뷰 #바다뷰 #브런치 #Shorts",
-        "channel": "쓸템",
-        "published_at": "2026-09-28",
-        "view_count": 1241
-      },
-      {
-        "video_id": "q476kvyXkNU",
-        "title": "거제한우맛집,한우마을 꽃등심200 특갈비살200 갈비살200 9만9천원",
-        "channel": "Doctor Oedo 거제도여행박사TV",
-        "published_at": "2026-09-28",
-        "view_count": 1182
-      },
-      {
-        "video_id": "hKd9v00QB60",
-        "title": "아찔한여행을하고싶다면 #흥자가간다 #먹방 #경남여행#거제여행#거제야호",
-        "channel": "흥자언니",
-        "published_at": "2026-09-28",
-        "view_count": 1163
-      },
-      {
-        "video_id": "VWNEsKWYn88",
-        "title": "거제 오아시스 호텔",
-        "channel": "Doctor Oedo 거제도여행박사TV",
-        "published_at": "2026-09-28",
-        "view_count": 1112
-      },
-      {
-        "video_id": "n-J7n4vR7o8",
-        "title": "힘들게 올랐더니 이런 절경이! 거제 우제봉 전망대#거제여행 #우제봉전망대 #우제봉 #거제가볼만한곳 #해금강 #거제바다 #경남여행 #전망대 #트레킹 #여행쇼츠 #우상여행기록",
-        "channel": "우상",
-        "published_at": "2026-09-28",
-        "view_count": 963
-      },
-      {
-        "video_id": "MchVa-TlMu8",
-        "title": "거제 구영항, 바다 앞에서 즐기는 삼겹살과 낚시 힐링 🎣🥓, 세월을 낚고 마음을 채우는 곳,  #거제여행 #구영항 #거제낚시 #바다낚시 #임영웅",
-        "channel": "노년윤슬",
-        "published_at": "2026-09-28",
-        "view_count": 699
-      },
-      {
-        "video_id": "IrItvt-VHxw",
-        "title": "이쁜 범돔보내기 거제체험낚시 #범돔#낚시#체험#체험낚시#여행#거제노인과바다",
-        "channel": "거제노인과바다 NAVI",
-        "published_at": "2026-09-28",
-        "view_count": 635
-      },
-      {
-        "video_id": "-UwGlDSXfA8",
-        "title": "거제 장승포 해안도로 낚시포인트 #거제도낚시 #장승포방파제 #장승포해안도로 #거제도원투낚시 #거제도루어낚시 #거제도여행 #장승포",
-        "channel": "카고피싱",
-        "published_at": "2026-09-28",
-        "view_count": 530
-      },
-      {
-        "video_id": "suTnh0sP2qk",
-        "title": "#거제시 #거제여행 #요가하는해녀 #거제해녀 #해녀 #바다 #해녀배",
-        "channel": "요가하는해녀",
-        "published_at": "2026-09-28",
-        "view_count": 310
-      },
-      {
-        "video_id": "fhHToXdhM_g",
-        "title": "거제  중곡동 오리백숙맛집 산골애",
-        "channel": "소소한 맛집투어",
-        "published_at": "2026-09-28",
-        "view_count": 221
-      },
-      {
-        "video_id": "NhMSRDVkuw8",
-        "title": "#거제#이수도#출렁다리#팜파스그라스#섬여행#부모님모시고가볼만한곳#26.9.24",
-        "channel": "들꽃소녀",
-        "published_at": "2026-09-28",
-        "view_count": 211
-      },
-      {
-        "video_id": "8q6ikM5f86E",
-        "title": "#거제여행 #거제맛집 #거제가볼만한곳 #거제도",
-        "channel": "솥밥한끼",
-        "published_at": "2026-09-28",
-        "view_count": 203
-      },
-      {
-        "video_id": "x1CiEb8fwkA",
-        "title": "#eunjudiary #geojeisland #거제도 #여행 #autumn #가을 #koreatravel #nature #travel  #likeimgonnaloseyou",
-        "channel": "Eunjudiary in Geoje Island, Korea",
-        "published_at": "2026-09-28",
-        "view_count": 119
-      },
-      {
-        "video_id": "b6i-D7FRqE4",
-        "title": "거제여행3(추석연휴)",
-        "channel": "우리집연구소2",
-        "published_at": "2026-09-28",
-        "view_count": 40
-      },
-      {
-        "video_id": "ulFWpme3wgo",
-        "title": "거제여행8(추석연휴)",
-        "channel": "우리집연구소2",
-        "published_at": "2026-09-28",
-        "view_count": 37
-      },
-      {
-        "video_id": "EvxOFYGw9uk",
-        "title": "26년 가족여행 1일차 거제야호~",
-        "channel": "등반대장",
-        "published_at": "2026-09-28",
-        "view_count": 17
-      },
-      {
-        "video_id": "1HDMVQ8PFwI",
-        "title": "거제-통영-여수 여행 [20260730~0803]",
-        "channel": "은우초이 EUNWOO",
-        "published_at": "2026-09-28",
-        "view_count": 10
-      },
-      {
-        "video_id": "tBphB_C6ZbQ",
-        "title": "거제도 여행1 (거제씨월드, 2026.07)",
-        "channel": "빛나튜브",
-        "published_at": "2026-09-28",
-        "view_count": 7
-      },
-      {
-        "video_id": "ar_UtzLv24k",
-        "title": "260926 섬 한가운데 숨겨진 수제돈가스 맛집 ‘선재쉼터’ 거제 야호",
-        "channel": "남지훈 TV 브이로그",
-        "published_at": "2026-09-27",
-        "view_count": 1328
-      },
-      {
-        "video_id": "0fsEQBCkvnc",
-        "title": "수라상 안부러운 거제 생선구이 맛집",
-        "channel": "꿀때지꿀꿀🐷",
-        "published_at": "2026-09-27",
-        "view_count": 1316
-      },
-      {
-        "video_id": "zqDesc8ND2s",
-        "title": "거제 벨버디어 후기, 한화리조트 디럭스 오션뷰 모바일 체크인 (거제 숙소)",
-        "channel": "다람이의 텐트 밖 세상",
-        "published_at": "2026-09-27",
-        "view_count": 1221
-      },
-      {
-        "video_id": "aWYBjU9i6eo",
-        "title": "거제에 이런 섬이? 🌊 산달도에서 만난 바다 풍경 #거제산달도 #산달도 #거제여행 #경남여행 #섬여행 #바다여행 #국내여행 #여행쇼츠 #우상여행",
-        "channel": "우상",
-        "published_at": "2026-09-27",
-        "view_count": 962
-      },
-      {
-        "video_id": "3bcNcUgWVEo",
-        "title": "거제도맛집 해신247 #거제도맛집 #해신247 #거제맛집 #거제도횟집",
-        "channel": "jyj",
-        "published_at": "2026-09-27",
-        "view_count": 366
-      },
-      {
-        "video_id": "RpEGykHSfh4",
-        "title": "#eunjudiary #koreatravel #거제도 #geojeisland #거제야호 #nature  #kpop #영의왈츠 #healing #shorts",
-        "channel": "Eunjudiary in Geoje Island, Korea",
-        "published_at": "2026-09-27",
-        "view_count": 326
-      },
-      {
-        "video_id": "s9jZ9eT3WqI",
-        "title": "거제도맛집 소노캄맛집 맛집추천 거제홍보대사 디딤돌회 #거제도맛집 #맛집추천 #소노캄 #소노캄맛집 #거제홍보대사 #거제 #거제도",
-        "channel": "거제홍보대사 ",
-        "published_at": "2026-09-27",
-        "view_count": 304
-      },
-      {
-        "video_id": "jVVdZs62E-8",
-        "title": "여권없이 일본여행 가는 방법✈️ #거제여행 #거제야호 #거제숙소 #스테이모리 #국내여행 #거제가볼만한곳",
-        "channel": "수인",
-        "published_at": "2026-09-27",
-        "view_count": 216
-      },
-      {
-        "video_id": "rbkhd7XZEkk",
-        "title": "거제도맛집 해신247 #거제도맛집 #해신247 #거제맛집 #거제도횟집",
-        "channel": "jyj",
-        "published_at": "2026-09-27",
-        "view_count": 216
-      },
-      {
-        "video_id": "tEbIc0SSPCw",
-        "title": "하늘에서 조망한  환상의 섬｜거제 해금강  여행",
-        "channel": "인생길 수다",
-        "published_at": "2026-09-27",
-        "view_count": 212
-      },
-      {
-        "video_id": "COk1LAvNhAA",
-        "title": "#갸족여행 #거제도 #해수욕장숙소에서 #먹방 #동태탕 #삼겹살 #한우육사시미 #된장찌개 #육개장 #김치찌개 #된장찌개 #순대국 #생선찌개 #생선회 #막걸리 #맥주",
-        "channel": "심프로Life",
-        "published_at": "2026-09-27",
-        "view_count": 183
-      },
-      {
-        "video_id": "tFyICeUC4fQ",
-        "title": "#이수도#낚시체험#거제#거가대교#추석첫여행#차례없는추석26.9.25",
-        "channel": "들꽃소녀",
-        "published_at": "2026-09-27",
-        "view_count": 30
-      },
-      {
-        "video_id": "HajTjx2-tLc",
-        "title": "#거제여행 #거제맛집 #거제가볼만한곳 #거제도",
-        "channel": "솥밥한끼",
-        "published_at": "2026-09-27",
-        "view_count": 5
-      },
-      {
-        "video_id": "E3qrtO3K6kQ",
-        "title": "거제숨은 일출명소",
-        "channel": "야자수",
-        "published_at": "2026-09-27",
-        "view_count": 1
-      },
-      {
-        "video_id": "OwLobjUbS-Q",
-        "title": "#하청굴구이마당#거제맛집#거제여행#제철음식#다이어트#노을맛집#낚시맛집",
-        "channel": "해광tv",
-        "published_at": "2026-09-26",
-        "view_count": 2693
-      },
-      {
-        "video_id": "_wv9yqR34Xc",
-        "title": "거제도 숨은 명소 무료 힐링 코스 #거제도여행 #거제여행 #거제도가볼만한곳",
-        "channel": "이탕",
-        "published_at": "2026-09-26",
-        "view_count": 1212
-      },
-      {
-        "video_id": "QOnsuM2I_A0",
-        "title": "거제 벨버디어 제대로 즐기는 법 #거제벨버디어 #거제여행 #거제도여행",
-        "channel": "이탕",
-        "published_at": "2026-09-26",
-        "view_count": 1204
-      },
-      {
-        "video_id": "CMZuAV9H5Sc",
-        "title": "#동부반점 #동부맛집 #요가하는해녀 #거제여행 #거제야호 #거제시 #거제맛집 #거제",
-        "channel": "요가하는해녀",
-        "published_at": "2026-09-26",
-        "view_count": 77
-      },
-      {
-        "video_id": "geFS46dH8eA",
-        "title": "거제식물원 정글돔 후기, 정글타워 연계할인 33% (거제 실내 가볼만한곳)",
-        "channel": "다람이의 텐트 밖 세상",
-        "published_at": "2026-09-25",
-        "view_count": 1327
-      },
-      {
-        "video_id": "V4xh09h7XK0",
-        "title": "거제도맛집 해신247 #거제도맛집 #해신247 #거제맛집 #거제도횟집 #거제횟집",
-        "channel": "jyj",
-        "published_at": "2026-09-25",
-        "view_count": 1326
-      },
-      {
-        "video_id": "r7N4Mkio_Ps",
-        "title": "260925 거제 야호, 여기 오션뷰 미쳤는데 맛집이네! (극강 오션뷰 패스트리디 오션뷰)",
-        "channel": "남지훈 TV 브이로그",
-        "published_at": "2026-09-25",
-        "view_count": 1311
-      },
-      {
-        "video_id": "thnqGJawHT8",
-        "title": "거제 포로수용소 근처 갔다가 현지인들이 숨겨두고 먹는 찐맛집 찾아버림.. 🤫✨​불향 가득 입혀져서 코끝부터 자극하는 제육볶음에 바지락 잔뜩 들어가 국물 진한 된장찌개겉바속촉의 진수",
-        "channel": "머무는 시선 (𝐏𝐥𝐚𝐜𝐞 & 𝐈𝐭𝐞𝐦 𝐋𝐨𝐠)",
-        "published_at": "2026-09-25",
-        "view_count": 1278
-      },
-      {
-        "video_id": "5yWkFb2cHKU",
-        "title": "거제 시댁 내려와서 추석 보내고 꼭 먹고 싶은 갈비집 방문",
-        "channel": "돼지갈비 원조집 3대째 용쓰네",
-        "published_at": "2026-09-25",
-        "view_count": 1275
-      },
-      {
-        "video_id": "5JvA9fQlF4g",
-        "title": "거제 연안대로 한내리공단안에있는 맛집",
-        "channel": "사천사랑초",
-        "published_at": "2026-09-25",
-        "view_count": 1175
-      },
-      {
-        "video_id": "RbNYUjn1ukU",
-        "title": "거제 가볼만한곳 특별한 체험들과 역사현장 흥남철수기념관",
-        "channel": "멍젤라",
-        "published_at": "2026-09-25",
-        "view_count": 1118
-      },
-      {
-        "video_id": "7ovbj9uTkas",
-        "title": "거제 1박2일 한 바퀴 코스 총정리 🌊 #Shorts",
-        "channel": "내안에블루",
-        "published_at": "2026-09-25",
-        "view_count": 1108
-      },
-      {
-        "video_id": "xGuIQA1Efi4",
-        "title": "거제도 가면 여긴 꼭 들러보세요 #거제도여행 #거제여행 #거제도가볼만한곳",
-        "channel": "이탕",
-        "published_at": "2026-09-25",
-        "view_count": 1042
-      },
-      {
-        "video_id": "b-OA1NYVmu0",
-        "title": "[거제 카페 맛집] 바다 보며 마시는 라떼 한 잔! 카페 심해 오션뷰 & 시그니처 음료 솔직 후기 #shorts",
-        "channel": "공복_Gongbok",
-        "published_at": "2026-09-25",
-        "view_count": 919
-      },
-      {
-        "video_id": "NlYrdWGJz8g",
-        "title": "#거제여행 #거제맛집 #거제가볼만한곳 #거제도 #맛집추천",
-        "channel": "솥밥한끼",
-        "published_at": "2026-09-25",
-        "view_count": 8
-      },
-      {
-        "video_id": "agYo39eINhw",
-        "title": "#하청굴구이마당#거제맛집#거제여행#제철음식#왕꽃선녀#추석음식#간만에기름칠#짠",
-        "channel": "해광tv",
-        "published_at": "2026-09-24",
-        "view_count": 3323
-      },
-      {
-        "video_id": "nZMpWxPXhsM",
-        "title": "거제도 데이트 인생 우대갈비 #거제도맛집 #거제맛집 #거제도여행",
-        "channel": "one step a day ",
-        "published_at": "2026-09-24",
-        "view_count": 1356
-      },
-      {
-        "video_id": "gFlMKe4z5JQ",
-        "title": "거제도 핫플 당일치기 여행 #드론영상 #핫플 #국내여행",
-        "channel": "힐링뷰뷰",
-        "published_at": "2026-09-24",
-        "view_count": 1244
-      },
-      {
-        "video_id": "rlwK2k4BYq4",
-        "title": "거제도 필수 여행코스! 거제 정글돔🌿",
-        "channel": "여행갈래",
-        "published_at": "2026-09-24",
-        "view_count": 1217
-      },
-      {
-        "video_id": "HAf6yKE9_sQ",
-        "title": "거제가면 여기로가조 #맛집 #여행",
-        "channel": "수염='=",
-        "published_at": "2026-09-24",
-        "view_count": 379
-      },
-      {
-        "video_id": "d8AJ-qKmfJc",
-        "title": "거제여행 브이로그",
-        "channel": "빈둥빈둥",
-        "published_at": "2026-09-24",
-        "view_count": 170
-      },
-      {
-        "video_id": "wS7S9q_F5gY",
-        "title": "거제도 핫플 당일치기 여행",
-        "channel": "힐링뷰뷰",
-        "published_at": "2026-09-24",
-        "view_count": 149
-      },
-      {
-        "video_id": "_z-Sv1KOmeY",
-        "title": "경남 거제 아주동 옥녀봉 거제산타고, 거제아주E편한세상아파트1단지 임도차량이동 후 임도중간 최단코스 원점회귀산행 등산코스",
-        "channel": "디용핑 (dyd)",
-        "published_at": "2026-09-24",
-        "view_count": 109
-      },
-      {
-        "video_id": "w83E_Soik4g",
-        "title": "[거제 카페 추천] 안 가면 후회하는 뷰 맛집 & 음료 맛집! 카페 심해 탐방기",
-        "channel": "공복_Gongbok",
-        "published_at": "2026-09-24",
-        "view_count": 81
-      },
-      {
-        "video_id": "Fh1ZvP2gL0c",
-        "title": "거제여행/거제숲소리공원/섬에도이런곳이있다#거제숲소리공원#거제여행#거제가볼만한곳   2026.9.24.",
-        "channel": "천지삐까리TV",
-        "published_at": "2026-09-24",
-        "view_count": 35
-      },
       {
         "video_id": "axs4GqR3aWs",
         "title": "거제 지세포 맛집 소노캄과 2분거리, 대게본가 다녀왔어요.",
@@ -493,39 +45,53 @@
         "view_count": 4694
       },
       {
-        "video_id": "_VVqlukat38",
-        "title": "#하청굴구이마당#거제맛집#거제여행#왕꽃선녀#부산무속인#추석맞이",
+        "video_id": "agYo39eINhw",
+        "title": "#하청굴구이마당#거제맛집#거제여행#제철음식#왕꽃선녀#추석음식#간만에기름칠#짠",
         "channel": "해광tv",
-        "published_at": "2026-09-23",
-        "view_count": 4051
+        "published_at": "2026-09-24",
+        "view_count": 3323
       },
       {
-        "video_id": "8TVrekW8wSQ",
-        "title": "🔥 거제여행 이렇게 해봤습니다! 오늘 오후 5시 본편 공개",
-        "channel": "흥자언니",
-        "published_at": "2026-09-23",
+        "video_id": "OwLobjUbS-Q",
+        "title": "#하청굴구이마당#거제맛집#거제여행#제철음식#다이어트#노을맛집#낚시맛집",
+        "channel": "해광tv",
+        "published_at": "2026-09-26",
+        "view_count": 2693
+      },
+      {
+        "video_id": "oYk8eX-flu4",
+        "title": "갸루가 카페에 갔을 때 생기는 일 #브이로그 #거제야호",
+        "channel": "와일드브로",
+        "published_at": "2026-09-28",
+        "view_count": 1411
+      },
+      {
+        "video_id": "nZMpWxPXhsM",
+        "title": "거제도 데이트 인생 우대갈비 #거제도맛집 #거제맛집 #거제도여행",
+        "channel": "one step a day ",
+        "published_at": "2026-09-24",
+        "view_count": 1356
+      },
+      {
+        "video_id": "ar_UtzLv24k",
+        "title": "260926 섬 한가운데 숨겨진 수제돈가스 맛집 ‘선재쉼터’ 거제 야호",
+        "channel": "남지훈 TV 브이로그",
+        "published_at": "2026-09-27",
+        "view_count": 1328
+      },
+      {
+        "video_id": "geFS46dH8eA",
+        "title": "거제식물원 정글돔 후기, 정글타워 연계할인 33% (거제 실내 가볼만한곳)",
+        "channel": "다람이의 텐트 밖 세상",
+        "published_at": "2026-09-25",
+        "view_count": 1327
+      },
+      {
+        "video_id": "V4xh09h7XK0",
+        "title": "거제도맛집 해신247 #거제도맛집 #해신247 #거제맛집 #거제도횟집 #거제횟집",
+        "channel": "jyj",
+        "published_at": "2026-09-25",
         "view_count": 1326
-      },
-      {
-        "video_id": "xI1D3zRSMzY",
-        "title": "거제 중곡동 맛집 찾는다면? 삼겹살부터 돼지갈비까지 박금순갈비! 🔥 #박금순갈비 #거제중곡점 #거제맛집 #거제고기집 #거제삼겹살 #거제돼지갈비 #거제도맛집 #구독부탁합니다",
-        "channel": "쁘띠파파 ",
-        "published_at": "2026-09-23",
-        "view_count": 1210
-      },
-      {
-        "video_id": "82gCujOHJJk",
-        "title": "#금조원왕갈비탕 #지세포 #왕갈비탕 #거제도 #거제여행 #거제 #거제가볼만한곳 #요가하는해녀 #해녀 #맛집 #일운면 #지세포항 #지세포맛집",
-        "channel": "요가하는해녀",
-        "published_at": "2026-09-23",
-        "view_count": 754
-      },
-      {
-        "video_id": "VwxsLRpI9a4",
-        "title": "추석연휴 정상영업 냉삼회관 거제수월점 거제도맛집 #추석연휴 #추석 #냉삼 #거제도맛집 #거제도",
-        "channel": "거제홍보대사 ",
-        "published_at": "2026-09-23",
-        "view_count": 312
       }
     ]
   }

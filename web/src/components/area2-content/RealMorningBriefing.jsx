@@ -8,6 +8,7 @@ const formatDate = (date) => date?.replaceAll("-", ".") ?? "미제공";
 export default function RealMorningBriefing({ region, signalStatus, signalSeries, contentType, recentYoutube }) {
   const envelope = contentType.envelope;
   const liveEnvelope = recentYoutube.status === "ok" ? recentYoutube.envelope : null;
+  const isRecentFeed = Boolean(liveEnvelope?.data?.videos);
   const briefing = liveEnvelope?.data?.videos
     ? { end: liveEnvelope.period?.end, recentVideos: liveEnvelope.data.videos }
     : buildContentBriefing(envelope);
@@ -18,12 +19,12 @@ export default function RealMorningBriefing({ region, signalStatus, signalSeries
       <section className="report-evidence youtube-video-report" aria-label="최근 7일 게시 영상">
         <h3 className="report-channel">유튜브 · 최근 영상</h3>
         <div className="morning-meta"><span>게시 기준 {formatDate(briefing.end)}</span></div>
-        <div className="youtube-recent-total"><span>최근 7일 게시 영상</span><strong>{briefing.recentVideos.length}<small>건</small></strong></div>
-        {briefing.recentVideos.length ? <div className="youtube-video-list-wrap"><ul className="youtube-recent-videos" aria-label="최근 7일 게시 영상, 최신순">
+        <div className="youtube-recent-total"><span>{isRecentFeed ? "최근 7일 인기 영상 · 조회수 순" : "최근 7일 게시 영상"}</span><strong>{briefing.recentVideos.length}<small>건</small></strong></div>
+        {briefing.recentVideos.length ? <div className="youtube-video-list-wrap"><ul className="youtube-recent-videos" aria-label={isRecentFeed ? "최근 7일 인기 영상, 누적 조회수 순" : "최근 7일 게시 영상, 최신순"}>
           {briefing.recentVideos.map((video) => {
             const validId = /^[\w-]{11}$/.test(video.video_id ?? "");
             const details = <>
-              <span className="youtube-recent-video-meta"><time dateTime={video.published_at}>{formatDate(video.published_at)}</time>{video.content_type ? ` · ${video.content_type}` : ""}</span>
+              <span className="youtube-recent-video-meta"><time dateTime={video.published_at}>{formatDate(video.published_at)}</time>{video.content_type ? ` · ${video.content_type}` : ""}{isRecentFeed && <span className="youtube-recent-video-views">조회수 {Number(video.view_count).toLocaleString("ko-KR")}회</span>}</span>
               <strong>{video.title}</strong>
               <span className="youtube-recent-video-channel">{video.channel}</span>
             </>;

@@ -1,12 +1,12 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-29T16:27:25+09:00",
+  "generated_at": "2026-09-29T16:41:52+09:00",
   "source": [
     {
       "name": "YouTube Data API v3",
       "provider": "Google",
       "retrieved_at": "2026-09-29",
-      "note": "울릉 여행, 울릉 가볼만한곳, 울릉 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 채널별 최대 3건"
+      "note": "울릉 여행, 울릉 가볼만한곳, 울릉 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 100회 이상, 조회수 상위 최대 10건, 채널별 최대 2건"
     }
   ],
   "period": {
@@ -24,6 +24,27 @@
     },
     "videos": [
       {
+        "video_id": "itOccHTU38Y",
+        "title": "#울릉도여행#울릉도 #울릉도택시투어#울릉약소칡소",
+        "channel": "울릉택시 김기사",
+        "published_at": "2026-09-25",
+        "view_count": 1138
+      },
+      {
+        "video_id": "yUmglPOkYmA",
+        "title": "#울릉도여행#울릉도택시투어#울릉도해중전망대",
+        "channel": "울릉택시 김기사",
+        "published_at": "2026-09-26",
+        "view_count": 632
+      },
+      {
+        "video_id": "M5-jd8-TlGU",
+        "title": "울릉도 3박4일  여행기",
+        "channel": "여행일기 나드리",
+        "published_at": "2026-09-24",
+        "view_count": 386
+      },
+      {
         "video_id": "SDe7Fyq45Ro",
         "title": "어선의 항해 #울릉행복투어 #울릉도 #울릉도여행 #가을여행",
         "channel": "울릉도불독",
@@ -36,48 +57,6 @@
         "channel": "울릉도불독",
         "published_at": "2026-09-29",
         "view_count": 113
-      },
-      {
-        "video_id": "9nY0qEb2BDQ",
-        "title": "관음도의 무지개 #울릉도여행 #울릉행복투어 #정들포전망대 #울릉도커피 #고고학커피 #울릉도불독",
-        "channel": "울릉도불독",
-        "published_at": "2026-09-29",
-        "view_count": 98
-      },
-      {
-        "video_id": "yUmglPOkYmA",
-        "title": "#울릉도여행#울릉도택시투어#울릉도해중전망대",
-        "channel": "울릉택시 김기사",
-        "published_at": "2026-09-26",
-        "view_count": 632
-      },
-      {
-        "video_id": "EU2O-CvbnYA",
-        "title": "#울릉도마가목효능#울릉도여행#울릉도택시투어#마가보감",
-        "channel": "울릉택시 김기사",
-        "published_at": "2026-09-26",
-        "view_count": 445
-      },
-      {
-        "video_id": "jav51vsZNlU",
-        "title": "2026 섬 여행 영상 공모_울릉을 잡아라!",
-        "channel": "Big_H",
-        "published_at": "2026-09-26",
-        "view_count": 34
-      },
-      {
-        "video_id": "itOccHTU38Y",
-        "title": "#울릉도여행#울릉도 #울릉도택시투어#울릉약소칡소",
-        "channel": "울릉택시 김기사",
-        "published_at": "2026-09-25",
-        "view_count": 1138
-      },
-      {
-        "video_id": "M5-jd8-TlGU",
-        "title": "울릉도 3박4일  여행기",
-        "channel": "여행일기 나드리",
-        "published_at": "2026-09-24",
-        "view_count": 386
       }
     ]
   }

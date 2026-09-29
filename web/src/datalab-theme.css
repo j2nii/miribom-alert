@@ -266,6 +266,8 @@
 .app .youtube-recent-videos img { display: block; width: 136px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; background: #dce7ed; }
 .app .youtube-recent-video-details { display: grid; min-width: 0; gap: 5px; }
 .app .youtube-recent-video-meta, .app .youtube-recent-video-channel { color: #506675; font-size: 13px; font-weight: 700; }
+.app .youtube-recent-video-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 8px; }
+.app .youtube-recent-video-views { color: #006fae; font-weight: 800; white-space: nowrap; }
 .app .youtube-recent-video-details > strong { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: #153746; font-size: 15px; line-height: 1.45; font-weight: 800; }
 .app .youtube-recent-videos a:hover strong { color: #006fae; text-decoration: underline; }
 @media (max-width: 1000px) {

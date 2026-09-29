@@ -33,6 +33,8 @@ EXCLUDE_TERMS = (
     "매매", "급매", "분양", "부동산", "매물", "임대", "전원주택", "토지매입",
     "아파트시세", "인제대학교", "인제대학", "인제의대", "플란체",
     "김포맛집", "원주맛집", "제주시인제", "국감", "국정감사", "주문은 사이트",
+    "파크골프레슨", "파크골프스윙", "부산무속인", "#kpop", "#가수",
+    "(노래)", "낚시라이브",
 )
 ALIASES = {
     "울릉": ("울릉", "ulleung"),
@@ -77,15 +79,19 @@ def main():
             if start.isoformat() <= video["published_at"] <= end.isoformat()
             and relevant(video, region)
         ]
-        items.sort(key=lambda video: (video["published_at"], video["view_count"]), reverse=True)
+        # Show the videos people watched most within the seven-day upload window.
+        items = [video for video in items if video["view_count"] >= 100]
+        items.sort(key=lambda video: (video["view_count"], video["published_at"]), reverse=True)
         channel_counts = {}
         limited = []
         for video in items:
             channel = video["channel"]
-            if channel_counts.get(channel, 0) >= 3:
+            if channel_counts.get(channel, 0) >= 2:
                 continue
             channel_counts[channel] = channel_counts.get(channel, 0) + 1
             limited.append(video)
+            if len(limited) == 10:
+                break
         items = limited
         payload = {
             "_mock": False,
@@ -94,7 +100,7 @@ def main():
                 "name": "YouTube Data API v3",
                 "provider": "Google",
                 "retrieved_at": raw["collected_at"][:10],
-                "note": f"{', '.join(raw['queries'])} 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 채널별 최대 3건",
+                "note": f"{', '.join(raw['queries'])} 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 100회 이상, 조회수 상위 최대 10건, 채널별 최대 2건",
             }],
             "period": {"start": start.isoformat(), "end": end.isoformat(), "granularity": "일"},
             "caveat": ["검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."],
