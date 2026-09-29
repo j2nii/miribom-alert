@@ -91,6 +91,40 @@
 .region-alert-dot[data-level="주의"] { background: #e7a53a; }
 .region-alert-dot[data-level="경계"] { background: #d8792a; }
 .region-alert-dot[data-level="심각"] { background: #c84848; }
+/* 시도 칩 -- 타이핑 없이 전국을 훑는 입구. 고르면 그 시도 이름이 검색어로 들어가
+   그 안에서 다시 고른다. 목록 행 버튼과 같은 컨테이너 안에 있으므로 위
+   ".header-region-results button" 규칙을 한 단계 더 좁은 선택자로 덮는다. */
+.app .header-region-picker .header-region-results .header-region-sidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0 2px 2px;
+  padding: 2px 6px 8px;
+}
+.app .header-region-picker .header-region-results .header-region-sidos button {
+  width: auto;
+  min-height: 0;
+  display: inline-flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border: 1px solid #cfe0e9;
+  border-radius: 999px;
+  background: #f7fbfd;
+  color: #26576e;
+  font-size: 12px;
+  font-weight: 800;
+}
+.app .header-region-picker .header-region-results .header-region-sidos button:hover {
+  border-color: #7fb6d3;
+  background: #eaf6fb;
+  color: #11374a;
+}
+.app .header-region-sidos button > span {
+  color: #6e8a99;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
 .app .header-region-picker button[type="submit"] { background: #007bbd; color: #fff; border-radius: 5px; font-weight: 700; }
 .app .header-region-picker button[type="submit"]:hover { background: #006ca6; }
 
