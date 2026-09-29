@@ -80,7 +80,7 @@ def main():
             and relevant(video, region)
         ]
         # Show the videos people watched most within the seven-day upload window.
-        items = [video for video in items if video["view_count"] >= 100]
+        items = [video for video in items if video["view_count"] >= 500]
         items.sort(key=lambda video: (video["view_count"], video["published_at"]), reverse=True)
         channel_counts = {}
         limited = []
@@ -90,8 +90,6 @@ def main():
                 continue
             channel_counts[channel] = channel_counts.get(channel, 0) + 1
             limited.append(video)
-            if len(limited) == 10:
-                break
         items = limited
         payload = {
             "_mock": False,
@@ -100,7 +98,7 @@ def main():
                 "name": "YouTube Data API v3",
                 "provider": "Google",
                 "retrieved_at": raw["collected_at"][:10],
-                "note": f"{', '.join(raw['queries'])} 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 100회 이상, 조회수 상위 최대 10건, 채널별 최대 2건",
+                "note": f"{', '.join(raw['queries'])} 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건",
             }],
             "period": {"start": start.isoformat(), "end": end.isoformat(), "granularity": "일"},
             "caveat": ["검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."],

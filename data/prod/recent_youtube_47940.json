@@ -1,12 +1,12 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-29T16:41:52+09:00",
+  "generated_at": "2026-09-29T16:47:11+09:00",
   "source": [
     {
       "name": "YouTube Data API v3",
       "provider": "Google",
       "retrieved_at": "2026-09-29",
-      "note": "울릉 여행, 울릉 가볼만한곳, 울릉 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 100회 이상, 조회수 상위 최대 10건, 채널별 최대 2건"
+      "note": "울릉 여행, 울릉 가볼만한곳, 울릉 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
     }
   ],
   "period": {
@@ -36,27 +36,6 @@
         "channel": "울릉택시 김기사",
         "published_at": "2026-09-26",
         "view_count": 632
-      },
-      {
-        "video_id": "M5-jd8-TlGU",
-        "title": "울릉도 3박4일  여행기",
-        "channel": "여행일기 나드리",
-        "published_at": "2026-09-24",
-        "view_count": 386
-      },
-      {
-        "video_id": "SDe7Fyq45Ro",
-        "title": "어선의 항해 #울릉행복투어 #울릉도 #울릉도여행 #가을여행",
-        "channel": "울릉도불독",
-        "published_at": "2026-09-29",
-        "view_count": 261
-      },
-      {
-        "video_id": "7Qm5r5gIkds",
-        "title": "아랫통구미길 드라이브 #울릉도여행 #울릉행복투어 #섬여행 #통구미옛길  #travel #아름다운섬 #automobile",
-        "channel": "울릉도불독",
-        "published_at": "2026-09-29",
-        "view_count": 113
       }
     ]
   }

@@ -1,12 +1,12 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-29T16:41:52+09:00",
+  "generated_at": "2026-09-29T16:47:11+09:00",
   "source": [
     {
       "name": "YouTube Data API v3",
       "provider": "Google",
       "retrieved_at": "2026-09-29",
-      "note": "인제 여행, 인제 가볼만한곳, 인제 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 100회 이상, 조회수 상위 최대 10건, 채널별 최대 2건"
+      "note": "인제 여행, 인제 가볼만한곳, 인제 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
     }
   ],
   "period": {
@@ -92,6 +92,41 @@
         "channel": "63미터 뛸래 말래?",
         "published_at": "2026-09-27",
         "view_count": 1112
+      },
+      {
+        "video_id": "DL3Lq7ik5p4",
+        "title": "인제 여행명소, 방태산 이단폭포",
+        "channel": "여행스케치",
+        "published_at": "2026-09-25",
+        "view_count": 1017
+      },
+      {
+        "video_id": "dLxKfBio-h8",
+        "title": "인제 가을꽃축제에서        잃어버린 4명을 찾았다.",
+        "channel": "สมหวัง 범로기형 인생2막",
+        "published_at": "2026-09-26",
+        "view_count": 780
+      },
+      {
+        "video_id": "J8n4OtJkXV0",
+        "title": "2026인제가을꽃축제",
+        "channel": "검볼",
+        "published_at": "2026-09-23",
+        "view_count": 637
+      },
+      {
+        "video_id": "Mt9FfravpB4",
+        "title": "비 오는 날 더 감성적인 알록달록 꽃대궐 🌼 2026 인제가을꽃축제 현장 5분 랜선 산책",
+        "channel": "서서농부 이종선",
+        "published_at": "2026-09-26",
+        "view_count": 586
+      },
+      {
+        "video_id": "Fp77trBpOVI",
+        "title": "2026 강원도 10월 첫째 주 가을축제｜정선·속초·인제·원주",
+        "channel": "득템자료실",
+        "published_at": "2026-09-28",
+        "view_count": 540
       }
     ]
   }
