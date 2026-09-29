@@ -43,7 +43,7 @@ export default function SignalTrend({ region }) {
           result={series}
           render={({ envelope }) => (
             <>
-              <SignalTrendChart series={envelope.data} timeline={tl} outlook={ol} />
+              <SignalTrendChart series={envelope.data} timeline={tl} outlook={ol} forecast={fc} />
               <SourceBadge envelope={envelope} />
             </>
           )}

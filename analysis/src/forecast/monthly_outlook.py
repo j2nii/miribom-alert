@@ -61,7 +61,7 @@ ROOT = HERE.parents[2]
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from export_forecast import DEFAULT_REGION, SHOWCASE  # noqa: E402
+from export_forecast import DEFAULT_REGION, HOLIDAY_PATCH, SHOWCASE  # noqa: E402
 from validate_data import validate_payload  # noqa: E402
 
 INTERIM = ROOT / "data" / "interim"
@@ -86,13 +86,8 @@ METHOD_LABEL = {
 FEATURES = ["g3", "rest_diff", "major_m", "major_ly", "hol_diff", "month", "h", "log_ly"]
 CAL_FEATURES = ["rest_diff", "major_m", "major_ly", "hol_diff"]
 
-# 한국천문연구원 월력요항 — analysis_calendar에 없는 2026-07 이후 공휴일
-FUTURE_HOLIDAYS = {
-    "2026-08-15": "광복절", "2026-08-17": "광복절 대체공휴일",
-    "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴",
-    "2026-10-03": "개천절", "2026-10-05": "개천절 대체공휴일", "2026-10-09": "한글날",
-    "2026-12-25": "기독탄신일", "2027-01-01": "신정",
-}
+# 한국천문연구원 월력요항 — analysis_calendar에 없는 2026-07 이후 공휴일 (7일 예측과 같은 표)
+FUTURE_HOLIDAYS = HOLIDAY_PATCH
 MAJOR_WORDS = ("설날", "추석")
 
 
@@ -238,8 +233,11 @@ def score(bt: pd.DataFrame) -> pd.DataFrame:
 # ── 메인 ────────────────────────────────────────────────────────────────────
 def main() -> None:
     monthly, data_end = load_monthly()
-    last_full = monthly.loc[monthly["full"], "month"].max()
-    horizon_end = last_full + max(HORIZONS)
+    # 지역마다 적재 범위가 다르다(09-28: 사례 6곳 2026-09-23, 나머지 2026-08-14).
+    # 검증·시험은 모든 지역이 다 채운 달까지만 쓰고, 전망의 기준월은 지역마다 자기 마지막 완결 월로 잡는다
+    region_last_full = monthly[monthly["full"]].groupby("region_id")["month"].max()
+    last_full = region_last_full.min()
+    horizon_end = region_last_full.max() + max(HORIZONS)
     cal = calendar_features(horizon_end)
     names = monthly.drop_duplicates("region_id").set_index("region_id")["region_name"]
 
@@ -274,15 +272,19 @@ def main() -> None:
     coverage = float(np.mean([((g["r"] >= q.loc[h, INTERVAL[0]]) & (g["r"] <= q.loc[h, INTERVAL[1]])).mean()
                               for h, g in ct.groupby("h")]))
 
-    # 최종: 마지막 달까지 전부로 학습, 기준월 = 마지막으로 다 채워진 달
-    train_all = make_rows(monthly, cal, pd.period_range("2024-03", last_full - 1, freq="M"))
-    train_all = train_all[train_all["month"] <= last_full]
-    future = make_rows(monthly, cal, [last_full], need_target=False)
+    # 최종: 알려진 달 전부로 학습, 기준월 = 지역마다 마지막으로 다 채워진 달
+    newest = region_last_full.max()
+    train_all = make_rows(monthly, cal, pd.period_range("2024-03", newest - 1, freq="M"))
+    train_all = train_all[train_all["month"] <= newest]
+    future = pd.concat([make_rows(monthly, cal, [o], need_target=False)
+                        for o in sorted(region_last_full.unique())], ignore_index=True)
+    future = future[future["origin"] == future["region_id"].map(region_last_full)]
     future["pred"] = future["ly"] * np.exp(fit_predict(chosen, train_all, future))
 
     summary = {
         "generated_at": datetime.now().astimezone().replace(microsecond=0).isoformat(),
         "data_end": str(data_end.date()), "last_full_month": str(last_full),
+        "last_full_by_region": {str(k): int(v) for k, v in region_last_full.value_counts().items()},
         "chosen": chosen, "chosen_label": METHOD_LABEL[chosen], "test_best": test_best, "valid_best": valid_best,
         "rule": "검증(2025)·시험(2026) 두 구간 sMAPE 평균이 가장 낮은 방법",
         "mean_smape": {m: round(float(mean_score[m]), 2) for m in METHODS},
@@ -303,9 +305,12 @@ def main() -> None:
     region_test = ct.groupby("region_id").apply(lambda d: smape(d["v"].to_numpy(), d["pred"].to_numpy()),
                                                  include_groups=False)
     written = 0
+    region_end = monthly.groupby("region_id").apply(
+        lambda d: str((d["month"].max().start_time + pd.Timedelta(days=int(d.loc[d["month"].idxmax(), "days"]) - 1)).date()),
+        include_groups=False)
     for region, f in future.groupby("region_id"):
         payload = build_payload(region, names[region], f, hist, summary, float(region_test.get(region, np.nan)),
-                                s_test, chosen)
+                                s_test, chosen, region_last_full[region], region_end[region])
         if problems := validate_payload("outlook", payload):
             sys.exit(f"{region} 스키마 검증 실패: {problems[:5]}")
         folder = PROD if region in SHOWCASE else PROD / "regions"
@@ -324,8 +329,7 @@ def trend_of(method: str, r) -> float:
     return {"SN_TREND": r.g3, "CAL": r.g3, "CAL_ROBUST": r.g6r}.get(method, 0.0)
 
 
-def build_payload(region, name, f, hist, summary, region_smape, s_test, chosen) -> dict:
-    last_full = pd.Period(summary["last_full_month"])
+def build_payload(region, name, f, hist, summary, region_smape, s_test, chosen, last_full, data_end) -> dict:
     months = pd.period_range(last_full - 23, last_full + 1, freq="M")
     history = []
     for m in months:
@@ -368,12 +372,13 @@ def build_payload(region, name, f, hist, summary, region_smape, s_test, chosen) 
             f"80% 구간은 2025·2026 두 구간 실제/예측 비율의 몇 달 앞별 10·90분위다(2026년 시험 적중률 {summary['interval_coverage_test']:.0%}).",
             "월 합계 전망이다. 날짜별 혼잡이나 지점 쏠림은 보이지 않는다 — 시군구 총량은 지점 급증을 원리적으로 담지 못한다(확정수치: 지점 급증 98% 미탐지).",
             "축제·행사 신설, 콘텐츠 유행 같은 새 사건은 예측에 들어가지 않는다. 검색 신호로 급증을 미리 아는 것은 검증에서 실패했다(AUC 0.217).",
-            f"데이터 기준일 {summary['data_end']}. {summary['last_full_month']}까지 다 채워진 달로 학습했다.",
+            f"데이터 기준일 {data_end}. {last_full}까지 다 채워진 달을 기준으로 전망했다"
+            " (방문자 자료는 공개까지 시차가 있어 매달 갱신한다).",
         ],
         "data": {
             "region": {"code": region, "name": name},
             "method": {"key": chosen, "label": summary["chosen_label"]},
-            "as_of": summary["last_full_month"],
+            "as_of": str(last_full),
             "history": history,
             "outlook": outlook,
             "methods": [{"key": m, "label": METHOD_LABEL[m],
