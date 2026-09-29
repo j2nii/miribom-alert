@@ -1,31 +1,31 @@
 {
   "_mock": false,
-  "generated_at": "2026-09-26T23:42:09+09:00",
+  "generated_at": "2026-09-28T17:29:54+09:00",
   "source": [
     {
       "name": "이동통신 기반 시군구 일별 방문자",
       "provider": "한국관광공사(공공데이터포털 15101972)",
-      "retrieved_at": "2026-09-26",
+      "retrieved_at": "2026-09-28",
       "url": "https://www.data.go.kr/data/15101972/openapi.do",
       "note": "외지인 방문자수. 팀 DB vw_daily_core_signal"
     },
     {
       "name": "한국관광 데이터랩 월간 지표",
       "provider": "한국관광공사",
-      "retrieved_at": "2026-09-26",
+      "retrieved_at": "2026-09-28",
       "url": "https://datalab.visitkorea.or.kr/",
       "note": "익월 17일 공개 시점을 지켜 결합"
     },
     {
       "name": "네이버 데이터랩 검색어 트렌드",
       "provider": "네이버",
-      "retrieved_at": "2026-09-26",
+      "retrieved_at": "2026-09-28",
       "note": "전일까지의 검색지수만 사용"
     },
     {
       "name": "전국문화축제표준데이터·특일 정보",
       "provider": "행정안전부·한국천문연구원",
-      "retrieved_at": "2026-09-26",
+      "retrieved_at": "2026-09-28",
       "note": "예측 대상일의 축제·공휴일"
     }
   ],

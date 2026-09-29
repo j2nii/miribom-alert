@@ -30,12 +30,26 @@ const PIN_ROWS = [10, 28];
 
 const EVENT_ORDER = ["콘텐츠 확산", "검색 급증", "방문 급증", "혼잡 발생", "조치 시행"];
 
-export default function SignalTrendChart({ series, timeline }) {
+// outlook(6개월 월별 전망)이 있으면 방문자 칸 오른쪽에 이어 그린다. 월 합계를 그 달 일수로 나눠
+// '하루 평균'으로 바꿔야 7일 평균 곡선과 같은 단위가 된다. 검색 칸은 미래를 그리지 않는다 —
+// 검색으로 급증을 미리 아는 것은 검증에서 실패했다(AUC 0.217).
+// forecast(7일 일별 예측)가 있으면 실측 바로 뒤 7일을 일별 점선 + 80% 구간으로 겹친다.
+export default function SignalTrendChart({ series, timeline, outlook, forecast }) {
   const [ref, width] = useElementWidth();
   const [hover, setHover] = useState(null);
 
   const model = useMemo(() => buildModel(series, timeline), [series, timeline]);
-  const { daily, t0, t1, events, episodes, thresholds, searchEnd, visitorsEnd } = model;
+  const { daily, t0, events, episodes, thresholds, searchEnd, visitorsEnd } = model;
+  const future = useMemo(() => futureMonths(outlook, visitorsEnd), [outlook, visitorsEnd]);
+  const week = useMemo(
+    () => (forecast?.daily ?? []).map((d) => ({ ...d, t: toTime(d.date) })).filter((d) => d.t > visitorsEnd),
+    [forecast, visitorsEnd]
+  );
+  const t1 = Math.max(
+    model.t1,
+    future.length ? future[future.length - 1].endT : -Infinity,
+    week.length ? week[week.length - 1].t : -Infinity
+  );
 
   const innerW = Math.max(200, width - M.left - M.right);
   const x = linear([t0, t1], [M.left, M.left + innerW]);
@@ -45,7 +59,9 @@ export default function SignalTrendChart({ series, timeline }) {
   const ySearch = linear([0, searchMax], [topY0 + TOP_H, topY0]);
 
   const botY0 = topY0 + TOP_H + GAP;
-  const visMax = niceMax(Math.max(...daily.flatMap((d) => [d.visitorsRaw ?? 0, d.lyMean ?? 0])));
+  const visMax = niceMax(
+    Math.max(...daily.flatMap((d) => [d.visitorsRaw ?? 0, d.lyMean ?? 0]), ...future.map((f) => f.upper), ...week.map((d) => d.upper))
+  );
   const yVis = linear([0, visMax], [botY0 + BOTTOM_H, botY0]);
   const height = botY0 + BOTTOM_H + AXIS_H;
 
@@ -60,6 +76,10 @@ export default function SignalTrendChart({ series, timeline }) {
     const px = e.clientX - box.left;
     const t = x.invert(px);
     const i = Math.round((t - t0) / DAY);
+    const wd = week.find((d) => Math.abs(d.t - t) < DAY / 2);
+    if (wd) return setHover({ week: wd, t: wd.t });
+    const f = future.find((m) => t >= m.drawStartT && t < m.endT);
+    if (f && (i >= daily.length || daily[i]?.visitorsRaw == null)) return setHover({ future: f, t });
     if (i < 0 || i >= daily.length) return setHover(null);
     setHover(i);
   };
@@ -78,7 +98,18 @@ export default function SignalTrendChart({ series, timeline }) {
   // 글자 라벨은 최고치가 가장 큰 구간 하나에만 단다. 나머지는 마름모만(값은 툴팁·사건 목록에)
   const mainEpisode = episodes.reduce((a, b) => (a && a.peak >= b.peak ? a : b), null);
 
-  const h = hover == null ? null : daily[hover];
+  const hf = hover?.future ?? null;
+  const hw = hover?.week ?? null;
+  const h = hover == null || hf || hw ? null : daily[hover];
+  const lastRaw = [...daily].reverse().find((d) => d.visitorsRaw != null);
+  const weekBand =
+    week.map((d, i) => `${i ? "L" : "M"}${x(d.t)},${yVis(d.upper)}`).join("") +
+    [...week].reverse().map((d) => `L${x(d.t)},${yVis(d.lower)}`).join("") +
+    (week.length ? "Z" : "");
+  const weekLine = pathOf([
+    ...(lastRaw ? [[x(lastRaw.t), yVis(lastRaw.visitorsRaw)]] : []),
+    ...week.map((d) => [x(d.t), yVis(d.predicted)]),
+  ]);
   const hEvents = h ? events.filter((ev) => ev.t === h.t) : [];
 
   return (
@@ -88,6 +119,8 @@ export default function SignalTrendChart({ series, timeline }) {
         <span><i className="swatch-line swatch-dash" style={{ borderColor: COLOR.threshold }} />신호 임계 {thresholds.search}배</span>
         <span><i className="swatch-line" style={{ background: COLOR.visitors }} />외지인 방문자 (7일 평균)</span>
         <span><i className="swatch-line" style={{ background: COLOR.context }} />전년 같은 요일 (7일 평균)</span>
+        {week.length > 0 && <span><i className="swatch-line swatch-dash" style={{ borderColor: COLOR.accent }} />7일 일별 예측</span>}
+        {future.length > 0 && <span><i className="swatch-line swatch-dash" style={{ borderColor: COLOR.visitors }} />6개월 전망 (하루 평균)</span>}
         {events.length > 0 && <span><i className="swatch-pin" />타임라인 사건</span>}
       </div>
 
@@ -100,6 +133,12 @@ export default function SignalTrendChart({ series, timeline }) {
           onMouseMove={onMove}
           onMouseLeave={() => setHover(null)}
         >
+          <defs>
+            <pattern id="noForecast" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="8" height="8" fill="rgba(16,32,47,0.025)" />
+              <line x1="0" y1="0" x2="0" y2="8" stroke="rgba(16,32,47,0.07)" strokeWidth="2" />
+            </pattern>
+          </defs>
           {/* 위 패널: 검색 배율 */}
           <text x={M.left} y={topY0 - 8} className="chart-panel-label">검색 관심 · 전년 대비 배율</text>
           {niceTicks(0, searchMax, 4).map((v) => (
@@ -132,6 +171,17 @@ export default function SignalTrendChart({ series, timeline }) {
             임계 {thresholds.search}배
           </text>
           <path d={pathOf(searchPts)} fill="none" stroke={COLOR.search} strokeWidth="2" strokeLinejoin="round" />
+          {future.length > 0 && x(t1) - x(searchEnd) > 60 && (
+            <g>
+              <rect x={x(searchEnd)} y={topY0} width={x(t1) - x(searchEnd)} height={TOP_H} fill="url(#noForecast)" />
+              <text x={(x(searchEnd) + x(t1)) / 2} y={topY0 + TOP_H / 2 - 6} className="chart-note chart-note--strong" textAnchor="middle">
+                검색 관심은 예측하지 않습니다
+              </text>
+              <text x={(x(searchEnd) + x(t1)) / 2} y={topY0 + TOP_H / 2 + 9} className="chart-note" textAnchor="middle">
+                검증 결과 미리 맞히지 못함 (AUC 0.217)
+              </text>
+            </g>
+          )}
           {episodes.map((ep) => (
             <EpisodeMarker
               key={`cf${ep.start}`}
@@ -155,6 +205,27 @@ export default function SignalTrendChart({ series, timeline }) {
           <path d={pathOf(lyPts)} fill="none" stroke={COLOR.context} strokeWidth="2" strokeLinejoin="round" />
           <path d={pathOf(rawPts)} fill="none" stroke={COLOR.visitors} strokeWidth="1" opacity="0.28" />
           <path d={pathOf(meanPts)} fill="none" stroke={COLOR.visitors} strokeWidth="2" strokeLinejoin="round" />
+          {future.map((f) => (
+            <g key={`fc${f.month}`}>
+              <rect x={x(f.drawStartT)} y={yVis(f.upper)} width={Math.max(1, x(f.endT) - x(f.drawStartT))} height={Math.max(1, yVis(f.lower) - yVis(f.upper))} fill={COLOR.visitors} opacity="0.13" />
+              <line x1={x(f.drawStartT)} x2={x(f.endT)} y1={yVis(f.ly)} y2={yVis(f.ly)} stroke={COLOR.context} strokeWidth="1.5" strokeDasharray="2 3" />
+              <line x1={x(f.drawStartT)} x2={x(f.endT)} y1={yVis(f.avg)} y2={yVis(f.avg)} stroke={COLOR.visitors} strokeWidth="2.5" strokeDasharray="6 4" />
+            </g>
+          ))}
+          {week.length > 0 && (
+            <g>
+              <path d={weekBand} fill={COLOR.accent} opacity="0.16" />
+              <path d={weekLine} fill="none" stroke={COLOR.accent} strokeWidth="1.75" strokeDasharray="3 3" />
+              {week.map((d) => (
+                <circle key={`wk${d.date}`} cx={x(d.t)} cy={yVis(d.predicted)} r="2.75" fill="#fff" stroke={COLOR.accent} strokeWidth="1.5" />
+              ))}
+            </g>
+          )}
+          {future.length > 0 && (
+            <text x={x(future[0].drawStartT) + 6} y={botY0 + 12} className="chart-note chart-note--strong" fill={COLOR.visitors}>
+              6개월 전망 →
+            </text>
+          )}
           <line x1={x(visitorsEnd)} x2={x(visitorsEnd)} y1={botY0} y2={botY0 + BOTTOM_H} stroke={COLOR.axis} />
           <text x={x(visitorsEnd) - 4} y={botY0 + 12} className="chart-note" textAnchor="end">방문자 자료 {fmtMD(model.visitorsEndIso)}까지</text>
 
@@ -182,8 +253,40 @@ export default function SignalTrendChart({ series, timeline }) {
               {h.lyMean != null && <Dot cx={x(h.t)} cy={yVis(h.lyMean)} color={COLOR.context} />}
             </g>
           )}
+          {hw && (
+            <g pointerEvents="none">
+              <line x1={x(hw.t)} x2={x(hw.t)} y1={topY0} y2={botY0 + BOTTOM_H} stroke={COLOR.ink} strokeOpacity="0.45" />
+              <Dot cx={x(hw.t)} cy={yVis(hw.predicted)} color={COLOR.accent} />
+            </g>
+          )}
+          {hf && (
+            <g pointerEvents="none">
+              <line x1={x(hover.t)} x2={x(hover.t)} y1={topY0} y2={botY0 + BOTTOM_H} stroke={COLOR.ink} strokeOpacity="0.45" />
+              <Dot cx={x(hover.t)} cy={yVis(hf.avg)} color={COLOR.visitors} />
+            </g>
+          )}
           <rect x={M.left} y={0} width={innerW} height={height - AXIS_H} fill="transparent" />
         </svg>
+
+        {hw && (
+          <div className="chart-tooltip" style={{ left: Math.min(x(hw.t) + 12, width - 236), top: botY0 - 40 }}>
+            <p className="chart-tooltip__date">{hw.date} ({weekdayOf(hw.date)}) 예측{hw.is_holiday ? " · 공휴일" : ""}</p>
+            <Row color={COLOR.accent} label="외지인 방문자 예측" value={`${fmtInt(hw.predicted)}명`} />
+            <Row color={COLOR.accent} label="  80% 구간" value={`${fmtInt(hw.lower)}~${fmtInt(hw.upper)}`} />
+            {hw.event && <p className="chart-tooltip__event">축제: {hw.event}</p>}
+            <p className="chart-tooltip__event">자세한 값은 ③ 방문객 예측의 '7일 일별 예측'</p>
+          </div>
+        )}
+        {hf && (
+          <div className="chart-tooltip" style={{ left: Math.min(x(hover.t) + 12, width - 236), top: botY0 - 40 }}>
+            <p className="chart-tooltip__date">{hf.month.replace("-", "년 ")}월 전망</p>
+            <Row color={COLOR.visitors} label="하루 평균 전망" value={`${fmtInt(hf.avg)}명`} />
+            <Row color={COLOR.visitors} label="  80% 구간" value={`${fmtInt(hf.lower)}~${fmtInt(hf.upper)}`} />
+            <Row color={COLOR.context} label="작년 같은 달 하루 평균" value={`${fmtInt(hf.ly)}명`} />
+            <Row color={COLOR.visitors} label="월 합계 전망" value={`${fmtInt(hf.predicted)}명`} />
+            <p className="chart-tooltip__event">계산 근거는 ③ 방문객 예측의 '근거 보기'</p>
+          </div>
+        )}
 
         {h && (
           <div
@@ -220,6 +323,10 @@ export default function SignalTrendChart({ series, timeline }) {
       <p className="chart-footnote">
         검색 {fmtMD(model.searchEndIso)}·방문자 {fmtMD(model.visitorsEndIso)}까지 반영. 배율은 그날 값 ÷ 364일 전 같은 요일 값의 최근
         7일 중앙값이고, 붉은 띠는 임계를 {thresholds.min_duration}일 이상 연속 넘은 구간입니다(D-12, 에이전트① 타임라인과 같은 규칙).
+        {week.length > 0 &&
+          ` 실측 바로 뒤 점선 점은 ${fmtMD(week[0].date)}~${fmtMD(week[week.length - 1].date)} 7일 일별 예측(음영은 80% 구간)입니다.`}
+        {future.length > 0 &&
+          " 오른쪽 점선은 6개월 월별 전망을 그 달 하루 평균으로 나눈 값이고, 음영은 80% 구간, 회색 점선은 작년 같은 달 하루 평균입니다."}
       </p>
 
       <TableView daily={daily} thresholds={thresholds} />
@@ -381,4 +488,25 @@ function TableView({ daily, thresholds }) {
       </table>
     </details>
   );
+}
+
+// 월 전망 → 하루 평균 계단. 방문자 실측이 끝난 뒤부터 그린다(8월처럼 일부만 실측된 달은 그 뒤부터)
+function futureMonths(outlook, visitorsEnd) {
+  if (!outlook?.outlook?.length) return [];
+  return outlook.outlook.map((f) => {
+    const [y, m] = f.month.split("-").map(Number);
+    const startT = Date.UTC(y, m - 1, 1);
+    const endT = Date.UTC(y, m, 1);
+    const days = Math.round((endT - startT) / DAY);
+    return {
+      ...f,
+      startT,
+      endT,
+      drawStartT: Math.max(startT, visitorsEnd + DAY),
+      avg: f.predicted / days,
+      lower: f.lower / days,
+      upper: f.upper / days,
+      ly: f.last_year / days,
+    };
+  });
 }

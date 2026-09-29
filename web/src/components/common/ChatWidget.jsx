@@ -31,6 +31,7 @@ const SUGGESTIONS = [
 const DATA_LABELS = {
   signal_status: "신호 상태",
   forecast: "7일 예측",
+  outlook: "6개월 전망",
   visitor_profile: "방문객 프로파일",
   hotspots: "인기 관광지",
   content_type: "콘텐츠 유형",

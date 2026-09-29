@@ -77,10 +77,15 @@ def daily_rows(frames: SignalFrames, backtest: pd.DataFrame, region: str, end: p
     return rows
 
 
+def region_end(frames: SignalFrames, metric: str, region: str) -> pd.Timestamp:
+    """그 지역의 마지막 관측일. 09-28 적재로 사례 6곳만 2026-09-23까지 있어 전국 최댓값을 쓰면 안 된다."""
+    return frames.raw[metric][region].dropna().index.max()
+
+
 def episode_rows(frames: SignalFrames, region: str) -> list[dict]:
     rows = []
     for metric, key in (("interest_naver", "search"), ("realization_visitors", "visitors")):
-        end = frames.data_end[metric].strftime("%Y-%m-%d")
+        end = region_end(frames, metric, region).strftime("%Y-%m-%d")
         for ep in frames.episodes(metric, region, DAILY_START, end):
             rows.append({"metric": key, "start": ep.start.strftime("%Y-%m-%d"),
                          "confirm": ep.confirm.strftime("%Y-%m-%d"), "end": ep.end.strftime("%Y-%m-%d"),
@@ -133,7 +138,8 @@ def point_block(ratios: pd.DataFrame, regions: pd.DataFrame, region: str) -> tup
 
 def build_payload(region: str, name: str, frames: SignalFrames, backtest: pd.DataFrame,
                   ratios: pd.DataFrame, regions: pd.DataFrame) -> dict:
-    search_end, visitors_end = frames.data_end["interest_naver"], frames.data_end["realization_visitors"]
+    search_end = region_end(frames, "interest_naver", region)
+    visitors_end = region_end(frames, "realization_visitors", region)
     end = max(search_end, visitors_end)
     points, points_end = point_block(ratios, regions, region)
     summary = backtest_summary(backtest, region)

@@ -62,7 +62,7 @@ export default function RegionSearch({ region, onRegionChange }) {
       .sort((a, b) => CASE_ORDER.indexOf(a.key) - CASE_ORDER.indexOf(b.key));
     return [
       recent.length && { title: "최근 본 지역", items: recent.map((entry) => ({ entry })) },
-      { title: "심층 분석 사례 지역 — 크롤링 자료까지 연결", items: cases.map((entry) => ({ entry })) },
+      { title: "심층 분석 지역 6곳 — 유튜브·기사 수집 자료와 AI 에이전트 분석까지", items: cases.map((entry) => ({ entry })) },
       { title: "지금 경보가 높은 지역", items: topAlertRegions(regions).map((entry) => ({ entry })) },
     ].filter(Boolean);
   }, [index, query, regions, region]);
@@ -177,7 +177,7 @@ export default function RegionSearch({ region, onRegionChange }) {
             <>
               {!query.trim() && (
                 <p className="region-search__summary">
-                  전국 <b>{index.count}</b>개 시군구 · 경보{" "}
+                  전국 <b>{index.count}</b>개 시군구 기본 분석 · 심층 분석 <b>{regions.filter((e) => e.case).length}</b>곳 · 경보{" "}
                   {["경계", "주의", "관심"].filter((l) => counts[l]).map((l) => (
                     <span key={l} className="region-search__count">
                       <i className={`alert-dot alert-dot--${l}`} />
@@ -228,7 +228,7 @@ export default function RegionSearch({ region, onRegionChange }) {
                                 검색 {entry.search_peak.peak.toFixed(1)}배
                               </span>
                             )}
-                            {entry.case && <span className="region-option__case">심층 사례</span>}
+                            {entry.case && <span className="region-option__case">심층 분석</span>}
                             {entry.alert && <AlertChip level={entry.alert} />}
                           </span>
                         </div>
@@ -287,7 +287,7 @@ export default function RegionSearch({ region, onRegionChange }) {
 function CurrentBadges({ entry }) {
   return (
     <span className="region-search__current" aria-hidden="true">
-      {entry.case ? <span className="region-option__case">심층 사례</span> : <span className="region-option__basic">데이터랩 기본</span>}
+      {entry.case ? <span className="region-option__case">심층 분석</span> : <span className="region-option__basic">기본 분석</span>}
       {entry.alert && <AlertChip level={entry.alert} />}
     </span>
   );

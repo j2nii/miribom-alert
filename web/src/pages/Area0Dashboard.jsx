@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRegionData } from "../hooks/useRegionData.js";
 import { useMediaQuery, NARROW_QUERY } from "../hooks/useMediaQuery.js";
-import { getRegionCoverage, isRegionCode } from "../data/manifest.js";
+import { getRegionCoverage } from "../data/manifest.js";
 import { useRegionLabel } from "../data/regionIndex.js";
 import RegionSearch from "../components/area0-dashboard/RegionSearch.jsx";
+import AnalysisTierCard from "../components/area0-dashboard/AnalysisTierCard.jsx";
 import DataState from "../components/common/DataState.jsx";
 import MockBanner from "../components/common/MockBanner.jsx";
 import ChatWidget from "../components/common/ChatWidget.jsx";
@@ -74,7 +75,7 @@ export default function Area0Dashboard({ region, onRegionChange, askOpen, onAskC
         </span>
       </div>
 
-      <RegionModeNote region={region} onRegionChange={onRegionChange} />
+      <AnalysisTierCard region={region} onRegionChange={onRegionChange} />
 
       <div className="area0-layout" ref={layoutRef}>
         <div className="area0-layout__main" ref={mainRef}>
@@ -118,29 +119,5 @@ export default function Area0Dashboard({ region, onRegionChange, askOpen, onAskC
         />
       </div>
     </>
-  );
-}
-
-// 이 지역에서 무엇을 볼 수 있는지 한 줄로. 전국 시군구는 데이터랩·이동통신·검색지수만 쓰는
-// 기본 분석(경보·신호 추이·7일 예측)이고, 크롤링 자료가 붙은 심층 분석은 사례 지역에만 있다.
-function RegionModeNote({ region, onRegionChange }) {
-  if (!isRegionCode(region)) {
-    return (
-      <p className="region-mode region-mode--case">
-        <b>심층 분석 사례 지역</b> — 데이터랩 지표에 유튜브·기사 등 수집 자료까지 연결해 콘텐츠 원인·체크리스트·브리핑을 함께 봅니다.
-      </p>
-    );
-  }
-  return (
-    <p className="region-mode">
-      <b>데이터랩 기본 분석</b> — 공개 데이터(데이터랩·이동통신·검색지수)만으로 경보 판정·신호 추이·7일 예측을 제공합니다. 콘텐츠 원인·체크리스트·브리핑은
-      심층 사례 지역에서 볼 수 있습니다:{" "}
-      {[["yeongwol", "영월"], ["geoje", "거제"]].map(([key, label], i) => (
-        <span key={key}>
-          {i > 0 && " · "}
-          <button type="button" className="region-mode__link" onClick={() => onRegionChange(key)}>{label}</button>
-        </span>
-      ))}
-    </p>
   );
 }

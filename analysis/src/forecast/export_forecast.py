@@ -3,12 +3,14 @@
 무엇을 내보내는가 (docs/meeting-notes/인계_forecast실측화_0926.md)
     - 모델: ablation.py의 LAG+CAL+FES+NAV+DLB (테스트 sMAPE 8.98%, MAE 7,603명). 같은 분할·같은 씨앗으로
       다시 학습하고, 테스트 성능이 재현되는지 확인한 뒤에만 내보낸다
-    - 예측 대상: 패널 마지막 날(데이터 기준일) 다음 7일. 검증한 것이 h=7뿐이라 7일만 낸다 (90일 금지)
+    - 예측 대상: 그 지역 마지막 관측일(데이터 기준일) 다음 7일. 검증한 것이 h=7뿐이라 7일만 낸다 (90일 금지)
+      기준일은 지역마다 다르다 (09-28: 사례 6곳 2026-09-23, 나머지 2026-08-14)
     - 구간: 그 지역의 테스트 기간 '실제/예측' 비율의 10·90분위 → 80% 구간. 표본이 모자라면 전국 분위수
     - 일별 경보 단계는 넣지 않는다. 경보는 월별 3신호 판정(D-13)이라 일별 임계가 없다
 
-미래 7일의 달력·축제는 DB(analysis_calendar, event)에서 가져온다. analysis_calendar는 2026년 7월 이후
-공휴일이 비어 있어(광복절이 평일로 적혀 있다) 천문연 월력요항으로 확인한 공휴일을 HOLIDAY_PATCH로 보탠다.
+미래 7일의 축제는 DB(event)에서 가져온다. analysis_calendar는 2026-09-23에서 끝나고 2026년 7월 이후
+공휴일이 비어 있어(광복절이 평일로 적혀 있다), 달력은 날짜로 직접 만들고 공휴일은 천문연 월력요항으로
+확인한 HOLIDAY_PATCH로 채운다.
 
 사용법:
     uv run python analysis/src/forecast/export_forecast.py                       # 거제·영월
@@ -58,30 +60,43 @@ INTERVAL = (0.10, 0.90)
 MIN_INTERVAL_SAMPLES = 60
 WEEKDAY = "월화수목금토일"
 
-# analysis_calendar에 빠진 공휴일 (한국천문연구원 2026년 월력요항)
+# analysis_calendar에 빠진 공휴일 (한국천문연구원 2026·2027년 월력요항). monthly_outlook.py도 이 표를 쓴다
 HOLIDAY_PATCH = {
-    "2026-08-15": "광복절",
-    "2026-08-17": "광복절 대체공휴일",
+    "2026-08-15": "광복절", "2026-08-17": "광복절 대체공휴일",
+    "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴",
+    "2026-10-03": "개천절", "2026-10-05": "개천절 대체공휴일", "2026-10-09": "한글날",
+    "2026-12-25": "기독탄신일", "2027-01-01": "신정",
+    "2027-02-06": "설날 연휴", "2027-02-07": "설날", "2027-02-08": "설날 연휴", "2027-02-09": "설날 대체공휴일",
 }
 
 
-def future_rows(panel: pd.DataFrame, conn) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """패널 마지막 날 다음 HORIZON일의 빈 행(달력·축제만 채움)과 축제 목록을 만든다."""
-    last = panel["observed_date"].max()
-    start, end = last + pd.Timedelta(days=1), last + pd.Timedelta(days=HORIZON)
-    calendar = read_sql(conn, f"""
-        select calendar_date as observed_date, calendar_year, calendar_month, day_of_week,
-               is_weekend, is_public_holiday, holiday_name
-        from analysis_calendar where calendar_date between '{start.date()}' and '{end.date()}'""")
-    if len(calendar) != HORIZON:
-        sys.exit(f"analysis_calendar에 {start.date()}~{end.date()}가 {len(calendar)}일만 있다")
-    calendar["observed_date"] = pd.to_datetime(calendar["observed_date"])
-    patch = calendar["observed_date"].dt.strftime("%Y-%m-%d").map(HOLIDAY_PATCH)
-    calendar.loc[patch.notna(), "holiday_name"] = patch[patch.notna()]
-    calendar.loc[patch.notna(), "is_public_holiday"] = 1
+def region_ends(panel: pd.DataFrame) -> pd.Series:
+    """지역별 마지막 관측일. 09-28 적재로 사례 6곳만 2026-09-23까지, 나머지는 2026-08-14까지라
+    전체 최댓값 하나로 자르면 안 된다."""
+    return panel.dropna(subset=[TARGET]).groupby("region_id")["observed_date"].max()
 
+
+def make_calendar(start: pd.Timestamp, end: pd.Timestamp) -> pd.DataFrame:
+    """analysis_calendar와 같은 열. analysis_calendar는 2026-09-23에서 끝나므로 날짜로 직접 만든다."""
+    calendar = pd.DataFrame({"observed_date": pd.date_range(start, end, freq="D")})
+    calendar["calendar_year"] = calendar["observed_date"].dt.year
+    calendar["calendar_month"] = calendar["observed_date"].dt.month
+    calendar["day_of_week"] = calendar["observed_date"].dt.weekday + 1  # 1=월 … 7=일
+    calendar["is_weekend"] = (calendar["day_of_week"] >= 6).astype(int)
+    calendar["holiday_name"] = calendar["observed_date"].dt.strftime("%Y-%m-%d").map(HOLIDAY_PATCH)
+    calendar["is_public_holiday"] = calendar["holiday_name"].notna().astype(int)
+    return calendar
+
+
+def future_rows(panel: pd.DataFrame, conn) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """지역마다 마지막 관측일 다음 HORIZON일의 빈 행(달력·축제만 채움)과 축제 목록을 만든다."""
+    ends = region_ends(panel)
+    calendar = make_calendar(ends.min() + pd.Timedelta(days=1), ends.max() + pd.Timedelta(days=HORIZON))
     regions = panel[["region_id", "region_name"]].drop_duplicates()
     future = regions.merge(calendar, how="cross")
+    last = future["region_id"].map(ends)
+    future = future[(future["observed_date"] > last)
+                    & (future["observed_date"] <= last + pd.Timedelta(days=HORIZON))].reset_index(drop=True)
     festivals = read_sql(conn, FESTIVAL_SQL)
     for column in ("start_date", "end_date"):
         festivals[column] = pd.to_datetime(festivals[column])
@@ -213,7 +228,10 @@ def main() -> None:
     missing = set(args.region) - set(panel["region_id"])
     if missing:
         sys.exit(f"패널에 없는 지역: {sorted(missing)}")
-    data_end = panel["observed_date"].max()
+    patch = panel["observed_date"].dt.strftime("%Y-%m-%d").map(HOLIDAY_PATCH)
+    panel.loc[patch.notna(), "holiday_name"] = patch[patch.notna()]
+    panel.loc[patch.notna(), "is_public_holiday"] = 1
+    ends = region_ends(panel)
     retrieved = json.loads((INTERIM / "panel_quality.json").read_text(encoding="utf-8"))["built_at"][:10]
 
     conn = connect()
@@ -241,7 +259,7 @@ def main() -> None:
     fit = pd.concat([between(*SPLITS["train"]), between(*SPLITS["valid"])]).dropna(subset=lag + [TARGET])
     test = between(*SPLITS["test"])
     test = test[test[lag].notna().all(axis=1)].copy()
-    target = data[data["observed_date"] > data_end]
+    target = data[data["observed_date"] > data["region_id"].map(ends)]
     target = target[target["region_id"].isin(args.region)].copy()
     if target[lag].isna().any().any():
         sys.exit("예측 대상일의 방문자 시차 변수에 결측이 있다")
@@ -263,7 +281,7 @@ def main() -> None:
     (PROD / "regions").mkdir(exist_ok=True)
     for region in args.region:
         payload = build_payload(region, target[target["region_id"] == region], test, panel,
-                                intervals, national, festivals, retrieved, data_end, got)
+                                intervals, national, festivals, retrieved, ends[region], got)
         if problems := validate_payload("forecast", payload):
             sys.exit(f"{region} 스키마 검증 실패: {problems[:5]}")
         folder = PROD if region in SHOWCASE else PROD / "regions"
