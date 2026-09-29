@@ -1,0 +1,308 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T16:27:25+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-29",
+      "note": "영월 여행, 영월 가볼만한곳, 영월 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 채널별 최대 3건"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."
+  ],
+  "data": {
+    "region": {
+      "code": "51750",
+      "name": "영월군"
+    },
+    "videos": [
+      {
+        "video_id": "MaqssftaGqU",
+        "title": "#여행 #korea#영월 #단종#청령포",
+        "channel": "맛집과 여행88",
+        "published_at": "2026-09-29",
+        "view_count": 1184
+      },
+      {
+        "video_id": "EZUkUJ8DSn4",
+        "title": "영화속한장면 비쥬얼 붉은메밀꽃밭🩷​#영월여행 #영월가볼만한곳 #붉은메밀꽃#영월붉은메밀꽃축제 #가을여행지 #가을축제",
+        "channel": "워메이",
+        "published_at": "2026-09-29",
+        "view_count": 777
+      },
+      {
+        "video_id": "zIOGgqXh_4Q",
+        "title": "#연꽃 #영월 #가볼만한곳 #여행",
+        "channel": "맛집과 여행88",
+        "published_at": "2026-09-29",
+        "view_count": 382
+      },
+      {
+        "video_id": "iZJqlBbh5m0",
+        "title": "강원도 영월 평창 여행 #뗏목 #육백마지기 #강원도여행 #영월 #평창",
+        "channel": "장은앵",
+        "published_at": "2026-09-28",
+        "view_count": 1256
+      },
+      {
+        "video_id": "ixFM18Lg84E",
+        "title": "댕댕이와 떠나는 영월 이색 산책로 #영월여행 #요선암 #돌개구멍",
+        "channel": "petstival with miso",
+        "published_at": "2026-09-28",
+        "view_count": 1171
+      },
+      {
+        "video_id": "gjT4Tfvkdr4",
+        "title": "영월 캠핑의 밤, 불멍하다가 마시멜로우까지 🔥🍡 | Campfire + Marshmallows = Perfect Camping Night 🔥🍡 | Yeongwol",
+        "channel": "대디레슨 : Daddy's One Point Lessons",
+        "published_at": "2026-09-28",
+        "view_count": 272
+      },
+      {
+        "video_id": "wc_CNt0GwrI",
+        "title": "강원도 영월 1박2일 코스를 올려드립니다!  #강원도여행 #강원도데이트 #영월여행 #영월데이트 #영월1박2일",
+        "channel": "쿼카와 다람쥐의 여행",
+        "published_at": "2026-09-28",
+        "view_count": 218
+      },
+      {
+        "video_id": "uo_MR6cw_vE",
+        "title": "영월서부시장 가면 이 3가지 꼭 드세요! #내돈내산 #맛집 #여행",
+        "channel": "자동차아이좋아엄마의 솔직리뷰",
+        "published_at": "2026-09-28",
+        "view_count": 99
+      },
+      {
+        "video_id": "vg9783Kmw8M",
+        "title": "고고학 발굴조사로 다시 보는 영월 청령포 단종어소 | 실제 어소 위치와 문화유산 복원",
+        "channel": "조용한 문화유산 산책 | 고고학",
+        "published_at": "2026-09-28",
+        "view_count": 68
+      },
+      {
+        "video_id": "7UBxyT10qW0",
+        "title": "왕이 머물던 방, 생각보다 소박합니다 👀🏡 | 영월 청령포 단종어소 | Inside the House Where a King Once Stayed 👀🏡",
+        "channel": "대디레슨 : Daddy's One Point Lessons",
+        "published_at": "2026-09-28",
+        "view_count": 4
+      },
+      {
+        "video_id": "HM8IqlqUoWc",
+        "title": "힐링이 필요해 🗯´ˎ˗ 초록초록 영월에서 보낸 2박 3일 VLOG 🍵🐢🥝 (feat.📸)",
+        "channel": "데이 DAY",
+        "published_at": "2026-09-27",
+        "view_count": 7989
+      },
+      {
+        "video_id": "HfKffhbkNPo",
+        "title": "청령포를 갔더니 휴장!  #영월청령포 #청령포 #영월여행 #영월가볼만한곳 #강원도여행 #국내여행 #여행영상 #여행기록 #단종유배지 #청령포소나무숲 #영월관광 #힐링여행 #이게말돼",
+        "channel": "이게말돼",
+        "published_at": "2026-09-27",
+        "view_count": 1495
+      },
+      {
+        "video_id": "UCAGgDq9-6c",
+        "title": "#영월 #붉은메밀꽃 #동강 #강원도여행",
+        "channel": "나이스가이 TV",
+        "published_at": "2026-09-27",
+        "view_count": 1316
+      },
+      {
+        "video_id": "p5JBAXwK5ug",
+        "title": "왕의 방을 몰래 들여다봤습니다 👀🏡 영월 청령포 단종어소 | We Took a Peek Inside the King’s House 👀🏡 | Cheongnyeongpo",
+        "channel": "대디레슨 : Daddy's One Point Lessons",
+        "published_at": "2026-09-27",
+        "view_count": 1110
+      },
+      {
+        "video_id": "eKjTszx_7yU",
+        "title": "#망경대산#망경대산휴양림#영월여행#강원도여행",
+        "channel": "힐링J",
+        "published_at": "2026-09-27",
+        "view_count": 461
+      },
+      {
+        "video_id": "clj5crvo1FU",
+        "title": "영월 맛집 서부순대집 순대국밥 리얼 먹방",
+        "channel": "한끼쥬",
+        "published_at": "2026-09-27",
+        "view_count": 434
+      },
+      {
+        "video_id": "CkhgYLROgOI",
+        "title": "#강원도#영월#청령포#단종유배지#영월힐링여행ep:2",
+        "channel": "한 수선화 Vlog",
+        "published_at": "2026-09-26",
+        "view_count": 1381
+      },
+      {
+        "video_id": "xKMy74TmMB4",
+        "title": "왕과 사는 남자의 무대, 영월 청령포 | 단종의 유배지",
+        "channel": "조용한 문화유산 산책 | 고고학",
+        "published_at": "2026-09-26",
+        "view_count": 1355
+      },
+      {
+        "video_id": "3oLjhxGTSJs",
+        "title": "#청령포 #단종#자규시#영월 #김선우 #여행",
+        "channel": "모든 삶은 시 이다  김선우 채널",
+        "published_at": "2026-09-26",
+        "view_count": 1292
+      },
+      {
+        "video_id": "J8WoAhaXebM",
+        "title": "선돌 #여행 #travel #아이와영월 #왕사남 #왕사남 선돌 #영월 #왕사남 촬영지 #영월여행 #영월갈만한곳",
+        "channel": "JJ story",
+        "published_at": "2026-09-26",
+        "view_count": 1257
+      },
+      {
+        "video_id": "8hWRyPiZ9ZY",
+        "title": "영월에 이런 곳이? 온몸으로 속도감을 즐기는 친환경 전기카트 체험 #카트라이더 #영월  #한반도전기카트장",
+        "channel": "짱구니튜브 JJangguni tube",
+        "published_at": "2026-09-26",
+        "view_count": 1213
+      },
+      {
+        "video_id": "he8eaiq2e1M",
+        "title": "장릉 #여행 #travel #아이와영월 #영월 #단종 #왕사남 #조선왕릉 #역사여행",
+        "channel": "JJ story",
+        "published_at": "2026-09-26",
+        "view_count": 1121
+      },
+      {
+        "video_id": "e9eqD5VlCYE",
+        "title": "#영월여행 #강원도물회 #주천면맛집 #독과점 #친절은 #없다 #포장만 #김치찌개",
+        "channel": "차밍mass",
+        "published_at": "2026-09-26",
+        "view_count": 441
+      },
+      {
+        "video_id": "GrCTL0cTn6Y",
+        "title": "#요선정 #요선암 #돌개구멍 #포트홀  #영월가볼만한곳 #강원도여행 #강원도명소",
+        "channel": "소소한힐링컷",
+        "published_at": "2026-09-26",
+        "view_count": 280
+      },
+      {
+        "video_id": "F7_xLWf9av0",
+        "title": "댕댕이와 힐링 영월 계곡 캠핑 #애견동반캠핑 #강아지캠핑 #영월캠핑장",
+        "channel": "petstival with miso",
+        "published_at": "2026-09-26",
+        "view_count": 279
+      },
+      {
+        "video_id": "miSaN01GG_I",
+        "title": "청령포#영월#카페#현지인맛집",
+        "channel": "경북대 신창환 교수의 열린 강의실",
+        "published_at": "2026-09-26",
+        "view_count": 159
+      },
+      {
+        "video_id": "g38xxiqZ8AI",
+        "title": "영월 여행 2박 3일 2번째 에피소드- 가볼만한곳, 맛집, 아이랑",
+        "channel": "시골아이 지호네 / Jiho's fam",
+        "published_at": "2026-09-26",
+        "view_count": 150
+      },
+      {
+        "video_id": "pUweN3pHqP4",
+        "title": "#영월 #동강빌리지무인카페 #뷰맛집",
+        "channel": "석교의 창",
+        "published_at": "2026-09-26",
+        "view_count": 30
+      },
+      {
+        "video_id": "_G5toy7pCFg",
+        "title": "한국의 사파 단양·영월 | 마음 편해지는 국내 힐링 코스",
+        "channel": "나물일기",
+        "published_at": "2026-09-25",
+        "view_count": 948
+      },
+      {
+        "video_id": "rWUA8s8cHJM",
+        "title": "영월에서 먹을 곳이 가장 많은 동네는? Which Yeongwol Neighborhood Has the Most Restaurants & Cafés?",
+        "channel": "kruncanny",
+        "published_at": "2026-09-25",
+        "view_count": 473
+      },
+      {
+        "video_id": "GPR4DnuA6fQ",
+        "title": "영월 주천면에 있는 웨이팅 생선구이 맛집을 소개해드립니다! #영월여행 #영월데이트 #영월맛집 #영월식당 #영월생선구이",
+        "channel": "쿼카와 다람쥐의 여행",
+        "published_at": "2026-09-25",
+        "view_count": 220
+      },
+      {
+        "video_id": "qiOPz8YdruY",
+        "title": "영월 서부시장에 있는 30년 이상 된 닭강정 맛집을 소개해드립니다! #영월닭강정 #강원도닭강정 #영월맛집 #영월여행 #영월데이트",
+        "channel": "쿼카와 다람쥐의 여행",
+        "published_at": "2026-09-25",
+        "view_count": 178
+      },
+      {
+        "video_id": "_8g2GjJvb14",
+        "title": "헐!! 웨이팅만 2시간~?! #영월군 #맛집 #왕과사는남자 #박가네",
+        "channel": "자연의 소리TV",
+        "published_at": "2026-09-24",
+        "view_count": 3374
+      },
+      {
+        "video_id": "-ANaxXgEytQ",
+        "title": "나 혼자 당일치기 영월여행🌿뚜벅이는 반값으로 단종투어 | 청령포, 선돌, 맛집까지",
+        "channel": "련주 ryunzu",
+        "published_at": "2026-09-24",
+        "view_count": 454
+      },
+      {
+        "video_id": "iS-yVKh44GM",
+        "title": "어쩌다영월카페에는 추석이벤트가 있다!!",
+        "channel": "어쩌다영월",
+        "published_at": "2026-09-24",
+        "view_count": 393
+      },
+      {
+        "video_id": "YIcxODR1LOc",
+        "title": "영월 동강다슬기 #영월맛집 #다슬기 #영월아침 #다슬기비빔밥",
+        "channel": "보로",
+        "published_at": "2026-09-24",
+        "view_count": 285
+      },
+      {
+        "video_id": "2pq6Tvcthpk",
+        "title": "왕과 사는 도시 '영월'에서 차박 여행 했습니다. #청령포 #영월여행",
+        "channel": "전업남편 고서방",
+        "published_at": "2026-09-24",
+        "view_count": 234
+      },
+      {
+        "video_id": "RlyTXRvc1fU",
+        "title": "강원도 영월 손만두 맛집#영월맛집#영월손만두#강원도손만두#영월맛집#영월손만두#강원도손만두",
+        "channel": "다판다 TV채널!",
+        "published_at": "2026-09-24",
+        "view_count": 0
+      },
+      {
+        "video_id": "gvdZSb5fdsQ",
+        "title": "가족과 가볼만한 곳, 어쩌다영월카페♡",
+        "channel": "어쩌다영월",
+        "published_at": "2026-09-23",
+        "view_count": 77
+      },
+      {
+        "video_id": "K18aCyH16cw",
+        "title": "가족과 갈만한 곳, 어쩌다영월카페♡",
+        "channel": "어쩌다영월",
+        "published_at": "2026-09-23",
+        "view_count": 17
+      }
+    ]
+  }
+}

@@ -8,6 +8,7 @@ import MorningBriefing from "../components/area2-content/MorningBriefing.jsx";
 
 export default function Area2Content({ region }) {
   const contentType = useRegionData("content_type", region);
+  const recentYoutube = useRegionData("recent_youtube", region);
   const signalStatus = useRegionData("signal_status", region);
   const signalSeries = useRegionData("signal_series", region);
 
@@ -17,16 +18,16 @@ export default function Area2Content({ region }) {
         <h2>오늘의 지역 보고서</h2>
       </div>
 
-      <MorningBriefing region={region} signalStatus={signalStatus} signalSeries={signalSeries} contentType={contentType} />
+      <MorningBriefing region={region} signalStatus={signalStatus} signalSeries={signalSeries} contentType={contentType} recentYoutube={recentYoutube} />
       <details className="summary-details" key={`archive-${region}`}>
-      <summary>업로드 영상 목록</summary>
+      <summary>기존 분류 영상 목록</summary>
       <div className="summary-details-body">
       <MockBanner isMock={contentType.status === "ok" && contentType.envelope._mock} />
       <DataState
         result={contentType}
         render={({ envelope }) => (
           <>
-            <p className="content-scope">유튜브 분류 자료 · 기준 {envelope.period?.end ?? "미제공"} · 위 보고서의 영상 근거</p>
+            <p className="content-scope">유튜브 분류 자료 · 기준 {envelope.period?.end ?? "미제공"}</p>
             <UploadVideoList
               key={region}
               contentTypeData={envelope.data}

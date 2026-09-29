@@ -25,6 +25,7 @@ function agentRegion(code) {
     hotspots: real("hotspots"),
     visitor_profile: real("visitor_profile"),
     content_type: real("content_type"),
+    recent_youtube: real("recent_youtube"),
     forecast: real("forecast"),
     signal_series: real("signal_series"),
   };
@@ -43,6 +44,7 @@ export const REGION_MANIFEST = {
     hotspots: { url: "/prod/hotspots_51750.json", kind: "real" },
     visitor_profile: { url: "/prod/visitor_profile_51750.json", kind: "real" },
     content_type: { url: "/prod/content_type_51750.json", kind: "real" },
+    recent_youtube: { url: "/prod/recent_youtube_51750.json", kind: "real" },
     // agent3_match.py --region 51750 실행 결과 (2026-09-24, common.py의 load_input에
     // region 인자를 추가해 지역별 파일을 읽도록 확장한 뒤 생성).
     checklist: { url: "/prod/checklist_51750.json", kind: "real" },
@@ -64,6 +66,7 @@ export const REGION_MANIFEST = {
     visitor_profile: { url: "/prod/visitor_profile.json", kind: "real" },
     hotspots: { url: "/prod/hotspots.json", kind: "real" },
     content_type: { url: "/prod/content_type.json", kind: "real" },
+    recent_youtube: { url: "/prod/recent_youtube_48310.json", kind: "real" },
     // agent3_match.py 실행 결과. hotspots/visitor_profile/content_type이 모두
     // 실측이 되면서 입력 4종이 전부 실측이 돼 파일 자체도 _mock:false로 바뀌었다
     // (09-20엔 hotspots/visitor_profile이 아직 mock이라 _mock:true였음).

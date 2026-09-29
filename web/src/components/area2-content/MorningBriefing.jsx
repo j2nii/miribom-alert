@@ -4,10 +4,11 @@ import SourceBadge from "../common/SourceBadge.jsx";
 import DailySearchSummary from "./DailySearchSummary.jsx";
 import RealMorningBriefing from "./RealMorningBriefing.jsx";
 
-export default function MorningBriefing({ region, signalStatus, signalSeries, contentType }) {
+export default function MorningBriefing({ region, signalStatus, signalSeries, contentType, recentYoutube }) {
   if (region !== "chungju") {
     if (contentType.status !== "ok" || contentType.envelope._mock) return null;
-    return <RealMorningBriefing region={region} signalStatus={signalStatus} signalSeries={signalSeries} contentType={contentType} />;
+    if (recentYoutube.status === "loading") return null;
+    return <RealMorningBriefing region={region} signalStatus={signalStatus} signalSeries={signalSeries} contentType={contentType} recentYoutube={recentYoutube} />;
   }
   const briefing = MORNING_BRIEFINGS[region];
   if (!briefing) return null;

@@ -253,8 +253,8 @@
 .app .youtube-recent-total strong { color: #006fae; font-size: 28px; line-height: 1; font-weight: 800; }
 .app .youtube-recent-total small { margin-left: 3px; color: #354956; font-size: 14px; font-weight: 700; }
 .app .youtube-video-report { display: flex; flex-direction: column; }
-.app .youtube-video-list-wrap { position: relative; display: flex; flex: 1; min-height: 315px; }
-.app .youtube-recent-videos { display: grid; grid-auto-rows: minmax(112px, auto); align-content: start; flex: 1; height: 100%; min-height: 0; overflow-y: scroll; scrollbar-gutter: stable; list-style: none; margin: 0; padding: 0 12px 34px; border: 1px solid #dce7ed; border-radius: 7px; background: #fff; scrollbar-color: #91b9ca #eef4f7; }
+.app .youtube-video-list-wrap { position: relative; display: flex; flex: 0 0 315px; height: 315px; min-height: 0; }
+.app .youtube-recent-videos { display: grid; grid-auto-rows: minmax(112px, auto); align-content: start; flex: 1; height: 100%; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; list-style: none; margin: 0; padding: 0 12px 34px; border: 1px solid #dce7ed; border-radius: 7px; background: #fff; scrollbar-color: #91b9ca #eef4f7; }
 .app .youtube-recent-videos::-webkit-scrollbar { width: 10px; }
 .app .youtube-recent-videos::-webkit-scrollbar-track { background: #eef4f7; border-radius: 6px; }
 .app .youtube-recent-videos::-webkit-scrollbar-thumb { background: #91b9ca; border: 2px solid #eef4f7; border-radius: 6px; }

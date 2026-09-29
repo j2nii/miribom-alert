@@ -5,22 +5,25 @@ import DailySearchSummary from "./DailySearchSummary.jsx";
 
 const formatDate = (date) => date?.replaceAll("-", ".") ?? "미제공";
 
-export default function RealMorningBriefing({ region, signalStatus, signalSeries, contentType }) {
+export default function RealMorningBriefing({ region, signalStatus, signalSeries, contentType, recentYoutube }) {
   const envelope = contentType.envelope;
-  const briefing = buildContentBriefing(envelope);
+  const liveEnvelope = recentYoutube.status === "ok" ? recentYoutube.envelope : null;
+  const briefing = liveEnvelope?.data?.videos
+    ? { end: liveEnvelope.period?.end, recentVideos: liveEnvelope.data.videos }
+    : buildContentBriefing(envelope);
   if (!briefing) return null;
   return <section className="morning-briefing" aria-label="유튜브와 네이버 지역 보고서">
-    <p className="report-intro">분류된 영상과 월별 검색 흐름을 각 자료의 기준일에 맞춰 확인하세요.</p>
+    <p className="report-intro">최근 게시 영상과 월별 검색 흐름을 각 자료의 기준일에 맞춰 확인하세요.</p>
     <div className="report-evidence-grid">
       <section className="report-evidence youtube-video-report" aria-label="최근 7일 게시 영상">
-        <h3 className="report-channel">유튜브 · 분류 영상</h3>
+        <h3 className="report-channel">유튜브 · 최근 영상</h3>
         <div className="morning-meta"><span>게시 기준 {formatDate(briefing.end)}</span></div>
         <div className="youtube-recent-total"><span>최근 7일 게시 영상</span><strong>{briefing.recentVideos.length}<small>건</small></strong></div>
         {briefing.recentVideos.length ? <div className="youtube-video-list-wrap"><ul className="youtube-recent-videos" aria-label="최근 7일 게시 영상, 최신순">
           {briefing.recentVideos.map((video) => {
             const validId = /^[\w-]{11}$/.test(video.video_id ?? "");
             const details = <>
-              <span className="youtube-recent-video-meta"><time dateTime={video.published_at}>{formatDate(video.published_at)}</time> · {video.content_type || "기타"}</span>
+              <span className="youtube-recent-video-meta"><time dateTime={video.published_at}>{formatDate(video.published_at)}</time>{video.content_type ? ` · ${video.content_type}` : ""}</span>
               <strong>{video.title}</strong>
               <span className="youtube-recent-video-channel">{video.channel}</span>
             </>;
