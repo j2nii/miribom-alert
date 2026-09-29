@@ -59,7 +59,7 @@ def call(endpoint: str, key: str, **params) -> dict:
     return response.json()
 
 
-def search_videos(key: str, query: str, days: int, limit: int, quota: Quota) -> list[str]:
+def search_videos(key: str, query: str, days: int, limit: int, quota: Quota, sort: str = "viewCount") -> list[str]:
     published_after = (datetime.now(timezone.utc) - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%SZ")
     result = call(
         "search",
@@ -67,7 +67,7 @@ def search_videos(key: str, query: str, days: int, limit: int, quota: Quota) -> 
         part="id",
         q=query,
         type="video",
-        order="viewCount",
+        order=sort,
         maxResults=min(limit, 50),
         publishedAfter=published_after,
         regionCode="KR",
@@ -127,6 +127,8 @@ def main() -> None:
     parser.add_argument("--queries", nargs="*", help="검색어 목록. 기본값은 고정 템플릿 3종(설계결정 D-06)")
     parser.add_argument("--days", type=int, default=90, help="최근 N일 업로드분만")
     parser.add_argument("--limit", type=int, default=25, help="검색어당 수집 영상 수 (최대 50)")
+    parser.add_argument("--sort", choices=["viewCount", "date"], default="viewCount",
+                        help="검색 결과 정렬. 최근 게시 영상 수집에는 date 사용")
     parser.add_argument("--comments", action="store_true", help="영상별 상위 댓글도 수집 (영상당 1 unit)")
     parser.add_argument("--comment-limit", type=int, default=20)
     args = parser.parse_args()
@@ -139,7 +141,7 @@ def main() -> None:
 
     video_ids: list[str] = []
     for query in queries:
-        found = search_videos(key, query, args.days, args.limit, quota)
+        found = search_videos(key, query, args.days, args.limit, quota, args.sort)
         new = [v for v in found if v not in video_ids]
         video_ids.extend(new)
         print(f"  검색 '{query}': {len(found)}건 (신규 {len(new)}건)")
@@ -164,6 +166,7 @@ def main() -> None:
                 "queries": queries,
                 "collected_at": datetime.now().astimezone().isoformat(timespec="seconds"),
                 "period_days": args.days,
+                "sort": args.sort,
                 "count": len(videos),
                 "videos": videos,
             },

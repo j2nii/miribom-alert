@@ -14,12 +14,7 @@ export default function Area4Performance({ region }) {
   return (
     <>
       <div className="panel-head">
-        <p className="panel-eyebrow">
-          <span className="panel-eyebrow__code">AREA 4</span>
-          성과 점검
-        </p>
-        <h2>성과 리포트</h2>
-        <p className="panel-subtitle">신호를 조치로 연결하는 데 며칠 걸렸는지, 조치 후 지표가 실제로 움직였는지 점검하는 화면입니다. 다음 회차 대응 속도를 정하는 근거로 씁니다.</p>
+        <h2>지난 이슈와 대응 기록</h2>
       </div>
 
       <MockBanner isMock={beforeAfter.status === "ok" && beforeAfter.envelope._mock} />
@@ -40,7 +35,7 @@ export default function Area4Performance({ region }) {
         />
       </div>
 
-      <div className="section-block">
+      {beforeAfter.status !== "unsupported" && <div className="section-block">
         <p className="section-title">조치 전후 비교</p>
         <DataState
           result={beforeAfter}
@@ -52,7 +47,7 @@ export default function Area4Performance({ region }) {
             </>
           )}
         />
-      </div>
+      </div>}
     </>
   );
 }

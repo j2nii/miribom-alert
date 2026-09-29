@@ -1,5 +1,61 @@
 # 한국관광 데이터랩 공식 다운로드 수집기
 
+## 일별 방문자수: 심층 분석 6곳
+
+`collect_daily_visitors.py`는 기존 월별 「지역별 관광현황」 수집기와 별개입니다.
+데이터랩의 [빅데이터 → 이동통신 → 지역별 방문자수](https://datalab.visitkorea.or.kr/datalab/portal/bda/getMetcoAna.do)에서
+일간 조건을 선택하고 **방문자 수 추이의 공식 데이터 다운로드**만 사용합니다.
+내국인 KT의 현지인·외지인 값을 수집하며, 31일 이하로 자동 분할합니다.
+
+```powershell
+python collection/datalab/collect_daily_visitors.py --start 2026-08-01 --end 2026-09-23
+```
+
+기본 대상은 거제시(48310), 여수시(12130), 울릉군(47940), 속초시(51210),
+영월군(51750), 인제군(51810)입니다. 처음 실행한 브라우저에서 데이터랩에 직접
+로그인한 뒤 터미널에서 Enter를 누릅니다. 계정 정보는 코드에 저장하지 않습니다.
+한 지역만 시험하려면 `--regions 51750`을 지정합니다. 출력은
+`data/raw/datalab_daily/`의 원본 ZIP과 `daily_visitors_case.csv`이며, 후자는
+기존 API 파일과 같은 `region,date,tou_div,value` 열을 사용합니다.
+`tou_div=1`은 현지인, `2`는 외지인입니다. 이미 검증된 ZIP은 재실행 때 건너뜁니다.
+
+브라우저 없이 받은 ZIP을 재검증·병합하려면 다음을 실행합니다.
+
+```powershell
+python collection/datalab/collect_daily_visitors.py --merge-only --api-reference C:\Users\han\yaho\signals_visitors_v2.csv
+```
+
+2026-09-28 수집 검증: 6곳 모두 2026-08-01~09-23의 54일을 확보했고,
+현지인·외지인 값은 총 648행입니다. 지역별 3개씩 원본 ZIP 18개를 검증했고
+지역·날짜·구분 중복이나 날짜 누락은 없었습니다. 기존 API 파일과 겹치는
+2026-08-01~08-14의 168건(6곳 × 14일 × 2구분)을 대조한 결과,
+86건은 정확히 같고 최대 차이는 0.5명입니다. 데이터랩 CSV가 정수로
+표시되는 데 따른 차이로 보입니다. 이 대조는 겹치는 기간에 한하며,
+2026-08-15 이후 값의 API 독립 검증을 뜻하지는 않습니다.
+외국인 SKT(`tou_div=3`) 값도 이 수집기의 대상이 아닙니다.
+
+CSV 생성만으로는 DB·예측 모델에 자동 반영되지 않습니다. 모델 입력을 갱신할 때는
+기존 API 원본을 보존하고 2026-08-15 이후 값을 날짜·지역·구분 키로 이어 붙인
+뒤, 다른 입력 변수의 기준일과 예측 검증 범위를 함께 점검해야 합니다.
+
+2026-09-28에는 다음 로더로 6곳의 2026-08-15~09-23 방문자 480행을
+`tour_earlywarning.fact_signal`에 적재했습니다. `source_system=kto_datalab_daily`로
+기존 API 값과 출처를 구분하며, 원본 CSV의 SHA256을 `source_file`에 기록합니다.
+`analysis_calendar`도 새 관측일 2026-09-23까지 채웠습니다. 로더는 기본이
+DB 변경 없는 검증 실행이며, `--commit`을 지정할 때만 반영합니다.
+
+```powershell
+python collection/datalab/load_daily_visitors_mysql.py --env C:\Users\han\yaho\yaho_mysql_setup\.env
+python collection/datalab/load_daily_visitors_mysql.py --env C:\Users\han\yaho\yaho_mysql_setup\.env --commit
+```
+
+9월의 네이버 일별 검색값도 별도로 수집해 8월 기존 자료와 186건을 겹쳐
+배율을 맞춘 다음, 6곳의 9월 1~23일 138행을 적재했습니다. 검증 후
+`vw_daily_core_signal`에는 각 지역 2026-08-01~09-23의 54일이 보입니다.
+기존 `snap_20260922_daily_core`는 2026-08-14까지의 동결 상태로 남겨뒀습니다.
+일별 예측용 9월 24일 이후 달력·축제·검색 피처와 시간 순 외부 검증은
+분석팀이 별도로 점검해야 합니다.
+
 한국관광 데이터랩 「지역별 관광현황」에서 지역과 기간을 바꾸고 사이트의
 `전체 다운로드` 버튼을 누르는 작업을 자동화합니다. 로그인 정보는 코드나
 설정 파일에 저장하지 않습니다.

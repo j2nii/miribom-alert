@@ -17,7 +17,32 @@ function Bar({ label, ratio, color = "var(--teal)" }) {
   );
 }
 
-export default function VisitorProfileCard({ profileData }) {
+export default function VisitorProfileCard({ profileData, spendingLabel = "소비" }) {
+  const categories = [
+    { label: "거주지", items: profileData.residence, name: (r) => [r.sido, r.sigungu].filter(Boolean).join(" ") },
+    { label: "이동 거리", items: profileData.distance, name: (r) => r.band },
+    { label: spendingLabel, items: profileData.spending, name: (r) => r.category },
+    { label: "동행 유형", items: profileData.companion, name: (r) => r.type },
+  ];
+  return <div>
+    <p className="profile-total">총 방문객 <strong>{Number.isFinite(profileData.total_visitors) ? profileData.total_visitors.toLocaleString("ko-KR") : "—"}</strong>명</p>
+    <div className="profile-highlights">
+      {categories.map(({ label, items = [], name }) => {
+        const ranked = items.filter((item) => Number.isFinite(item.ratio)).slice().sort((a, b) => b.ratio - a.ratio);
+        const top = ranked[0];
+        const tied = top ? ranked.filter((item) => item.ratio === top.ratio).length : 0;
+        return <div className="profile-highlight" key={label}>
+          <span>{label} {top ? (tied > 1 ? "공동 1위" : "1위") : ""}</span>
+          <strong>{top ? name(top) : "자료 없음"}</strong>
+          {top && <small>{(top.ratio * 100).toFixed(1)}%{tied > 1 ? ` · 외 ${tied - 1}곳 동일 비중` : ""}</small>}
+        </div>;
+      })}
+    </div>
+    <details className="compact-details"><summary>방문객 구성 전체 보기</summary><ProfileDetails profileData={profileData} /></details>
+  </div>;
+}
+
+function ProfileDetails({ profileData }) {
   const { total_visitors, local_external_mix, residence, distance, spending, companion, profile_tags } =
     profileData;
 

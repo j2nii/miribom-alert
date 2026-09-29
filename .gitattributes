@@ -1,0 +1,5 @@
+# data/prod/** 는 파이프라인 산출물이다(analysis/src/forecast/export_*.py,
+# agents/judge_signal_status.py, scripts/build_region_index.py). 손으로 고치는
+# 파일이 아니라서 PR diff에서 기본으로 접어 둔다 -- 병합 한 번에 700개가 바뀌면
+# 정작 읽어야 할 web/ 코드 변경이 묻힌다.
+data/prod/** linguist-generated=true

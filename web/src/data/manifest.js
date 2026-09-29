@@ -15,16 +15,7 @@
 //                   over a second parallel pipeline.
 //   "unsupported" - no file for this region/dataType yet; UI shows the
 //                   existing "데이터 준비 전" empty state.
-// VITE_USE_PROD gates data types that have BOTH a mock and a real file and
-// where we still want an easy way to fall back to mock. geoje's content_type
-// is real by default now (VITE_USE_PROD=true in .env/.env.example, since the
-// 5-region LLM classification via agent2_apply.py is trusted) -- the toggle
-// is kept only as an escape hatch back to mock if a problem shows up. Data
-// types that only have one version (mock-only, or promoted straight to real
-// once the agents/ pipeline produced them -- hotspots/visitor_profile/checklist)
-// skip the toggle entirely; adding/removing a prod file is a manifest edit,
-// not a runtime toggle.
-const USE_PROD = import.meta.env.VITE_USE_PROD === "true";
+// Adding or removing a production file is a manifest edit, not a runtime toggle.
 
 // 에이전트 산출물(signal_status·timeline·hotspots·visitor_profile·content_type)과 예측·신호 추이가
 // 모두 있는 추가 지역. 파일 이름 규칙이 같아 지역코드만 다르다. 체크리스트·브리핑·선례·조치 전후는
@@ -37,6 +28,9 @@ function agentRegion(code) {
     hotspots: real("hotspots"),
     visitor_profile: real("visitor_profile"),
     content_type: real("content_type"),
+    // scripts/export_recent_youtube.py · export_recent_content_types.py -- 최근 영상·콘텐츠 유형
+    recent_youtube: real("recent_youtube"),
+    recent_content_type: real("recent_content_type"),
     // analysis/src/forecast/export_forecast.py · export_signal_series.py (228개 시군구 공통 모델)
     forecast: real("forecast"),
     signal_series: real("signal_series"),
@@ -47,6 +41,7 @@ function agentRegion(code) {
 
 export const REGION_MANIFEST = {
   yeongwol: {
+    daily_peak: { url: "/mock/daily_peak.json", kind: "mock" },
     // 메인 실데이터 사례 (docs/meeting-notes/UI/MySQL_실데이터_연동_계획.md).
     // signal_status/timeline/hotspots/visitor_profile/content_type 5종은
     // agents/ 파이프라인이 이 지역(region_id 51750) 실측 산출물을 만들어뒀음.
@@ -57,6 +52,8 @@ export const REGION_MANIFEST = {
     hotspots: { url: "/prod/hotspots_51750.json", kind: "real" },
     visitor_profile: { url: "/prod/visitor_profile_51750.json", kind: "real" },
     content_type: { url: "/prod/content_type_51750.json", kind: "real" },
+    recent_youtube: { url: "/prod/recent_youtube_51750.json", kind: "real" },
+    recent_content_type: { url: "/prod/recent_content_type_51750.json", kind: "real" },
     // agent3_match.py --region 51750 실행 결과 (2026-09-24, common.py의 load_input에
     // region 인자를 추가해 지역별 파일을 읽도록 확장한 뒤 생성).
     checklist: { url: "/prod/checklist_51750.json", kind: "real" },
@@ -71,6 +68,7 @@ export const REGION_MANIFEST = {
     // briefing은 forecast_51750이 생겼으므로 agent5_briefing.py --region 51750으로 만들 수 있다.
   },
   geoje: {
+    daily_peak: { url: "/mock/daily_peak_geoje.json", kind: "mock" },
     // 대비 사례 (총량은 그대로인데 특정 지점에만 쏠리는 패턴).
     // signal_status/timeline/content_type 모두 agents/ 파이프라인의 실측
     // 산출물(기본 지역 = 거제이므로 파일명에 지역코드 접미사 없음)을 그대로 사용.
@@ -82,9 +80,9 @@ export const REGION_MANIFEST = {
     // agent_visitor_profile.py, agent_hotspots.py 실행 결과 (refactor/agents_db-full연동).
     visitor_profile: { url: "/prod/visitor_profile.json", kind: "real" },
     hotspots: { url: "/prod/hotspots.json", kind: "real" },
-    content_type: USE_PROD
-      ? { url: "/prod/content_type.json", kind: "real" }
-      : { url: "/mock/content_type.json", kind: "mock" },
+    content_type: { url: "/prod/content_type.json", kind: "real" },
+    recent_youtube: { url: "/prod/recent_youtube_48310.json", kind: "real" },
+    recent_content_type: { url: "/prod/recent_content_type_48310.json", kind: "real" },
     // agent3_match.py 실행 결과. hotspots/visitor_profile/content_type이 모두
     // 실측이 되면서 입력 4종이 전부 실측이 돼 파일 자체도 _mock:false로 바뀌었다
     // (09-20엔 hotspots/visitor_profile이 아직 mock이라 _mock:true였음).
@@ -106,6 +104,7 @@ export const REGION_MANIFEST = {
   sokcho: agentRegion("51210"),
   inje: agentRegion("51810"),
   chungju: {
+    daily_peak: { url: "/mock/daily_peak.json", kind: "mock" },
     // Intentionally schema-independent (baseline lifecycle reference case,
     // not one of the 9 official contracts) -- but same envelope shape, so
     // it's just as swappable to real data later. See docs/설계결정.md and
@@ -118,13 +117,13 @@ export const REGION_MANIFEST = {
 };
 
 export const REGIONS = [
-  { key: "yeongwol", label: "영월군" },
-  { key: "geoje", label: "거제시" },
-  { key: "yeosu", label: "여수시" },
-  { key: "sokcho", label: "속초시" },
-  { key: "inje", label: "인제군" },
-  { key: "ulleung", label: "울릉군" },
-  { key: "chungju", label: "충주시" },
+  { key: "yeongwol", label: "영월군", region_id: "51750" },
+  { key: "geoje", label: "거제시", region_id: "48310" },
+  { key: "yeosu", label: "여수시", region_id: "12130" },
+  { key: "sokcho", label: "속초시", region_id: "51210" },
+  { key: "inje", label: "인제군", region_id: "51810" },
+  { key: "ulleung", label: "울릉군", region_id: "47940" },
+  { key: "chungju", label: "충주시", region_id: "43130" },
 ];
 
 // 전국 시군구: 사례 지역이 아닌 곳은 지역 키가 5자리 지역코드("51150")다. 데이터랩·이동통신·검색지수만으로

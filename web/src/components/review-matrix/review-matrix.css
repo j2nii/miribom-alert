@@ -1,0 +1,96 @@
+.matrix-card {
+  border: 1px solid #e4deec;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 18px;
+  margin-bottom: 16px;
+  color: #463952;
+  box-shadow: none;
+  font-family: var(--font-kr);
+  font-size: 14px;
+}
+
+.matrix-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.matrix-card__header h3 {
+  margin: 4px 0 0;
+  font-size: 20px;
+  color: #463952;
+}
+
+.matrix-card__eyebrow,
+.matrix-card__note {
+  margin: 0;
+  color: #746a7f;
+  font-size: 12px;
+}
+
+.matrix-state {
+  border-radius: 6px;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.matrix-state--normal { background: #f0edf5; color: #655873; }
+.matrix-state--online { background: #f0eaf8; color: #65519d; }
+.matrix-state--demand { background: #ffe9df; color: #b54708; }
+.matrix-state--combined { background: #ffe4e8; color: #b42318; }
+
+.matrix-card__stale {
+  margin: 16px 0 0;
+  border-radius: 10px;
+  background: #fff6e5;
+  padding: 10px 12px;
+  color: #854d0e;
+  font-size: 13px;
+}
+
+.matrix-signals {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.matrix-signals > div {
+  display: grid;
+  gap: 3px;
+  border-radius: 12px;
+  background: #f8f5fc;
+  padding: 14px;
+}
+
+.matrix-signals span,
+.matrix-signals small,
+.matrix-card__action span {
+  color: #746a7f;
+  font-size: 12px;
+}
+
+.matrix-card__interpretation {
+  margin: 18px 0 0;
+  line-height: 1.55;
+}
+
+.matrix-card__action {
+  display: grid;
+  gap: 4px;
+  margin: 14px 0;
+  border-left: 3px solid var(--portal-accent);
+  padding-left: 12px;
+}
+
+.matrix-card--error { color: #b42318; }
+
+@media (max-width: 640px) {
+  .matrix-card__header { align-items: stretch; flex-direction: column; }
+  .matrix-state { align-self: flex-start; }
+  .matrix-signals { grid-template-columns: 1fr; }
+}

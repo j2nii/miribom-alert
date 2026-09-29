@@ -1,117 +1,127 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ManualRefCite from "../common/ManualRefCite.jsx";
-import { useChecklistDone } from "../../hooks/useChecklistDone.js";
+import { readChecklistDone, writeChecklistDone } from "../../lib/checklistDone.js";
 
-// agents 브랜치 계약 변경: "사전(예보 대응)"이 기존 4단계 앞에 추가됐다. 이
-// 목록에 없는 phase 값을 가진 항목은 byPhase의 필터에서 조용히 빠지므로(에러
-// 없이 화면에서 사라짐), 새 phase가 생길 때마다 여기도 같이 넓혀야 한다.
-//
-// `slug`는 구간별 색 토큰(index.css의 --phase-*)과 이어진다. 구간 구분이 텍스트
-// 헤더뿐이라 스크롤하며 훑을 때 지금 어느 구간인지 놓친다는 QA 피드백 때문에, 각
-// 구간에 왼쪽 컬러 바 + 같은 색 칩 헤더를 준다. 시간 순서(사전→운영→마감)를 차가운
-// 색에서 뜨거운 색으로 흐르게 배치해 "지금 대응 중"인 구간이 가장 눈에 띈다.
-const PHASES = [
-  { name: "사전(예보 대응)", slug: "before" },
-  { name: "오전(준비)", slug: "morning" },
-  { name: "운영 중(모니터링)", slug: "operating" },
-  { name: "비상 대응", slug: "emergency" },
-  { name: "마감(평가)", slug: "closing" },
-];
+// 알려진 단계는 운영 순서대로 표시하고, 새 단계는 데이터에 나타난 순서로 덧붙인다.
+const PHASE_ORDER = ["사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"];
+// 구간당 먼저 보여 줄 건수. 나머지는 "더보기"로 편다 -- 영월은 한 구간이 9건까지 간다.
 const PAGE_SIZE = 5;
 
-function ChecklistItem({ item, checked, onToggle, muted }) {
+// 이 지역이 어떤 조건에 걸려 이 목록이 뽑혔는지. checklist.matched_for를 읽는 코드가
+// 지금까지 화면에 하나도 없었다.
+function MatchedFor({ matchedFor }) {
+  if (!matchedFor) return null;
+  const parts = [
+    matchedFor.alert_level && `경보 ${matchedFor.alert_level}`,
+    `혼잡도 ${matchedFor.congestion_level ?? "미측정"}`,
+    matchedFor.spatial_type,
+    matchedFor.content_type,
+    matchedFor.profile_tags?.length ? matchedFor.profile_tags.join(", ") : null,
+  ].filter(Boolean);
+  return <p className="info-box policy-checklist-matched">이 조건으로 매칭됨 — {parts.join(" · ")}</p>;
+}
+
+export default function ChecklistPanel({ checklistData, showDetails = true }) {
+  const immediate = checklistData.items
+    .filter((item) => item.status === "발동" && ["사전(예보 대응)", "오전(준비)"].includes(item.phase))
+    .slice().sort((a, b) => a.rank - b.rank).slice(0, 3);
+  const shortActions = {
+    "CL-026": "혼잡 시간·동선 분산",
+    "CL-046": "안내물·대기공간 준비",
+    "CL-047": "주차·퇴장 안내 계획",
+  };
+  return <div>
+    <ol className="policy-now-list">
+      {immediate.map((item, index) => <li key={item.id}>
+        <span className="policy-now-number">{index + 1}</span>
+        <div><strong>{shortActions[item.id] ?? item.action}</strong><p>{item.owner}</p></div>
+      </li>)}
+    </ol>
+    {!immediate.length && <p className="policy-now-note">지금 우선 안내할 사전 준비 항목이 없습니다. 전체 자료를 확인하세요.</p>}
+    {showDetails && <details className="compact-details policy-full"><summary>전체 체크리스트·선정 근거</summary><FullChecklist checklistData={checklistData} /></details>}
+  </div>;
+}
+
+function ChecklistRow({ item, checked, onToggle }) {
   return (
-    <li className={`briefing-item${checked ? " briefing-item--done" : ""}${muted ? " briefing-item--muted" : ""}`}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-        <label className="briefing-item-check">
+    <li className={`briefing-item${checked ? " is-complete" : ""}`}>
+      <div className="policy-checklist-item-top">
+        <label className="policy-checklist-action">
           <input type="checkbox" checked={checked} onChange={() => onToggle(item.id)} />
           <span className="briefing-item-label">{item.action}</span>
         </label>
         <span className={`priority-tag priority-${item.priority}`}>{item.priority}</span>
       </div>
-      <div style={{ fontSize: 11, color: "var(--ink-soft)" }}>
-        담당: <span className="dept-chip">{item.owner}</span> · {item.match_reason}
+      <div className="briefing-item-owner">
+        담당: <span className="dept-chip">{item.owner}</span>
       </div>
-      <ManualRefCite manualRef={item.manual_ref} />
+      {/* 왜 이 조치가 뽑혔는지. 데이터에 있는데 전체 체크리스트에서는 보여 준 적이 없다. */}
+      {item.match_reason && <p className="policy-checklist-reason">{item.match_reason}</p>}
+      <ManualRefCite manualRef={item.manual_ref} alwaysVisible />
     </li>
   );
 }
 
-export default function ChecklistPanel({ checklistData, region }) {
-  const { matched_for, items, excluded_count } = checklistData;
+export function FullChecklist({ checklistData, storageKey = checklistData.region?.code ?? "region" }) {
+  const { items, excluded_count } = checklistData;
+  const [completed, setCompleted] = useState(() => readChecklistDone(storageKey));
+  // AREA0 "오늘의 결론"이 같은 키를 읽는다. 저장과 함께 같은 탭에도 알린다.
+  useEffect(() => {
+    writeChecklistDone(storageKey, completed);
+  }, [completed, storageKey]);
+
   const [expanded, setExpanded] = useState({});
-  const { done, toggle } = useChecklistDone(region);
-
-  // agent3가 매긴 status: "발동" = 지금 조건에 해당하는 조치, "대기" = 조건 미충족.
-  // 예전에는 둘을 똑같은 무게로 한 줄에 섞어 22건을 쏟아내서, 처음 보는 사람은 무엇부터
-  // 해야 하는지 고를 수 없었다. 발동만 앞에 세우고 대기는 구간 끝에 접어 둔다.
-  const active = items.filter((i) => i.status !== "대기");
-  const doneCount = active.filter((i) => done.has(i.id)).length;
-  const progress = active.length > 0 ? Math.round((doneCount / active.length) * 100) : 0;
-
-  const byPhase = PHASES.map((phase) => ({
-    ...phase,
-    items: active.filter((i) => i.phase === phase.name).sort((a, b) => a.rank - b.rank),
-    waiting: items.filter((i) => i.status === "대기" && i.phase === phase.name).sort((a, b) => a.rank - b.rank),
+  const activeItems = items.filter((item) => item.status === "발동");
+  // 조건을 아직 만족하지 않은 조치. 지금까지는 아예 렌더하지 않아 "왜 이것만 나오지?"에
+  // 답할 수가 없었다. 구간 끝에 접어 둔다.
+  const waitingItems = items.filter((item) => item.status === "대기");
+  const byRank = (a, b) => a.rank - b.rank;
+  const phases = [...PHASE_ORDER, ...new Set([...activeItems, ...waitingItems].map((item) => item.phase).filter((phase) => !PHASE_ORDER.includes(phase)))];
+  const byPhase = phases.map((phase) => ({
+    phase,
+    items: activeItems.filter((item) => item.phase === phase).sort(byRank),
+    waiting: waitingItems.filter((item) => item.phase === phase).sort(byRank),
   })).filter((g) => g.items.length > 0 || g.waiting.length > 0);
+  const completedCount = activeItems.filter((item) => completed.includes(item.id)).length;
+  const progress = activeItems.length ? Math.round((completedCount / activeItems.length) * 100) : 0;
+  const toggleCompleted = (id) => setCompleted((current) => current.includes(id)
+    ? current.filter((entry) => entry !== id)
+    : [...current, id]);
 
   return (
-    <div>
-      <div className="checklist-progress">
-        <div className="checklist-progress__head">
-          <strong>
-            오늘 할 일 {active.length}건 중 <span className="checklist-progress__count">{doneCount}건</span> 완료
-          </strong>
-          <span className="checklist-progress__pct">{progress}%</span>
-        </div>
-        <div className="checklist-progress__bar">
-          <div className="checklist-progress__fill" style={{ width: `${progress}%` }} />
-        </div>
-        <p className="checklist-progress__note">
-          체크 상태는 이 브라우저에만 저장되고 날짜가 바뀌면 새로 시작합니다.
-        </p>
+    <div className="policy-checklist">
+      <div className="policy-checklist-progress">
+        <span>선정된 조치 {activeItems.length}건</span>
+        <strong>{completedCount}건 완료 · {progress}%</strong>
+        <span className="policy-checklist-progress__bar"><span className="policy-checklist-progress__fill" style={{ width: `${progress}%` }} /></span>
+        <span className="policy-checklist-progress__note">체크 상태는 이 브라우저에만 저장됩니다.</span>
       </div>
-
-      <div className="info-box">
-        {/* signal_status.congestion_level처럼 matched_for.congestion_level도
-            혼잡도 미측정 지역/시점에서는 생략될 수 있다. */}
-        이 조건으로 매칭됨 — 경보 {matched_for.alert_level} · 혼잡도{" "}
-        {matched_for.congestion_level != null ? matched_for.congestion_level : "미측정"} ·{" "}
-        {matched_for.spatial_type} · {matched_for.content_type}
-        {matched_for.profile_tags?.length > 0 && <> · {matched_for.profile_tags.join(", ")}</>}
-      </div>
+      <MatchedFor matchedFor={checklistData.matched_for} />
 
       {byPhase.map((group) => {
-        const showAll = expanded[group.name];
+        const showAll = expanded[group.phase];
         const visible = showAll ? group.items : group.items.slice(0, PAGE_SIZE);
-        const groupDone = group.items.filter((i) => done.has(i.id)).length;
+        const groupDone = group.items.filter((item) => completed.includes(item.id)).length;
         return (
-          <section key={group.name} className={`checklist-phase checklist-phase--${group.slug}`}>
-            <div className="checklist-phase__head">
-              <span className="checklist-phase__chip">{group.name}</span>
-              <span className="checklist-phase__count">
-                {groupDone}/{group.items.length}
-              </span>
-            </div>
+          <section className="policy-checklist-phase" key={group.phase}>
+            <h4>{group.phase}{group.items.length > 0 && <small>{groupDone}/{group.items.length}</small>}</h4>
             <ul className="briefing-list">
               {visible.map((item) => (
-                <ChecklistItem key={item.id} item={item} checked={done.has(item.id)} onToggle={toggle} />
+                <ChecklistRow key={item.id} item={item} checked={completed.includes(item.id)} onToggle={toggleCompleted} />
               ))}
             </ul>
             {group.items.length > PAGE_SIZE && (
-              <button
-                onClick={() => setExpanded((e) => ({ ...e, [group.name]: !showAll }))}
-                className="footer-link-btn"
-              >
+              <button type="button" className="footer-link-btn" aria-expanded={Boolean(showAll)}
+                onClick={() => setExpanded((current) => ({ ...current, [group.phase]: !showAll }))}>
                 {showAll ? "접기" : `더보기 (${group.items.length - PAGE_SIZE}건)`}
               </button>
             )}
             {group.waiting.length > 0 && (
-              <details className="checklist-waiting">
+              <details className="compact-details">
                 <summary>지금은 해당 없음 {group.waiting.length}건 (조건 미충족)</summary>
                 <ul className="briefing-list">
                   {group.waiting.map((item) => (
-                    <ChecklistItem key={item.id} item={item} checked={done.has(item.id)} onToggle={toggle} muted />
+                    <ChecklistRow key={item.id} item={item} checked={completed.includes(item.id)} onToggle={toggleCompleted} />
                   ))}
                 </ul>
               </details>
@@ -120,7 +130,7 @@ export default function ChecklistPanel({ checklistData, region }) {
         );
       })}
 
-      <p style={{ fontSize: 12, color: "var(--ink-soft)" }}>
+      <p className="policy-checklist-excluded">
         매뉴얼 조건 불일치로 제외된 항목 {excluded_count}건
       </p>
     </div>

@@ -15,10 +15,9 @@ import { getManifestEntry } from "./_lib/dataManifest.js";
 // tokens as they arrive: {type:"token", text} while the model is writing
 // the final answer, then one {type:"done", results, envelopes} once
 // it's finished (or {type:"error", error} if something failed).
-const client = new OpenAI({
-  apiKey: process.env.UPSTAGE_API_KEY,
-  baseURL: "https://api.upstage.ai/v1",
-});
+const client = process.env.UPSTAGE_API_KEY
+  ? new OpenAI({ apiKey: process.env.UPSTAGE_API_KEY, baseURL: "https://api.upstage.ai/v1" })
+  : null;
 
 const MODEL = process.env.UPSTAGE_MODEL || "solar-pro4";
 

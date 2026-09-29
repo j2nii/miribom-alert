@@ -51,12 +51,10 @@ export default function CrossValidationLights({ signalStatusData }) {
               }}
             />
             <div style={{ flex: 1, fontSize: 13 }}>
-              <strong>{s.signal}</strong>
-              <div style={{ color: "var(--ink-soft)" }}>{s.provider}</div>
+              <strong>{{ 관심: "온라인 관심", 의도: "방문지 검색", 실현: "실제 방문" }[s.stage] ?? s.signal}</strong>
             </div>
             <div style={{ fontSize: 13, textAlign: "right" }}>
-              {formatValue(s)} / 임계 {formatThreshold(s)}
-              <div style={{ color: "var(--ink-soft)" }}>{s.trend}</div>
+              {s.value == null ? "자료 없음" : s.exceeded ? "증가 신호" : "기준 미만"}
             </div>
           </div>
         ))}

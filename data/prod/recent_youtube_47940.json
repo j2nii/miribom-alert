@@ -1,0 +1,42 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T16:47:11+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-29",
+      "note": "울릉 여행, 울릉 가볼만한곳, 울릉 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."
+  ],
+  "data": {
+    "region": {
+      "code": "47940",
+      "name": "울릉군"
+    },
+    "videos": [
+      {
+        "video_id": "itOccHTU38Y",
+        "title": "#울릉도여행#울릉도 #울릉도택시투어#울릉약소칡소",
+        "channel": "울릉택시 김기사",
+        "published_at": "2026-09-25",
+        "view_count": 1138
+      },
+      {
+        "video_id": "yUmglPOkYmA",
+        "title": "#울릉도여행#울릉도택시투어#울릉도해중전망대",
+        "channel": "울릉택시 김기사",
+        "published_at": "2026-09-26",
+        "view_count": 632
+      }
+    ]
+  }
+}

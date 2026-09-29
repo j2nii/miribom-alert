@@ -1,0 +1,438 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T17:03:18+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3 수집 영상의 제목 검토 분류",
+      "provider": "Google / 제출본 수동 검토",
+      "retrieved_at": "2026-09-29",
+      "note": "지역별 최근 7일 게시·수집 시 조회수 500회 이상인 영상의 제목을 9개 유형으로 검토해 분류"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "영상 내용을 시청하지 않고 제목만으로 분류했다.",
+    "유튜브 전체 게시물은 아니며 검색어별 결과와 채널별 최대 2건의 표본이다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "items": [
+      {
+        "video_id": "axs4GqR3aWs",
+        "title": "거제 지세포 맛집 소노캄과 2분거리, 대게본가 다녀왔어요.",
+        "channel": "찰랑찰랑뱃살",
+        "published_at": "2026-09-23",
+        "view_count": 14824,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 지세포 맛집 소노캄과 2분거리, 대게본가 다녀왔어요.’라고 표시됨"
+      },
+      {
+        "video_id": "h5D2GVyIt-U",
+        "title": "거제 고현 맛집 생생게장백반 다녀왔어요",
+        "channel": "찰랑찰랑뱃살",
+        "published_at": "2026-09-23",
+        "view_count": 14350,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 고현 맛집 생생게장백반 다녀왔어요’라고 표시됨"
+      },
+      {
+        "video_id": "eFSCyKklm6c",
+        "title": "가성비 미쳤다🔥 4인 숙박 5만원부터! 자연휴양림부터 숨은 명소까지｜흥자가간다 거제편 | 거제야호 | 거제여행",
+        "channel": "흥자언니",
+        "published_at": "2026-09-23",
+        "view_count": 4694,
+        "content_type": "코스·일정형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘가성비 미쳤다🔥 4인 숙박 5만원부터! 자연휴양림부터 숨은 명소까지｜흥자가간다 거제편 | 거제야호 | 거제여행’라고 표시됨"
+      },
+      {
+        "video_id": "agYo39eINhw",
+        "title": "#하청굴구이마당#거제맛집#거제여행#제철음식#왕꽃선녀#추석음식#간만에기름칠#짠",
+        "channel": "해광tv",
+        "published_at": "2026-09-24",
+        "view_count": 3323,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘#하청굴구이마당#거제맛집#거제여행#제철음식#왕꽃선녀#추석음식#간만에기름칠#짠’라고 표시됨"
+      },
+      {
+        "video_id": "OwLobjUbS-Q",
+        "title": "#하청굴구이마당#거제맛집#거제여행#제철음식#다이어트#노을맛집#낚시맛집",
+        "channel": "해광tv",
+        "published_at": "2026-09-26",
+        "view_count": 2693,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘#하청굴구이마당#거제맛집#거제여행#제철음식#다이어트#노을맛집#낚시맛집’라고 표시됨"
+      },
+      {
+        "video_id": "oYk8eX-flu4",
+        "title": "갸루가 카페에 갔을 때 생기는 일 #브이로그 #거제야호",
+        "channel": "와일드브로",
+        "published_at": "2026-09-28",
+        "view_count": 1411,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘갸루가 카페에 갔을 때 생기는 일 #브이로그 #거제야호’라고 표시됨"
+      },
+      {
+        "video_id": "nZMpWxPXhsM",
+        "title": "거제도 데이트 인생 우대갈비 #거제도맛집 #거제맛집 #거제도여행",
+        "channel": "one step a day ",
+        "published_at": "2026-09-24",
+        "view_count": 1356,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제도 데이트 인생 우대갈비 #거제도맛집 #거제맛집 #거제도여행’라고 표시됨"
+      },
+      {
+        "video_id": "ar_UtzLv24k",
+        "title": "260926 섬 한가운데 숨겨진 수제돈가스 맛집 ‘선재쉼터’ 거제 야호",
+        "channel": "남지훈 TV 브이로그",
+        "published_at": "2026-09-27",
+        "view_count": 1328,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘260926 섬 한가운데 숨겨진 수제돈가스 맛집 ‘선재쉼터’ 거제 야호’라고 표시됨"
+      },
+      {
+        "video_id": "geFS46dH8eA",
+        "title": "거제식물원 정글돔 후기, 정글타워 연계할인 33% (거제 실내 가볼만한곳)",
+        "channel": "다람이의 텐트 밖 세상",
+        "published_at": "2026-09-25",
+        "view_count": 1327,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제식물원 정글돔 후기, 정글타워 연계할인 33% (거제 실내 가볼만한곳)’라고 표시됨"
+      },
+      {
+        "video_id": "V4xh09h7XK0",
+        "title": "거제도맛집 해신247 #거제도맛집 #해신247 #거제맛집 #거제도횟집 #거제횟집",
+        "channel": "jyj",
+        "published_at": "2026-09-25",
+        "view_count": 1326,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제도맛집 해신247 #거제도맛집 #해신247 #거제맛집 #거제도횟집 #거제횟집’라고 표시됨"
+      },
+      {
+        "video_id": "8TVrekW8wSQ",
+        "title": "🔥 거제여행 이렇게 해봤습니다! 오늘 오후 5시 본편 공개",
+        "channel": "흥자언니",
+        "published_at": "2026-09-23",
+        "view_count": 1326,
+        "content_type": "코스·일정형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘🔥 거제여행 이렇게 해봤습니다! 오늘 오후 5시 본편 공개’라고 표시됨"
+      },
+      {
+        "video_id": "0fsEQBCkvnc",
+        "title": "수라상 안부러운 거제 생선구이 맛집",
+        "channel": "꿀때지꿀꿀🐷",
+        "published_at": "2026-09-27",
+        "view_count": 1316,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘수라상 안부러운 거제 생선구이 맛집’라고 표시됨"
+      },
+      {
+        "video_id": "r7N4Mkio_Ps",
+        "title": "260925 거제 야호, 여기 오션뷰 미쳤는데 맛집이네! (극강 오션뷰 패스트리디 오션뷰)",
+        "channel": "남지훈 TV 브이로그",
+        "published_at": "2026-09-25",
+        "view_count": 1311,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘260925 거제 야호, 여기 오션뷰 미쳤는데 맛집이네! (극강 오션뷰 패스트리디 오션뷰)’라고 표시됨"
+      },
+      {
+        "video_id": "4qKdXLb_OL4",
+        "title": "명절연휴 #거제도 #애견동반여행 #노랑버덩 💛🐕💨🐾🌊",
+        "channel": "뿌꾸맘_긍정이tv ",
+        "published_at": "2026-09-28",
+        "view_count": 1307,
+        "content_type": "코스·일정형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘명절연휴 #거제도 #애견동반여행 #노랑버덩 💛🐕💨🐾🌊’라고 표시됨"
+      },
+      {
+        "video_id": "thnqGJawHT8",
+        "title": "거제 포로수용소 근처 갔다가 현지인들이 숨겨두고 먹는 찐맛집 찾아버림.. 🤫✨​불향 가득 입혀져서 코끝부터 자극하는 제육볶음에 바지락 잔뜩 들어가 국물 진한 된장찌개겉바속촉의 진수",
+        "channel": "머무는 시선 (𝐏𝐥𝐚𝐜𝐞 & 𝐈𝐭𝐞𝐦 𝐋𝐨𝐠)",
+        "published_at": "2026-09-25",
+        "view_count": 1278,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 포로수용소 근처 갔다가 현지인들이 숨겨두고 먹는 찐맛집 찾아버림.. 🤫✨​불향 가득 입혀져서 코끝부터 자극하는 제육볶음에 바지락 잔뜩 들어가 국물 진한 된장찌개겉바속촉의 진수’라고 표시됨"
+      },
+      {
+        "video_id": "5yWkFb2cHKU",
+        "title": "거제 시댁 내려와서 추석 보내고 꼭 먹고 싶은 갈비집 방문",
+        "channel": "돼지갈비 원조집 3대째 용쓰네",
+        "published_at": "2026-09-25",
+        "view_count": 1275,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 시댁 내려와서 추석 보내고 꼭 먹고 싶은 갈비집 방문’라고 표시됨"
+      },
+      {
+        "video_id": "gFlMKe4z5JQ",
+        "title": "거제도 핫플 당일치기 여행 #드론영상 #핫플 #국내여행",
+        "channel": "힐링뷰뷰",
+        "published_at": "2026-09-24",
+        "view_count": 1244,
+        "content_type": "코스·일정형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제도 핫플 당일치기 여행 #드론영상 #핫플 #국내여행’라고 표시됨"
+      },
+      {
+        "video_id": "66mA6NEkMmY",
+        "title": "브런치에 커피까지 준다고? 거가대교 야경 품은 거제 감성 숙소 #거제숙소 #거제여행 #내돈내산 #거제에어비앤비 #감성숙소 #거가대교뷰 #바다뷰 #브런치 #Shorts",
+        "channel": "쓸템",
+        "published_at": "2026-09-28",
+        "view_count": 1241,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘브런치에 커피까지 준다고? 거가대교 야경 품은 거제 감성 숙소 #거제숙소 #거제여행 #내돈내산 #거제에어비앤비 #감성숙소 #거가대교뷰 #바다뷰 #브런치 #Shorts’라고 표시됨"
+      },
+      {
+        "video_id": "zqDesc8ND2s",
+        "title": "거제 벨버디어 후기, 한화리조트 디럭스 오션뷰 모바일 체크인 (거제 숙소)",
+        "channel": "다람이의 텐트 밖 세상",
+        "published_at": "2026-09-27",
+        "view_count": 1221,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 벨버디어 후기, 한화리조트 디럭스 오션뷰 모바일 체크인 (거제 숙소)’라고 표시됨"
+      },
+      {
+        "video_id": "rlwK2k4BYq4",
+        "title": "거제도 필수 여행코스! 거제 정글돔🌿",
+        "channel": "여행갈래",
+        "published_at": "2026-09-24",
+        "view_count": 1217,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제도 필수 여행코스! 거제 정글돔🌿’라고 표시됨"
+      },
+      {
+        "video_id": "_wv9yqR34Xc",
+        "title": "거제도 숨은 명소 무료 힐링 코스 #거제도여행 #거제여행 #거제도가볼만한곳",
+        "channel": "이탕",
+        "published_at": "2026-09-26",
+        "view_count": 1212,
+        "content_type": "코스·일정형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제도 숨은 명소 무료 힐링 코스 #거제도여행 #거제여행 #거제도가볼만한곳’라고 표시됨"
+      },
+      {
+        "video_id": "xI1D3zRSMzY",
+        "title": "거제 중곡동 맛집 찾는다면? 삼겹살부터 돼지갈비까지 박금순갈비! 🔥 #박금순갈비 #거제중곡점 #거제맛집 #거제고기집 #거제삼겹살 #거제돼지갈비 #거제도맛집 #구독부탁합니다",
+        "channel": "쁘띠파파 ",
+        "published_at": "2026-09-23",
+        "view_count": 1210,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 중곡동 맛집 찾는다면? 삼겹살부터 돼지갈비까지 박금순갈비! 🔥 #박금순갈비 #거제중곡점 #거제맛집 #거제고기집 #거제삼겹살 #거제돼지갈비 #거제도맛집 #구독부탁합니다’라고 표시됨"
+      },
+      {
+        "video_id": "QOnsuM2I_A0",
+        "title": "거제 벨버디어 제대로 즐기는 법 #거제벨버디어 #거제여행 #거제도여행",
+        "channel": "이탕",
+        "published_at": "2026-09-26",
+        "view_count": 1204,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 벨버디어 제대로 즐기는 법 #거제벨버디어 #거제여행 #거제도여행’라고 표시됨"
+      },
+      {
+        "video_id": "q476kvyXkNU",
+        "title": "거제한우맛집,한우마을 꽃등심200 특갈비살200 갈비살200 9만9천원",
+        "channel": "Doctor Oedo 거제도여행박사TV",
+        "published_at": "2026-09-28",
+        "view_count": 1182,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제한우맛집,한우마을 꽃등심200 특갈비살200 갈비살200 9만9천원’라고 표시됨"
+      },
+      {
+        "video_id": "5JvA9fQlF4g",
+        "title": "거제 연안대로 한내리공단안에있는 맛집",
+        "channel": "사천사랑초",
+        "published_at": "2026-09-25",
+        "view_count": 1175,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 연안대로 한내리공단안에있는 맛집’라고 표시됨"
+      },
+      {
+        "video_id": "RbNYUjn1ukU",
+        "title": "거제 가볼만한곳 특별한 체험들과 역사현장 흥남철수기념관",
+        "channel": "멍젤라",
+        "published_at": "2026-09-25",
+        "view_count": 1118,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 가볼만한곳 특별한 체험들과 역사현장 흥남철수기념관’라고 표시됨"
+      },
+      {
+        "video_id": "VWNEsKWYn88",
+        "title": "거제 오아시스 호텔",
+        "channel": "Doctor Oedo 거제도여행박사TV",
+        "published_at": "2026-09-28",
+        "view_count": 1112,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 오아시스 호텔’라고 표시됨"
+      },
+      {
+        "video_id": "7ovbj9uTkas",
+        "title": "거제 1박2일 한 바퀴 코스 총정리 🌊 #Shorts",
+        "channel": "내안에블루",
+        "published_at": "2026-09-25",
+        "view_count": 1108,
+        "content_type": "코스·일정형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 1박2일 한 바퀴 코스 총정리 🌊 #Shorts’라고 표시됨"
+      },
+      {
+        "video_id": "n-J7n4vR7o8",
+        "title": "힘들게 올랐더니 이런 절경이! 거제 우제봉 전망대#거제여행 #우제봉전망대 #우제봉 #거제가볼만한곳 #해금강 #거제바다 #경남여행 #전망대 #트레킹 #여행쇼츠 #우상여행기록",
+        "channel": "우상",
+        "published_at": "2026-09-28",
+        "view_count": 963,
+        "content_type": "포토스팟형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘힘들게 올랐더니 이런 절경이! 거제 우제봉 전망대#거제여행 #우제봉전망대 #우제봉 #거제가볼만한곳 #해금강 #거제바다 #경남여행 #전망대 #트레킹 #여행쇼츠 #우상여행기록’라고 표시됨"
+      },
+      {
+        "video_id": "aWYBjU9i6eo",
+        "title": "거제에 이런 섬이? 🌊 산달도에서 만난 바다 풍경 #거제산달도 #산달도 #거제여행 #경남여행 #섬여행 #바다여행 #국내여행 #여행쇼츠 #우상여행",
+        "channel": "우상",
+        "published_at": "2026-09-27",
+        "view_count": 962,
+        "content_type": "자연경관형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제에 이런 섬이? 🌊 산달도에서 만난 바다 풍경 #거제산달도 #산달도 #거제여행 #경남여행 #섬여행 #바다여행 #국내여행 #여행쇼츠 #우상여행’라고 표시됨"
+      },
+      {
+        "video_id": "b-OA1NYVmu0",
+        "title": "[거제 카페 맛집] 바다 보며 마시는 라떼 한 잔! 카페 심해 오션뷰 & 시그니처 음료 솔직 후기 #shorts",
+        "channel": "공복_Gongbok",
+        "published_at": "2026-09-25",
+        "view_count": 919,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘[거제 카페 맛집] 바다 보며 마시는 라떼 한 잔! 카페 심해 오션뷰 & 시그니처 음료 솔직 후기 #shorts’라고 표시됨"
+      },
+      {
+        "video_id": "82gCujOHJJk",
+        "title": "#금조원왕갈비탕 #지세포 #왕갈비탕 #거제도 #거제여행 #거제 #거제가볼만한곳 #요가하는해녀 #해녀 #맛집 #일운면 #지세포항 #지세포맛집",
+        "channel": "요가하는해녀",
+        "published_at": "2026-09-23",
+        "view_count": 754,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘#금조원왕갈비탕 #지세포 #왕갈비탕 #거제도 #거제여행 #거제 #거제가볼만한곳 #요가하는해녀 #해녀 #맛집 #일운면 #지세포항 #지세포맛집’라고 표시됨"
+      },
+      {
+        "video_id": "MchVa-TlMu8",
+        "title": "거제 구영항, 바다 앞에서 즐기는 삼겹살과 낚시 힐링 🎣🥓, 세월을 낚고 마음을 채우는 곳,  #거제여행 #구영항 #거제낚시 #바다낚시 #임영웅",
+        "channel": "노년윤슬",
+        "published_at": "2026-09-28",
+        "view_count": 699,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 구영항, 바다 앞에서 즐기는 삼겹살과 낚시 힐링 🎣🥓, 세월을 낚고 마음을 채우는 곳,  #거제여행 #구영항 #거제낚시 #바다낚시 #임영웅’라고 표시됨"
+      },
+      {
+        "video_id": "D1Z6TuUfT00",
+        "title": "거제 #매미성 애견동반 가족여행",
+        "channel": "뿌꾸맘_긍정이tv ",
+        "published_at": "2026-09-29",
+        "view_count": 672,
+        "content_type": "자연경관형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 #매미성 애견동반 가족여행’라고 표시됨"
+      },
+      {
+        "video_id": "IrItvt-VHxw",
+        "title": "이쁜 범돔보내기 거제체험낚시 #범돔#낚시#체험#체험낚시#여행#거제노인과바다",
+        "channel": "거제노인과바다 NAVI",
+        "published_at": "2026-09-28",
+        "view_count": 635,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘이쁜 범돔보내기 거제체험낚시 #범돔#낚시#체험#체험낚시#여행#거제노인과바다’라고 표시됨"
+      },
+      {
+        "video_id": "VTVWfTixk-k",
+        "title": "#거제여행 #거제맛집 #거제도 #거제가볼만한곳 #맛집추천",
+        "channel": "솥밥한끼",
+        "published_at": "2026-09-23",
+        "view_count": 570,
+        "content_type": "맛집형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘#거제여행 #거제맛집 #거제도 #거제가볼만한곳 #맛집추천’라고 표시됨"
+      },
+      {
+        "video_id": "-UwGlDSXfA8",
+        "title": "거제 장승포 해안도로 낚시포인트 #거제도낚시 #장승포방파제 #장승포해안도로 #거제도원투낚시 #거제도루어낚시 #거제도여행 #장승포",
+        "channel": "카고피싱",
+        "published_at": "2026-09-28",
+        "view_count": 530,
+        "content_type": "체험·액티비티형",
+        "confidence": 0.6,
+        "evidence": "제목에 ‘거제 장승포 해안도로 낚시포인트 #거제도낚시 #장승포방파제 #장승포해안도로 #거제도원투낚시 #거제도루어낚시 #거제도여행 #장승포’라고 표시됨"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "맛집형",
+        "count": 17,
+        "ratio": 0.4595,
+        "total_views": 50190
+      },
+      {
+        "content_type": "체험·액티비티형",
+        "count": 10,
+        "ratio": 0.2703,
+        "total_views": 10304
+      },
+      {
+        "content_type": "코스·일정형",
+        "count": 6,
+        "ratio": 0.1622,
+        "total_views": 10891
+      },
+      {
+        "content_type": "자연경관형",
+        "count": 2,
+        "ratio": 0.0541,
+        "total_views": 1634
+      },
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 1,
+        "ratio": 0.027,
+        "total_views": 1411
+      },
+      {
+        "content_type": "포토스팟형",
+        "count": 1,
+        "ratio": 0.027,
+        "total_views": 963
+      }
+    ],
+    "unclassified_count": 0
+  }
+}

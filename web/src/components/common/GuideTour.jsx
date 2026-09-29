@@ -33,46 +33,41 @@ const STEPS = [
     note: "화면의 모든 수치에는 출처와 실측·샘플 표시가 붙습니다. 조치 문구는 매뉴얼 원문을 그대로 인용하며, 없는 내용을 지어내지 않습니다.",
   },
   {
-    selector: ".region-search, .scan-input-wrap",
+    selector: ".header-region-search",
     title: "담당 지역을 찾습니다",
-    body: "전국 226개 시군구를 이름·시도·초성(예: 강릉, 강원 고성, ㄱㄹ)으로 찾을 수 있고, 목록에서 지금 경보 단계도 함께 보입니다. 어디서든 / 키로 바로 검색합니다. 지역을 바꾸면 아래 모든 화면과 대화창이 함께 바뀌고, 대화 기록도 새로 시작됩니다.",
+    body: "전국 226개 시군구를 이름·시도·초성(예: 강릉, 강원 고성, ㄱㄹ)으로 찾습니다. 검색창을 누르면 최근 본 지역과 시도별 칩이 먼저 나오니, 타이핑 없이 도 단위로 좁혀 들어가도 됩니다. 지역을 바꾸면 아래 모든 화면과 대화창이 함께 바뀝니다.",
   },
   {
-    // 게이지·배지·기준일·단계 설명을 묶은 영역(SignalStatusPanel/LifecyclePanel의
-    // .alert-summary). 설명 문구가 바늘을 언급하므로 바늘이 스포트라이트 밖에 있으면 안 된다.
-    selector: ".alert-summary, .area0-layout__main",
+    // 오늘의 브리핑 카드(DailySignalChart). 경보 단계·수치·두 차트가 한 덩어리다.
+    selector: ".daily-peak.actual-signal, #area0",
     title: "지금 어떤 상태인지 봅니다",
-    body: "게이지 바늘이 가리키는 곳이 오늘의 경보 단계이고, 바로 아래 한 줄이 그 단계에서 무엇을 해야 하는지입니다. 옆의 기준일은 이 판정이 언제 것인지를 뜻합니다.",
+    body: "맨 윗줄이 오늘의 경보 단계와 판정일입니다. 아래 세 칸은 검색 배율·외지인 방문·예측 요약이고, 1주·1개월·6개월 버튼으로 기간을 바꿔 두 추이 차트를 볼 수 있습니다.",
   },
   {
-    selector: ".today-action",
+    selector: ".today-conclusion",
     title: "오늘 할 일을 여기서 받습니다",
-    body: "상황 유형과 오늘 처리할 조치 건수, 그중 먼저 할 3건이 정리돼 있습니다. 버튼을 누르면 전체 목록으로 이동하고, 요약은 바로 복사할 수 있습니다.",
+    body: "펼치면 지금 상황이 어떤 유형인지와 그 근거, 오늘 처리할 조치 건수와 그중 먼저 할 3건이 '왜'와 함께 나옵니다. 맨 아래 링크로 전체 체크리스트로 갑니다.",
   },
   {
-    // 화면 상태에 따라 대화창이 어떤 모습으로 있든 하나는 잡히게 한다: 펼쳐진 패널 →
-    // 모바일 상단 내비의 "물어보기" 버튼 → 데스크톱 플로팅 아이콘.
-    selector: ".chat-widget, .area-nav__ask, .chat-widget__toggle",
+    // 런처는 대화창이 닫혀 있어도 항상 화면에 있다. 열려 있으면 패널을 비춘다.
+    selector: ".chat-popup-panel, .chat-popup-launcher",
     title: "모르면 물어보세요",
-    body: "용어나 수치가 낯설면 평소 말로 물어보면 됩니다. 답변 아래에는 어떤 데이터를 근거로 했는지, 실측인지 샘플인지가 항상 붙습니다. 화면을 내린 뒤에는 위쪽 '물어보기' 버튼으로 다시 열 수 있습니다.",
+    body: "용어나 수치가 낯설면 평소 말로 물어보면 됩니다. 처음 열면 예시 질문이 나오고, 답변 아래에는 어떤 데이터를 근거로 했는지와 실측·샘플 여부가 칩으로 붙습니다. 오른쪽 아래 버튼으로 언제든 다시 엽니다.",
   },
   {
-    // 신호 추이·예측 패널(AREA 0 바로 아래). 패널 전체는 화면보다 커서 첫 차트만 비춘다
-    selector: "#trend .trend-chart, #trend",
-    title: "신호가 실제로 어떻게 움직였는지 봅니다",
-    body: "위 칸은 검색 관심(전년 대비 배율)과 기준선, 아래 칸은 실제 외지인 방문자입니다. 번호 핀은 콘텐츠 확산·혼잡·조치 같은 사건입니다. 이어서 관광지점과 시군구 전체를 비교한 그래프, 7일 방문객 예측이 나옵니다.",
-  },
-  {
-    // 패널 전체(#area1)가 아니라 첫 섹션(3중 교차검증 신호등)을 비춘다 -- 패널은 화면보다
-    // 커서 통째로 비추면 스포트라이트가 아무것도 좁혀 주지 못한다.
-    selector: "#area1 .section-block, #area1",
+    selector: "#signal-evidence",
     title: "왜 그렇게 판단했는지 확인합니다",
-    body: "서로 다른 출처의 신호 3개(관심·의도·실현) 중 몇 개가 기준선을 넘었는지로 단계가 정해집니다. 보고할 때 근거로 쓰는 화면입니다.",
+    body: "출처가 서로 다른 신호 3개(온라인 관심·방문지 검색·실제 방문) 중 몇 개가 기준을 넘었는지로 단계가 정해집니다. '이 단계는 어떻게 정해졌나요?'를 펼치면 승격 규칙과 매뉴얼 근거까지 나옵니다. 보고할 때 근거로 쓰는 화면입니다.",
   },
   {
-    selector: ".checklist-progress, #area3",
+    selector: "#forecast",
+    title: "앞으로 며칠을 미리 봅니다",
+    body: "자료 기준일 다음 7일의 예상 방문자와 80% 구간입니다. 가장 붐빌 날이 언제인지 미리 알면 인력과 동선을 그 날에 맞춰 준비할 수 있습니다.",
+  },
+  {
+    selector: "#policy-report .policy-checklist-progress, #policy-report",
     title: "체크하며 처리하고 보고문을 가져갑니다",
-    body: "조치마다 매뉴얼 근거가 붙어 있습니다. 처리한 항목을 체크하면 진행률이 위 '오늘의 결론' 카드에도 반영됩니다. 아래 정책 브리핑은 그대로 복사해 보고서에 붙일 수 있습니다.",
+    body: "조치마다 왜 뽑혔는지와 매뉴얼 근거가 붙어 있습니다. 처리한 항목을 체크하면 진행률과 위 '오늘의 결론' 완료 건수가 함께 움직입니다. 아래 정책 보고문은 그대로 복사해 보고서에 붙일 수 있습니다.",
   },
 ];
 
@@ -255,40 +250,40 @@ export default function GuideTour({ open, onClose }) {
   }
 
   return (
-    <div className="tour" role="dialog" aria-modal="true" aria-label="사용법 안내">
-      {hole && hole.height > 0 && <div className="tour__hole" style={hole} />}
+    <div className="guide-tour" role="dialog" aria-modal="true" aria-label="사용법 안내">
+      {hole && hole.height > 0 && <div className="guide-tour__hole" style={hole} />}
       {/* 구멍이 아직 측정 전이면 전체를 덮어 화면이 번쩍이지 않게 한다 */}
-      {(!hole || hole.height <= 0) && <div className="tour__backdrop" />}
+      {(!hole || hole.height <= 0) && <div className="guide-tour__backdrop" />}
 
       <div
-        className={`tour__card${step.intro ? " tour__card--intro" : ""}`}
+        className={`guide-tour__card${step.intro ? " guide-tour__card--intro" : ""}`}
         style={step.intro ? undefined : cardStyle}
         ref={cardRef}
       >
-        <p className="tour__progress">
+        <p className="guide-tour__progress">
           {index + 1} / {steps.length}
         </p>
-        <p className="tour__title">{step.title}</p>
-        <p className="tour__body">{step.body}</p>
+        <p className="guide-tour__title">{step.title}</p>
+        <p className="guide-tour__body">{step.body}</p>
         {step.points && (
-          <ul className="tour__points">
+          <ul className="guide-tour__points">
             {step.points.map((p) => (
               <li key={p}>{p}</li>
             ))}
           </ul>
         )}
-        {step.note && <p className="tour__note">{step.note}</p>}
-        <div className="tour__buttons">
-          <button type="button" className="tour__skip" onClick={finish}>
+        {step.note && <p className="guide-tour__note">{step.note}</p>}
+        <div className="guide-tour__buttons">
+          <button type="button" className="guide-tour__skip" onClick={finish}>
             건너뛰기
           </button>
-          <div className="tour__nav">
+          <div className="guide-tour__nav">
             {index > 0 && (
-              <button type="button" className="btn-ghost" onClick={prev}>
+              <button type="button" className="guide-tour__back" onClick={prev}>
                 이전
               </button>
             )}
-            <button type="button" className="btn-primary" onClick={next}>
+            <button type="button" className="guide-tour__next" onClick={next}>
               {index + 1 === steps.length ? "시작하기" : step.intro ? "둘러보기" : "다음"}
             </button>
           </div>

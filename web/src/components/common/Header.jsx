@@ -1,90 +1,83 @@
 import { useEffect, useState } from "react";
+import RegionSearchPicker from "./RegionSearchPicker.jsx";
 
-// Mirrors the reference demo's header markup/classes exactly (brand /
-// brand-tag / app-subtitle). The demo had no area navigation (everything
-// was 3 panels on one screen); with 5 areas now spanning a taller page, a
-// small anchor row is added below the subtitle, styled like the demo's own
-// pill tags rather than as a separate nav bar.
-//
-// 라벨에 업무 언어를 병기한 이유: "AREA 1"만으로는 처음 온 담당자가 그 화면에서 무엇을
-// 하는지 알 수 없다. 번호를 빼지 않은 것은 제출 문서·슬라이드가 AREA 번호로 쓰여 있어서다.
-// 이 줄이 화면 전체의 흐름(지금 상황 → 신호 확인 → 원인 → 오늘 할 일 → 성과)을 상시로
-// 보여주므로, 투어를 닫은 뒤에도 길잡이가 남는다.
-const AREA_ANCHORS = [
-  { id: "area0", num: "0", label: "지금 상황" },
-  // 신호 추이·예측 패널(AREA 0 바로 아래). AREA 번호 체계 밖이라 번호 대신 추이 기호를 단다
-  { id: "trend", num: "↗", label: "추이·예측" },
-  { id: "area1", num: "1", label: "신호 확인" },
-  { id: "area2", num: "2", label: "원인 콘텐츠" },
-  { id: "area3", num: "3", label: "오늘 할 일" },
-  { id: "area4", num: "4", label: "성과 점검" },
+const STEPS = [
+  { label: "현황 확인", note: "지역의 경보 상태", icon: "M4 18V10m5 8V6m5 12v-5m5 5V3" },
+  { label: "신호 탐색", note: "변화를 먼저 발견", icon: "M3 12h4l3-7 4 14 3-7h4" },
+  { label: "원인 분석", note: "콘텐츠와 방문 흐름", icon: "M10 17a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm5-2 6 6" },
+  { label: "대응 준비", note: "체크리스트와 브리핑", icon: "M8 4h12v17H4V4h4m0-2h8v5H8V2Zm0 10 2 2 5-5m-7 9h8" },
+  { label: "성과 확인", note: "대응 이후의 변화", icon: "M4 3v17h17M7 15l4-4 4 2 5-7m-5 0h5v5" },
 ];
 
-export default function Header({ onReplayTour, onAsk }) {
-  const [activeId, setActiveId] = useState("area0");
+const NAV_ITEMS = [
+  { href: "#area0", label: "이슈 브리핑", icon: STEPS[0].icon },
+  { href: "#area2", label: "관련 콘텐츠", icon: STEPS[2].icon },
+  { href: "#area3", label: "대응 준비", icon: STEPS[3].icon },
+  { href: "#area1", label: "심층 분석", icon: STEPS[1].icon },
+  { href: "#area4", label: "대응 기록", icon: STEPS[4].icon },
+];
 
-  // 지금 보고 있는 구역을 앵커에 표시한다. ChatWidget이 docked/floating 전환에 쓰는 것과
-  // 같은 IntersectionObserver 패턴.
-  useEffect(() => {
-    const sections = AREA_ANCHORS.map((a) => document.getElementById(a.id)).filter(Boolean);
-    if (sections.length === 0) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActiveId(visible.target.id);
-      },
-      // 화면 상단 1/3 지점에 들어온 구역을 "지금 보는 곳"으로 친다
-      { rootMargin: "-20% 0px -60% 0px", threshold: [0, 0.2, 0.5] }
-    );
-    sections.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
+export default function Header({ region, onRegionChange, onReplayTour }) {
+  const [selectedRegion, setSelectedRegion] = useState(region);
+  useEffect(() => setSelectedRegion(region), [region]);
 
-  // <nav>을 <header> 안에 두면 sticky가 헤더 높이 안에서만 붙어 헤더와 함께 사라진다.
-  // 형제로 빼야 페이지 전체를 따라온다.
+  function showRegion(event) {
+    event.preventDefault();
+    onRegionChange(selectedRegion);
+    window.location.hash = "area0";
+    document.getElementById("area0")?.scrollIntoView({ block: "start" });
+  }
+
   return (
     <>
+      <a className="skip-link" href="#area0">지역 현황 바로가기</a>
+      <div className="portal-utility"><div className="portal-width"><span>지역 관광 데이터 브리핑</span></div></div>
       <header className="app-header">
-      <div className="app-header__top">
-        <div>
-          <div className="brand">
-            <span className="brand-name">관광레이더</span>
-            <span className="brand-tag">DEMO · 스키마 목업/실데이터 기반</span>
-          </div>
-          <p className="app-subtitle">
-            SNS·검색·방문 신호로 관광객 급증을 미리 잡고, 오늘 할 조치와 보고문까지 받아 가는 화면입니다.
-          </p>
+        <div className="portal-width portal-header-row">
+          <a className="portal-brand" href="#" aria-label="관광레이더 홈">
+            <svg className="brand-radar" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <circle cx="24" cy="24" r="20" fill="currentColor" fillOpacity=".05" stroke="currentColor" strokeWidth="1.8" />
+              <circle cx="24" cy="24" r="13" stroke="currentColor" strokeOpacity=".35" strokeWidth="1.2" />
+              <circle cx="24" cy="24" r="6" stroke="currentColor" strokeOpacity=".35" strokeWidth="1.2" />
+              <path d="M24 4V44M4 24H44" stroke="currentColor" strokeOpacity=".25" />
+              <path d="M24 24V4A20 20 0 0 1 41.32 14Z" fill="currentColor" fillOpacity=".18" />
+              <path d="M24 24L41.32 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <circle cx="24" cy="24" r="2.5" fill="currentColor" />
+              <circle cx="33" cy="16" r="3.2" fill="currentColor" stroke="white" strokeWidth="1.2" />
+              <circle cx="14" cy="32" r="2.4" fill="currentColor" fillOpacity=".65" stroke="white" strokeWidth="1" />
+            </svg>
+            관광<span>레이더</span>
+          </a>
+          <form className="header-region-picker" onSubmit={showRegion}>
+            <label htmlFor="active-region">관심 지역 선택</label>
+            <RegionSearchPicker selected={selectedRegion} current={region} onSelect={setSelectedRegion} />
+            <button type="submit">현황 보기 <span aria-hidden="true">→</span></button>
+          </form>
+          {/* 투어 재생 버튼은 form 밖에 둔다 -- 안에 두면 .header-region-picker button
+              규칙이 잡아 "현황 보기" submit 버튼과 생김새가 같아진다. */}
+          <button type="button" className="header-tour-replay" onClick={onReplayTour}>사용법 보기</button>
         </div>
-        <button type="button" className="app-header__help" onClick={onReplayTour}>
-          사용법 보기
-        </button>
-      </div>
       </header>
-
-      <nav className="area-nav">
-        <div className="area-nav__inner">
-          <div className="area-nav__anchors">
-            {AREA_ANCHORS.map((a) => (
-              <a
-                key={a.id}
-                href={`#${a.id}`}
-                className={`app-header-anchor${activeId === a.id ? " is-active" : ""}`}
-              >
-                <span className="app-header-anchor__num">{a.num}</span>
-                {a.label}
+      <nav className="portal-navigation" aria-label="서비스 메뉴">
+        <div className="portal-width">
+          <div className="workflow-nav">
+            {NAV_ITEMS.map((item, i) => {
+              return <a className="workflow-step" key={item.href} href={item.href}>
+                <span className="workflow-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={item.icon} /></svg></span>
+                <span className="workflow-label"><small>0{i + 1}</small>{item.label}</span>
               </a>
-            ))}
+            })}
           </div>
-          {/* 좁은 화면 전용(CSS로 숨김/표시). 모바일에서는 떠다니는 챗봇 아이콘이 본문
-              글자를 가려서 아예 없앴고, 그 진입점을 여기로 옮겼다 -- 내비가 화면 상단에
-              고정돼 있으므로 어느 위치에서 읽던 중이든 한 번에 닿는다. */}
-          <button type="button" className="area-nav__ask" onClick={onAsk}>
-            💬 물어보기
-          </button>
         </div>
       </nav>
+      <section className="portal-hero" aria-labelledby="service-title">
+        <div className="portal-width hero-inner">
+          <div className="hero-copy">
+            <h1 id="service-title">우리 지역 관광 변화, 한눈에</h1>
+            <p className="hero-description">검색 흐름부터 외지인 방문과 대응 준비까지 이어서 확인하세요.</p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
