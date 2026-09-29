@@ -538,12 +538,13 @@
 .analysis-signal-stage { color: #264858; font-size: 13px; font-weight: 800; }
 .analysis-signal-list strong { color: #007bbd; font-size: 12px; font-weight: 800; }
 .analysis-signal-list p { min-height: 2.8em; margin: 8px 0 5px; color: #415f6e; font-size: 11px; line-height: 1.4; font-weight: 700; }
-.analysis-signal-list small { color: #5d7480; font-size: 11px; font-weight: 700; }
+.analysis-signal-list small { display: block; color: #5d7480; font-size: 11px; font-weight: 700; }
 .analysis-type-list { display: grid; gap: 12px; list-style: none; margin: 0 0 14px; padding: 0; }
-.analysis-type-list li { display: grid; grid-template-columns: minmax(105px, 1fr) minmax(120px, 2.5fr) 44px 48px; align-items: center; gap: 12px; color: #264858; font-size: 13px; font-weight: 800; }
+.analysis-type-list li { display: grid; grid-template-columns: minmax(105px, 1fr) minmax(120px, 2.5fr) 44px 76px; align-items: center; gap: 12px; color: #264858; font-size: 13px; font-weight: 800; }
 .analysis-type-track { height: 12px; background: #e7f2f7; }
 .analysis-type-track > span { display: block; height: 100%; background: #61acc8; }
-.analysis-type-list strong, .analysis-type-list small { text-align: right; white-space: nowrap; }
+.analysis-type-list strong { text-align: right; white-space: nowrap; }
+.analysis-type-list small { text-align: right; line-height: 1.35; }
 .analysis-type-list small { color: #58717f; font-size: 11px; }
 .policy-checklist-section { margin-top: 12px; }
 .policy-generated-section { margin-top: 26px; padding-top: 26px; border-top: 1px solid #dce7ed; }
@@ -557,7 +558,7 @@
   .analysis-report-intro nav a { font-size: 13px; }
   .analysis-evidence-lead { display: block; }
   .analysis-evidence-lead p { margin-top: 8px; }
-  .analysis-type-list li { grid-template-columns: minmax(85px, 1fr) minmax(65px, 1.5fr) 38px 40px; gap: 6px; font-size: 11px; }
+  .analysis-type-list li { grid-template-columns: minmax(85px, 1fr) minmax(65px, 1.5fr) 38px 64px; gap: 6px; font-size: 11px; }
 }
 /* The regional panel moves from observed signal to place, audience and forecast. */
 .app .panel-scan .section-block { margin-top: 22px; }
