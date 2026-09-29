@@ -1,3 +1,5 @@
+import Term from "../common/Term.jsx";
+
 export default function HotspotRanking({ hotspotsData, deadZonePois = [] }) {
   const ranking = [...(hotspotsData.ranking ?? [])].sort((a, b) => a.rank - b.rank);
   return <ul className="rank-list analysis-hotspot-list" aria-label="관광지 순위">
@@ -7,7 +9,7 @@ export default function HotspotRanking({ hotspotsData, deadZonePois = [] }) {
         <span className="rank-index">{poi.rank}</span>
         <div className="analysis-hotspot-main">
           <div className="analysis-hotspot-head">
-            <strong>{poi.poi_name}{isDeadZone && <span className="dept-chip">분산 후보지</span>}</strong>
+            <strong>{poi.poi_name}{isDeadZone && <span className="dept-chip"><Term name="분산 후보지">분산 후보지</Term></span>}</strong>
             <span className={poi.change_rate >= 0 ? "is-up" : "is-down"}>
               {poi.change_rate >= 0 ? "+" : ""}{(poi.change_rate * 100).toFixed(1)}%
             </span>

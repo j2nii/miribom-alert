@@ -1,0 +1,284 @@
+/* 전국 시군구 검색 (RegionSearch.jsx). 경보 색은 :root의 --alert-* 토큰을 쓰고,
+   색만으로 단계를 알리지 않도록 항상 글자(관심·주의…)를 함께 적는다. */
+.region-search {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.region-search__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.region-search__field.is-open,
+.region-search__field:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-tint-bg);
+}
+.region-search__icon {
+  font-size: 17px;
+  color: var(--ink-soft);
+}
+.region-search__field input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  color: var(--ink);
+}
+/* 닫혀 있을 때 placeholder가 곧 '지금 지역'이라 진하게 보여 준다 */
+.region-search__field:not(.is-open) input::placeholder {
+  color: var(--ink);
+  font-weight: 700;
+}
+.region-search__current {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 6px;
+}
+.region-search__clear {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--ink-soft);
+}
+.region-search__kbd,
+.region-search__hint kbd {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  background: var(--panel-tint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+@media (max-width: 860px) {
+  .region-search__kbd,
+  .region-search__hint {
+    display: none;
+  }
+}
+
+.region-search__panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-width: 640px;
+  padding: 8px 0 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 12px 32px rgba(16, 32, 47, 0.16);
+}
+.region-search__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 0 14px 6px;
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.region-search__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.region-search__asof {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+}
+.region-search__list {
+  max-height: min(420px, 60vh);
+  overflow-y: auto;
+  padding: 0 6px;
+}
+.region-search__section + .region-search__section {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+}
+.region-search__section-title {
+  margin: 4px 8px 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.region-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 38px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13.5px;
+}
+.region-option.is-active {
+  background: var(--mist);
+}
+.region-option.is-current .region-option__name {
+  color: var(--teal);
+}
+.region-option__name {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  font-weight: 700;
+}
+.region-option__name mark {
+  background: var(--amber-tint-bg);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+.region-option__sido {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--ink-soft);
+}
+.region-option__meta {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+}
+.region-option__signal {
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.region-option__case,
+.region-option__basic {
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.region-option__case {
+  background: var(--teal-tint-bg);
+  color: var(--teal);
+}
+.region-option__basic {
+  background: var(--mist);
+  color: var(--ink-soft);
+}
+.region-option.is-disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.region-option__note {
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+.alert-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.alert-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.alert-dot--관심 {
+  background: var(--alert-관심);
+}
+.alert-dot--주의 {
+  background: var(--alert-주의);
+}
+.alert-dot--경계 {
+  background: var(--alert-경계);
+}
+.alert-dot--심각 {
+  background: var(--alert-심각);
+}
+
+.region-search__sidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 2px 8px 6px;
+}
+.sido-chip {
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+  font-family: var(--font-kr);
+  font-size: 12px;
+  color: var(--ink);
+}
+.sido-chip span {
+  margin-left: 2px;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+.sido-chip:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+.region-search__sample {
+  margin: 0 8px 4px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-kr);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.region-search__sample span {
+  margin-left: 4px;
+  font-size: 10.5px;
+}
+.region-search__empty {
+  padding: 14px 10px;
+  font-size: 12.5px;
+  color: var(--ink-soft);
+}
+.region-search__empty p {
+  margin: 0;
+}
+.region-search__tip {
+  margin-top: 4px !important;
+  font-size: 11.5px;
+}
+.region-search__hint {
+  margin: 6px 14px 0;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+.region-search__hint kbd {
+  margin: 0 1px;
+}

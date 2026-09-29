@@ -1,3 +1,5 @@
+import Term from "../common/Term.jsx";
+
 export default function ContentTypeSummary({ data }) {
   const { summary, unclassified_count, zone_signals } = data;
   const maxRatio = Math.max(...summary.map((s) => s.ratio));
@@ -34,7 +36,8 @@ export default function ContentTypeSummary({ data }) {
 
       {zone_signals && (
         <p style={{ fontSize: 13, marginTop: 8 }}>
-          핫존 신호 {zone_signals.핫존}건 · 데드존 신호 {zone_signals.데드존}건
+          <Term name="핫존">핫존</Term> 신호 {zone_signals.핫존}건 · <Term name="데드존">데드존</Term> 신호{" "}
+          {zone_signals.데드존}건
           {zone_signals.데드존_지점?.length > 0 && (
             <> — 분산 후보지: {zone_signals.데드존_지점.join(", ")}</>
           )}

@@ -15,8 +15,10 @@
 사용법:
     uv run python collection/db_export.py        # DB 스냅샷이 없을 때
     uv run python agents/judge_signal_status.py
+    uv run python agents/judge_signal_status.py --all   # 사례 밖 시군구 전체 → data/prod/regions/
 """
 
+import argparse
 import json
 import sys
 from datetime import datetime
@@ -278,10 +280,16 @@ def build(region: str, region_name: str, panel: pd.DataFrame, thresholds: dict, 
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--all", action="store_true",
+                        help="사례 지역을 뺀 실제 시군구 전체를 data/prod/regions/에 쓴다 (사례 지역 파일은 건드리지 않음)")
+    args = parser.parse_args()
+
     manifest = json.loads((DB_DIR / "manifest.json").read_text(encoding="utf-8"))
     files = pd.read_csv(DB_DIR / "source_file.csv")
     panel_loaded = str(files.loc[files["file_name"].str.startswith("관광_월별패널"), "loaded_at"].iloc[0])[:10]
-    regions = pd.read_csv(DB_DIR / "dim_region.csv", dtype={"region_id": str}).set_index("region_id")["region_name"]
+    dim = pd.read_csv(DB_DIR / "dim_region.csv", dtype={"region_id": str})
+    regions = dim.set_index("region_id")["region_name"]
     panel, thresholds = load_panel()
     frames = SignalFrames()
     meta = {"exported_at": manifest["exported_at"], "panel_loaded_at": panel_loaded}
@@ -289,6 +297,21 @@ def main() -> None:
     print(f"임계: 관심 {thresholds['sns_mentions']}%p / 의도 {thresholds['navigation_searches']}%p "
           f"(전국 {int(MONTHLY_PERCENTILE * 100)}백분위) / 실현 {frames.threshold['realization_visitors']}배 {MIN_DURATION}일 지속\n")
     PROD.mkdir(parents=True, exist_ok=True)
+    if args.all:
+        targets = sorted(set(dim.loc[dim["is_synthetic"] == 0, "region_id"]) - set(CASE_REGIONS))
+        out = PROD / "regions"
+        out.mkdir(exist_ok=True)
+        levels = {}
+        for region in targets:
+            payload = build(region, regions[region], panel, thresholds, frames, meta)
+            if errors := validate_payload("signal_status", payload):
+                sys.exit(f"[스키마 실패] {region}: {errors[:3]}")
+            (out / f"signal_status_{region}.json").write_text(
+                json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+            level = payload["data"]["alert_level"]
+            levels[level] = levels.get(level, 0) + 1
+        print(f"{len(targets)}곳 → data/prod/regions/  경보 단계 분포: {levels}")
+        return
     for region in CASE_REGIONS:
         payload = build(region, regions[region], panel, thresholds, frames, meta)
         errors = validate_payload("signal_status", payload)

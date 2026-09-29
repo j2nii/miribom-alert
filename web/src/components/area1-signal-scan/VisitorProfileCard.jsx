@@ -76,22 +76,22 @@ function ProfileDetails({ profileData }) {
         ))}
       </div>
 
-      <p style={{ fontSize: 13, fontWeight: 700, margin: "10px 0 4px" }}>거주지 상위</p>
+      <p className="subsection-title" style={{ marginTop: 10 }}>거주지 상위</p>
       {residence.slice(0, 5).map((r, i) => (
         <Bar key={i} label={`${r.sido}${r.sigungu ? " " + r.sigungu : ""}`} ratio={r.ratio} />
       ))}
 
-      <p style={{ fontSize: 13, fontWeight: 700, margin: "10px 0 4px" }}>거리대별</p>
+      <p className="subsection-title" style={{ marginTop: 10 }}>거리대별</p>
       {distance.map((d, i) => (
         <Bar key={i} label={d.band} ratio={d.ratio} color="var(--amber)" />
       ))}
 
-      <p style={{ fontSize: 13, fontWeight: 700, margin: "10px 0 4px" }}>소비 카테고리</p>
+      <p className="subsection-title" style={{ marginTop: 10 }}>소비 카테고리</p>
       {spending.map((s, i) => (
         <Bar key={i} label={s.category} ratio={s.ratio} color="#8858c8" />
       ))}
 
-      <p style={{ fontSize: 13, fontWeight: 700, margin: "10px 0 4px" }}>동행 유형</p>
+      <p className="subsection-title" style={{ marginTop: 10 }}>동행 유형</p>
       {companion.map((c, i) => (
         <Bar key={i} label={c.type} ratio={c.ratio} color="var(--crimson)" />
       ))}
