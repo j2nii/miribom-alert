@@ -31,11 +31,11 @@ function SignalEvidence({ envelope }) {
   </>;
 }
 
-function ContentBreakdown({ envelope }) {
+function ContentBreakdown({ envelope, recent }) {
   const rows = (envelope.data.summary ?? []).slice().sort((a, b) => b.count - a.count);
   const total = rows.reduce((sum, row) => sum + row.count, 0);
   return <>
-    <p className="analysis-data-date">{dateLabel(envelope.period?.end)}까지 분류 · 관광 관련 영상 {total.toLocaleString("ko-KR")}건</p>
+    <p className="analysis-data-date">{recent ? `${dateLabel(envelope.period?.start)}~${dateLabel(envelope.period?.end)} 게시 · 제목 기준 분류` : `${dateLabel(envelope.period?.end)}까지 분류`} · 관광 관련 영상 {total.toLocaleString("ko-KR")}건</p>
     <ol className="analysis-type-list">
       {rows.map((row) => <li key={row.content_type}>
         <span>{row.content_type}</span>
@@ -54,6 +54,8 @@ export default function AreaDeepAnalysis({ region }) {
   const hotspots = useRegionData("hotspots", region);
   const visitorProfile = useRegionData("visitor_profile", region);
   const contentType = useRegionData("content_type", region);
+  const recentContentType = useRegionData("recent_content_type", region);
+  const contentAnalysis = recentContentType.status === "unsupported" ? contentType : recentContentType;
 
   return <div className="deep-analysis-body">
     <section className="analysis-report-block" id="signal-evidence">
@@ -72,9 +74,9 @@ export default function AreaDeepAnalysis({ region }) {
       </section>}
     </div>}
 
-    {contentType.status !== "unsupported" && <section className="analysis-report-block" id="content-analysis">
+    {contentAnalysis.status !== "unsupported" && <section className="analysis-report-block" id="content-analysis">
       <div className="analysis-block-heading"><span>04 · 콘텐츠</span><h3>어떤 콘텐츠가 관심을 모았나요?</h3><p>관광 관련 영상의 유형을 집계해 방문 흐름과 함께 살펴봅니다.</p></div>
-      <DataState result={contentType} render={({ envelope }) => <ContentBreakdown envelope={envelope} />} />
+      <DataState result={contentAnalysis} render={({ envelope }) => <ContentBreakdown envelope={envelope} recent={contentAnalysis === recentContentType} />} />
     </section>}
   </div>;
 }
