@@ -1020,3 +1020,14 @@
     transform: none;
   }
 }
+
+/* 서비스 메뉴 상단 고정 — 스크롤을 내려도 다른 영역으로 바로 이동할 수 있게 (09.30).
+   .app의 overflow-x: clip은 sticky를 깨지 않는다(hidden이면 깨짐). 메뉴로 이동한 섹션 제목이
+   고정 메뉴 밑에 숨지 않도록 앵커 대상에 메뉴 높이만큼 scroll-margin을 준다. */
+.app { --sticky-nav-h: 50px; }
+.portal-navigation { position: sticky; top: 0; z-index: 40; box-shadow: 0 2px 8px rgba(16, 37, 48, .06); }
+.app .header-region-results { z-index: 45; } /* 지역 검색 목록이 고정 메뉴 위로 펼쳐지게 */
+.app [id] { scroll-margin-top: calc(var(--sticky-nav-h) + 16px); }
+@media (max-width: 700px) {
+  .app { --sticky-nav-h: 58px; }
+}
