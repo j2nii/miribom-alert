@@ -2020,6 +2020,10 @@ html { scroll-behavior: smooth; }
 .search-chart-card .brief-chart-title { color: #574374; }
 .search-chart-card .brief-chart-title span { color: #746783; }
 .brief-chart-card .daily-peak-svg { margin-top: 2px; }
+.daily-peak-chart-wrap { position: relative; }
+.daily-peak-tooltip { position: absolute; z-index: 4; transform: translate(-50%, calc(-100% - 10px)); padding: 6px 9px; border-radius: 6px; background: #263241; color: #fff; font-size: 11px; line-height: 1.5; white-space: nowrap; pointer-events: none; box-shadow: 0 4px 12px rgba(16, 32, 47, 0.22); }
+.daily-peak-tooltip strong, .daily-peak-tooltip span { display: block; }
+.daily-peak-tooltip strong { font-weight: 700; }
 .app .hero-inner { padding-top: 10px; }
 .app .hero-copy { padding: 12px 0 14px; }
 .app .hero-description { margin-top: 5px; }

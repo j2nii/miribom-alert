@@ -28,6 +28,7 @@ const TOOLS = [
   { name: "get_signal_status", dataType: "signal_status", description: "현재 경보 단계와 3중 교차검증(관심·의도·실현) 판정 결과" },
   { name: "get_forecast", dataType: "forecast", description: "데이터 기준일 다음 7일의 외지인 방문자 예측(80% 구간·피크일·이유)과 요일별 방문 비중. 7일보다 먼 날은 예측하지 않는다" },
   { name: "get_outlook", dataType: "outlook", description: "앞으로 6개월 월별 외지인 방문자 전망(80% 구간), 계산 근거(작년 같은 달 × 휴일·명절 보정), 방법 7가지의 2025·2026 검증 오차와 선택 이유. 행사 기획·예산 질문에 쓴다" },
+  { name: "get_signal_series", dataType: "signal_series", description: "일별 검색지수·외지인 방문자 추이(최근 6개월+예측 구간). 특정 과거 날짜의 수치나 추이를 물으면 이 도구를 쓴다" },
   { name: "get_visitor_profile", dataType: "visitor_profile", description: "방문객 성/연령, 거주지, 이동 거리, 소비 성향, 동반 유형 분포" },
   { name: "get_hotspots", dataType: "hotspots", description: "급증 지점 랭킹 (현지인/외지인 구분)" },
   { name: "get_content_type", dataType: "content_type", description: "SNS·유튜브 콘텐츠 유형 분류 결과 (핫존·데드존 신호 포함)" },
