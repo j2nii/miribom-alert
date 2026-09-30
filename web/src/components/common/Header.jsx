@@ -34,7 +34,7 @@ export default function Header({ region, onRegionChange, onReplayTour }) {
       <div className="portal-utility"><div className="portal-width"><span>지역 관광 데이터 브리핑</span></div></div>
       <header className="app-header">
         <div className="portal-width portal-header-row">
-          <a className="portal-brand" href="#" aria-label="관광레이더 홈">
+          <a className="portal-brand" href="#" aria-label="미리봄 홈">
             <svg className="brand-radar" viewBox="0 0 48 48" fill="none" aria-hidden="true">
               <circle cx="24" cy="24" r="20" fill="currentColor" fillOpacity=".05" stroke="currentColor" strokeWidth="1.8" />
               <circle cx="24" cy="24" r="13" stroke="currentColor" strokeOpacity=".35" strokeWidth="1.2" />
@@ -46,7 +46,7 @@ export default function Header({ region, onRegionChange, onReplayTour }) {
               <circle cx="33" cy="16" r="3.2" fill="currentColor" stroke="white" strokeWidth="1.2" />
               <circle cx="14" cy="32" r="2.4" fill="currentColor" fillOpacity=".65" stroke="white" strokeWidth="1" />
             </svg>
-            관광<span>레이더</span>
+            미리<span>봄</span>
           </a>
           <form className="header-region-picker" onSubmit={showRegion}>
             <label htmlFor="active-region">관심 지역 선택</label>
