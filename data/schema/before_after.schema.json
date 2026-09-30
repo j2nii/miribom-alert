@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/before_after.schema.json",
+  "title": "before_after — 조치 전후 비교",
+  "description": "AREA 4 성과 리포트. KPI 이름은 매뉴얼 p.15 3-tier 체계를 그대로 사용한다 (우리가 지표를 지어내지 않는다).",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "intervention", "metrics"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "intervention": {
+          "type": "object",
+          "required": ["name", "applied_at", "actions"],
+          "properties": {
+            "name": { "type": "string" },
+            "applied_at": { "$ref": "_envelope.schema.json#/definitions/date" },
+            "actions": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+            "checklist_ids": {
+              "type": "array",
+              "description": "시행한 조치가 checklist의 어느 항목이었는지 역참조",
+              "items": { "type": "string", "pattern": "^CL-\\d{3}$" }
+            }
+          }
+        },
+        "comparison_window": {
+          "type": "object",
+          "description": "전후 비교 구간. 길이가 같아야 한다.",
+          "required": ["before", "after"],
+          "properties": {
+            "before": { "$ref": "_envelope.schema.json#/definitions/period" },
+            "after": { "$ref": "_envelope.schema.json#/definitions/period" }
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["kpi", "tier", "before", "after", "unit", "direction"],
+            "properties": {
+              "kpi": {
+                "type": "string",
+                "enum": [
+                  "전년 대비 혼잡도율 개선",
+                  "핫존-데드존 균형도(지니계수)",
+                  "공간가치 효율성 지수",
+                  "단위 면적당 인원수(경사도 보정)",
+                  "혼잡 임계치 초과 횟수/지속시간",
+                  "병목 구간 체류 시간",
+                  "유입/유출 비율",
+                  "실시간 혼잡도 단계(1~5)",
+                  "구간별 평균 이동 속도",
+                  "핫스팟 실시간 체류 인원",
+                  "안전사고 위험도 스코어"
+                ],
+                "description": "매뉴얼 p.15 KPI 명칭 고정"
+              },
+              "tier": { "type": "integer", "enum": [1, 2, 3], "description": "1:전략적 2:운영관리 3:실시간" },
+              "before": { "type": "number" },
+              "after": { "type": "number" },
+              "unit": { "type": "string" },
+              "change_rate": { "type": "number" },
+              "direction": {
+                "type": "string",
+                "enum": ["낮을수록좋음", "높을수록좋음"],
+                "description": "개선 방향. 화면에서 색상 판단에 쓴다."
+              },
+              "significance": {
+                "type": "string",
+                "description": "차이가 의미 있는지에 대한 단서. 표본·계절성 한계가 있으면 여기에 적는다."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

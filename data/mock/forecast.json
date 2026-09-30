@@ -1,0 +1,843 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "한국관광 데이터랩 지역별 방문자 통계",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/"
+    },
+    {
+      "name": "이동통신 기반 유동인구",
+      "provider": "한국관광공사(통신사 제휴 데이터)",
+      "retrieved_at": "2026-09-12",
+      "note": "관광 데이터랩 제공 가공 지표"
+    }
+  ],
+  "period": {
+    "start": "2026-09-13",
+    "end": "2026-12-11",
+    "granularity": "일"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "예측 구간(lower~upper)은 검증 기간 잔차의 80% 구간이다. 구간을 벗어나는 날이 5일 중 1일 정도 발생한다.",
+    "축제·기상 등 일회성 요인은 모델에 반영되지 않아 별도 event 필드로 표기한다."
+  ],
+  "data": {
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "model": {
+      "name": "SARIMAX(주간 계절성 + 공휴일 더미)",
+      "trained_on": {
+        "start": "2023-01-01",
+        "end": "2026-08-31",
+        "granularity": "일"
+      },
+      "metric": {
+        "name": "MAPE",
+        "value": 11.4,
+        "validation_period": {
+          "start": "2026-06-01",
+          "end": "2026-08-31",
+          "granularity": "일"
+        }
+      },
+      "features": [
+        "요일",
+        "공휴일",
+        "월별 계절성",
+        "전년 동기 방문객",
+        "기상(강수 여부)"
+      ]
+    },
+    "daily": [
+      {
+        "date": "2026-09-13",
+        "predicted": 33822,
+        "lower": 27735,
+        "upper": 39909,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-14",
+        "predicted": 23426,
+        "lower": 19210,
+        "upper": 27642,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-15",
+        "predicted": 22154,
+        "lower": 18167,
+        "upper": 26141,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-16",
+        "predicted": 23950,
+        "lower": 19639,
+        "upper": 28261,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-17",
+        "predicted": 24145,
+        "lower": 19799,
+        "upper": 28491,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-18",
+        "predicted": 25134,
+        "lower": 20610,
+        "upper": 29658,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-19",
+        "predicted": 42957,
+        "lower": 35225,
+        "upper": 50689,
+        "expected_alert_level": "경계",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-20",
+        "predicted": 37184,
+        "lower": 30491,
+        "upper": 43877,
+        "expected_alert_level": "경계",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-21",
+        "predicted": 24370,
+        "lower": 19984,
+        "upper": 28756,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-22",
+        "predicted": 21342,
+        "lower": 17501,
+        "upper": 25183,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-23",
+        "predicted": 23475,
+        "lower": 19250,
+        "upper": 27700,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-24",
+        "predicted": 22608,
+        "lower": 18539,
+        "upper": 26677,
+        "expected_alert_level": "관심",
+        "is_holiday": true
+      },
+      {
+        "date": "2026-09-25",
+        "predicted": 22759,
+        "lower": 18663,
+        "upper": 26855,
+        "expected_alert_level": "관심",
+        "is_holiday": true
+      },
+      {
+        "date": "2026-09-26",
+        "predicted": 41320,
+        "lower": 33883,
+        "upper": 48757,
+        "expected_alert_level": "경계",
+        "is_holiday": true
+      },
+      {
+        "date": "2026-09-27",
+        "predicted": 34993,
+        "lower": 28695,
+        "upper": 41291,
+        "expected_alert_level": "경계",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-28",
+        "predicted": 20652,
+        "lower": 16935,
+        "upper": 24369,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-29",
+        "predicted": 23177,
+        "lower": 19006,
+        "upper": 27348,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-09-30",
+        "predicted": 23686,
+        "lower": 19423,
+        "upper": 27949,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-01",
+        "predicted": 21837,
+        "lower": 17907,
+        "upper": 25767,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-02",
+        "predicted": 20143,
+        "lower": 16518,
+        "upper": 23768,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-03",
+        "predicted": 42485,
+        "lower": 34838,
+        "upper": 50132,
+        "expected_alert_level": "경계",
+        "is_holiday": true
+      },
+      {
+        "date": "2026-10-04",
+        "predicted": 35017,
+        "lower": 28714,
+        "upper": 41320,
+        "expected_alert_level": "경계",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-05",
+        "predicted": 21390,
+        "lower": 17540,
+        "upper": 25240,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-06",
+        "predicted": 21145,
+        "lower": 17339,
+        "upper": 24951,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-07",
+        "predicted": 20905,
+        "lower": 17143,
+        "upper": 24667,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-08",
+        "predicted": 19803,
+        "lower": 16239,
+        "upper": 23367,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-09",
+        "predicted": 19608,
+        "lower": 16079,
+        "upper": 23137,
+        "expected_alert_level": "관심",
+        "is_holiday": true
+      },
+      {
+        "date": "2026-10-10",
+        "predicted": 35408,
+        "lower": 29035,
+        "upper": 41781,
+        "expected_alert_level": "경계",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-11",
+        "predicted": 30224,
+        "lower": 24784,
+        "upper": 35664,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-12",
+        "predicted": 19355,
+        "lower": 15872,
+        "upper": 22838,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-13",
+        "predicted": 19742,
+        "lower": 16189,
+        "upper": 23295,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-14",
+        "predicted": 19018,
+        "lower": 15595,
+        "upper": 22441,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-15",
+        "predicted": 18803,
+        "lower": 15419,
+        "upper": 22187,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-16",
+        "predicted": 18869,
+        "lower": 15473,
+        "upper": 22265,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-17",
+        "predicted": 34512,
+        "lower": 28300,
+        "upper": 40724,
+        "expected_alert_level": "경계",
+        "is_holiday": false,
+        "event": "거제 섬&섬 축제(가상)"
+      },
+      {
+        "date": "2026-10-18",
+        "predicted": 32115,
+        "lower": 26335,
+        "upper": 37895,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-19",
+        "predicted": 19380,
+        "lower": 15892,
+        "upper": 22868,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-20",
+        "predicted": 18693,
+        "lower": 15329,
+        "upper": 22057,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-21",
+        "predicted": 17884,
+        "lower": 14665,
+        "upper": 21103,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-22",
+        "predicted": 18592,
+        "lower": 15246,
+        "upper": 21938,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-23",
+        "predicted": 19564,
+        "lower": 16043,
+        "upper": 23085,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-24",
+        "predicted": 32905,
+        "lower": 26983,
+        "upper": 38827,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-25",
+        "predicted": 28445,
+        "lower": 23325,
+        "upper": 33565,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-26",
+        "predicted": 17536,
+        "lower": 14380,
+        "upper": 20692,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-27",
+        "predicted": 19714,
+        "lower": 16166,
+        "upper": 23262,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-28",
+        "predicted": 19095,
+        "lower": 15658,
+        "upper": 22532,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-29",
+        "predicted": 16927,
+        "lower": 13881,
+        "upper": 19973,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-30",
+        "predicted": 18527,
+        "lower": 15193,
+        "upper": 21861,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-10-31",
+        "predicted": 32185,
+        "lower": 26392,
+        "upper": 37978,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-01",
+        "predicted": 25344,
+        "lower": 20783,
+        "upper": 29905,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-02",
+        "predicted": 16738,
+        "lower": 13726,
+        "upper": 19750,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-03",
+        "predicted": 17082,
+        "lower": 14008,
+        "upper": 20156,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-04",
+        "predicted": 16196,
+        "lower": 13281,
+        "upper": 19111,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-05",
+        "predicted": 16395,
+        "lower": 13444,
+        "upper": 19346,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-06",
+        "predicted": 16838,
+        "lower": 13808,
+        "upper": 19868,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-07",
+        "predicted": 28598,
+        "lower": 23451,
+        "upper": 33745,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-08",
+        "predicted": 26681,
+        "lower": 21879,
+        "upper": 31483,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-09",
+        "predicted": 17925,
+        "lower": 14699,
+        "upper": 21151,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-10",
+        "predicted": 16676,
+        "lower": 13675,
+        "upper": 19677,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-11",
+        "predicted": 17108,
+        "lower": 14029,
+        "upper": 20187,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-12",
+        "predicted": 16553,
+        "lower": 13574,
+        "upper": 19532,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-13",
+        "predicted": 15364,
+        "lower": 12599,
+        "upper": 18129,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-14",
+        "predicted": 29126,
+        "lower": 23884,
+        "upper": 34368,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-15",
+        "predicted": 23250,
+        "lower": 19065,
+        "upper": 27435,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-16",
+        "predicted": 16394,
+        "lower": 13444,
+        "upper": 19344,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-17",
+        "predicted": 16014,
+        "lower": 13132,
+        "upper": 18896,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-18",
+        "predicted": 15105,
+        "lower": 12387,
+        "upper": 17823,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-19",
+        "predicted": 15670,
+        "lower": 12850,
+        "upper": 18490,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-20",
+        "predicted": 15244,
+        "lower": 12501,
+        "upper": 17987,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-21",
+        "predicted": 28928,
+        "lower": 23721,
+        "upper": 34135,
+        "expected_alert_level": "주의",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-22",
+        "predicted": 22348,
+        "lower": 18326,
+        "upper": 26370,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-23",
+        "predicted": 15632,
+        "lower": 12819,
+        "upper": 18445,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-24",
+        "predicted": 14514,
+        "lower": 11902,
+        "upper": 17126,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-25",
+        "predicted": 15687,
+        "lower": 12864,
+        "upper": 18510,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-26",
+        "predicted": 14776,
+        "lower": 12117,
+        "upper": 17435,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-27",
+        "predicted": 14470,
+        "lower": 11866,
+        "upper": 17074,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-28",
+        "predicted": 24330,
+        "lower": 19951,
+        "upper": 28709,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-29",
+        "predicted": 19974,
+        "lower": 16379,
+        "upper": 23569,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-11-30",
+        "predicted": 13343,
+        "lower": 10942,
+        "upper": 15744,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-01",
+        "predicted": 14754,
+        "lower": 12099,
+        "upper": 17409,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-02",
+        "predicted": 13644,
+        "lower": 11189,
+        "upper": 16099,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-03",
+        "predicted": 13447,
+        "lower": 11027,
+        "upper": 15867,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-04",
+        "predicted": 13652,
+        "lower": 11195,
+        "upper": 16109,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-05",
+        "predicted": 23855,
+        "lower": 19562,
+        "upper": 28148,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-06",
+        "predicted": 21292,
+        "lower": 17460,
+        "upper": 25124,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-07",
+        "predicted": 12340,
+        "lower": 10119,
+        "upper": 14561,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-08",
+        "predicted": 13733,
+        "lower": 11262,
+        "upper": 16204,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-09",
+        "predicted": 12509,
+        "lower": 10258,
+        "upper": 14760,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-10",
+        "predicted": 12728,
+        "lower": 10437,
+        "upper": 15019,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      },
+      {
+        "date": "2026-12-11",
+        "predicted": 13504,
+        "lower": 11074,
+        "upper": 15934,
+        "expected_alert_level": "관심",
+        "is_holiday": false
+      }
+    ],
+    "weekday_concentration": [
+      {
+        "weekday": "월",
+        "ratio": 0.1224
+      },
+      {
+        "weekday": "화",
+        "ratio": 0.1225
+      },
+      {
+        "weekday": "수",
+        "ratio": 0.1223
+      },
+      {
+        "weekday": "목",
+        "ratio": 0.1192
+      },
+      {
+        "weekday": "금",
+        "ratio": 0.1199
+      },
+      {
+        "weekday": "토",
+        "ratio": 0.2035
+      },
+      {
+        "weekday": "일",
+        "ratio": 0.1902
+      }
+    ],
+    "peak_days": [
+      {
+        "date": "2026-09-19",
+        "predicted": 42957,
+        "expected_alert_level": "경계",
+        "reason": "주말 + 성수기 잔여 수요가 겹치는 날"
+      },
+      {
+        "date": "2026-10-03",
+        "predicted": 42485,
+        "expected_alert_level": "경계",
+        "reason": "주말 + 성수기 잔여 수요가 겹치는 날"
+      },
+      {
+        "date": "2026-09-26",
+        "predicted": 41320,
+        "expected_alert_level": "경계",
+        "reason": "주말 + 성수기 잔여 수요가 겹치는 날"
+      },
+      {
+        "date": "2026-09-20",
+        "predicted": 37184,
+        "expected_alert_level": "경계",
+        "reason": "주말 + 성수기 잔여 수요가 겹치는 날"
+      },
+      {
+        "date": "2026-10-10",
+        "predicted": 35408,
+        "expected_alert_level": "경계",
+        "reason": "주말 + 성수기 잔여 수요가 겹치는 날"
+      }
+    ]
+  }
+}

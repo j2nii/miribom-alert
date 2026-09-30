@@ -1,0 +1,130 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/checklist.schema.json",
+  "title": "checklist — 매칭된 매뉴얼 체크리스트 (에이전트③)",
+  "description": "현재 상황에 해당하는 매뉴얼 조치만 골라온 결과. 모든 항목은 manual_ref를 갖는다 = AI가 조치를 창작하지 않는다.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "matched_for", "items"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "matched_for": {
+          "type": "object",
+          "description": "어떤 조건으로 걸러왔는가. 화면에 그대로 보여 매칭 과정을 드러낸다.",
+          "required": ["alert_level", "spatial_type"],
+          "properties": {
+            "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+            "congestion_level": { "$ref": "_envelope.schema.json#/definitions/congestion_level" },
+            "spatial_type": { "$ref": "_envelope.schema.json#/definitions/spatial_type" },
+            "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
+            "profile_tags": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "rank", "phase", "action", "manual_ref"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^CL-\\d{3}$" },
+              "rank": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "표시 우선순위. 정렬 기준은 ⓪상태(발동>대기, D-07) ①우선순위(최우선>높음>보통) ②시점(사전→오전→운영중→비상→마감) ③관련도(핵심>관련>일반, D-08) ④id. 매칭된 항목은 자르지 않고 전부 담으며, 화면 표시 개수는 프론트가 정한다(권장: 시점별 상위 5건 + 더보기). 설계 근거는 docs/설계결정.md D-03·D-07·D-08 참조."
+              },
+              "phase": {
+                "type": "string",
+                "enum": ["사전(예보 대응)", "오전(준비)", "운영 중(모니터링)", "비상 대응", "마감(평가)"],
+                "description": "'사전(예보 대응)'은 며칠 앞서 준비하는 조치(매뉴얼 p.20 시나리오 ①②, p.13 유형별 관리, D-07). 나머지 4개는 매뉴얼 p.50 일일 운영 실무 가이드의 하루 일과 시점."
+              },
+              "status": {
+                "type": "string",
+                "enum": ["발동", "대기"],
+                "description": "D-07. '대기'는 경보 단계·공간 유형은 맞지만 현재 혼잡도가 항목 조건에 미달한 현장 조치 — 조건 도달 시 즉시 실행할 목록이다. 없으면 '발동'으로 간주."
+              },
+              "standby_condition": {
+                "type": "string",
+                "description": "status가 '대기'일 때 발동 조건. 예: '혼잡도 4단계 이상 관측 시'"
+              },
+              "relevance": {
+                "type": "string",
+                "enum": ["핵심", "관련", "일반"],
+                "description": "에이전트③ LLM이 판정한 현재 상황과의 관련도(D-08). 핵심=판정된 상황 유형·부하 위치에 직접 대응, 관련=간접 지원, 일반=상황 무관 공통 절차. 관련도가 낮아도 제외하지 않는다."
+              },
+              "situation_type": {
+                "type": "array",
+                "description": "이 조치가 매뉴얼에서 속한 상황 유형(p.39). 비어 있으면 상황 유형 무관.",
+                "items": { "$ref": "_envelope.schema.json#/definitions/situation_type" }
+              },
+              "action": { "type": "string", "minLength": 5, "description": "조치 내용" },
+              "owner": { "type": "string", "description": "담당 주체. 매뉴얼 p.7~8 추진 주체 구분을 따른다." },
+              "priority": { "type": "string", "enum": ["최우선", "높음", "보통"] },
+              "alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+              "spatial_type": {
+                "type": "array",
+                "description": "이 조치가 해당하는 공간 유형. 비어 있으면 전 유형 공통.",
+                "items": { "$ref": "_envelope.schema.json#/definitions/spatial_type" }
+              },
+              "profile_tags": { "type": "array", "items": { "type": "string" } },
+              "manual_ref": { "$ref": "_envelope.schema.json#/definitions/manual_ref" },
+              "match_reason": {
+                "type": "string",
+                "description": "왜 이 항목이 선택되었는지 한 문장. 에이전트③이 생성."
+              }
+            }
+          }
+        },
+        "excluded_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "조건 불일치로 제외된 매뉴얼 항목 수. 전체 중 몇 개를 골랐는지 보여준다."
+        },
+        "assessment": {
+          "type": "object",
+          "description": "에이전트③ LLM의 상황 판정(D-08). 조치를 만들지 않고 판정만 담는다.",
+          "properties": {
+            "situation_types": {
+              "type": "array",
+              "description": "예상되는 혼잡 상황 유형과 근거. 해당 없으면 빈 배열.",
+              "items": {
+                "type": "object",
+                "required": ["type", "evidence"],
+                "properties": {
+                  "type": { "$ref": "_envelope.schema.json#/definitions/situation_type" },
+                  "evidence": { "type": "string", "minLength": 5 }
+                },
+                "additionalProperties": false
+              }
+            },
+            "out_of_scope": {
+              "type": "array",
+              "description": "신호에는 있으나 매뉴얼이 다루지 않는 이슈. 조치를 지어내지 않고 존재만 알린다 (예: 바가지 요금).",
+              "items": {
+                "type": "object",
+                "required": ["issue", "evidence"],
+                "properties": {
+                  "issue": { "type": "string" },
+                  "evidence": { "type": "string" }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "model": {
+          "type": "object",
+          "description": "판정에 사용한 LLM. 재현을 위해 백엔드·모델·프롬프트 버전을 남긴다.",
+          "required": ["name", "prompt_version"],
+          "properties": {
+            "name": { "type": "string" },
+            "provider": { "type": "string", "description": "anthropic / openai-compatible / replay" },
+            "prompt_version": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

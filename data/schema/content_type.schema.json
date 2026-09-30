@@ -1,0 +1,94 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/content_type.schema.json",
+  "title": "content_type — 콘텐츠 유형 분류 결과 (에이전트②)",
+  "description": "유튜브 등 콘텐츠가 만들어낸 수요의 성격. 매뉴얼의 공간 유형(spatial_type)과는 다른 축이며, 매칭에서는 보조 필터로만 쓴다.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "items", "summary"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "model": {
+          "type": "object",
+          "description": "분류에 사용한 LLM. 재현 가능하도록 모델명과 프롬프트 버전을 남긴다.",
+          "required": ["name", "prompt_version"],
+          "properties": {
+            "name": { "type": "string" },
+            "prompt_version": { "type": "string", "description": "agents/prompts/ 내 파일 버전" },
+            "temperature": { "type": "number" }
+          }
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["video_id", "title", "published_at", "content_type", "confidence", "evidence"],
+            "properties": {
+              "video_id": { "type": "string" },
+              "title": { "type": "string" },
+              "channel": { "type": "string" },
+              "published_at": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "view_count": { "type": "integer", "minimum": 0 },
+              "like_count": { "type": "integer", "minimum": 0 },
+              "comment_count": { "type": "integer", "minimum": 0 },
+              "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
+              "confidence": { "$ref": "_envelope.schema.json#/definitions/ratio" },
+              "evidence": {
+                "type": "string",
+                "minLength": 5,
+                "description": "분류 근거. 영상 내 실제 표현을 인용한다. 근거 없는 분류는 화면에 표시하지 않는다."
+              },
+              "poi_mentioned": {
+                "type": "array",
+                "description": "영상에서 언급된 지점. hotspots와 조인하는 키.",
+                "items": { "type": "string" }
+              },
+              "sentiment": { "type": "string", "enum": ["긍정", "중립", "부정"] },
+              "zone_signal": {
+                "type": "string",
+                "enum": ["핫존", "데드존"],
+                "description": "수요 쏠림/이탈 신호. 해당 없으면 필드를 넣지 않는다. '관광무관'으로 분류된 항목도 이 값은 가질 수 있다 — 집계에서 빠지는 것과 신호를 버리는 것은 다르다. 데드존은 문제가 아니라 분산 정책의 목적지 후보다. 설계 근거는 docs/설계결정.md D-02 참조."
+              }
+            }
+          }
+        },
+        "summary": {
+          "type": "array",
+          "description": "유형별 집계. 화면 상단 요약에 쓴다.",
+          "items": {
+            "type": "object",
+            "required": ["content_type", "count", "ratio"],
+            "properties": {
+              "content_type": { "$ref": "_envelope.schema.json#/definitions/content_type" },
+              "count": { "type": "integer", "minimum": 0 },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" },
+              "total_views": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "unclassified_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "신뢰도 미달 또는 관광무관으로 집계에서 제외한 건수. 숨기지 않고 표시한다."
+        },
+        "zone_signals": {
+          "type": "object",
+          "description": "핫존/데드존 신호 집계. 데드존 항목은 AREA 1에서 분산 후보지로, AREA 3에서 분산 유도 조치의 근거로 쓰인다.",
+          "properties": {
+            "핫존": { "type": "integer", "minimum": 0 },
+            "데드존": { "type": "integer", "minimum": 0 },
+            "데드존_지점": {
+              "type": "array",
+              "description": "데드존 신호가 지목한 지점명",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  }
+}

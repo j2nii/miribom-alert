@@ -1,0 +1,674 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-24T02:02:51+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-24",
+      "note": "검색어 여수 여행, 여수 가볼만한곳, 여수 맛집 / 최근 90일 업로드분 54건 중 2026-08-31 이전 업로드 33건 중 조회수 상위 33건 분류"
+    }
+  ],
+  "period": {
+    "start": "2026-06-26",
+    "end": "2026-08-31",
+    "granularity": "일"
+  },
+  "caveat": [
+    "영상은 signal_status 기준일(as_of=2026-08-31) 이전 업로드분만 포함했다 — 다른 실측 계약(signal_status/visitor_profile/hotspots)과 시점을 맞추기 위함이다. 이후 업로드된 21건은 제외했다.",
+    "수집된 영상 중 조회수 상위 50건만 분류했다(기준일 이전 33건 중). 소규모 채널·최근 업로드 콘텐츠는 과소 대표된다.",
+    "조회수는 수집 시점 기준이며 이후 계속 변동한다.",
+    "신뢰도 0.6 미만과 '관광무관'은 집계에서 제외했다. 제외 건수는 unclassified_count로 표시한다.",
+    "zone_signal은 집계 제외 항목에도 부여된다. 데드존이 지목한 지점은 분산 정책의 목적지 후보로 쓰인다.",
+    "분류는 제목·설명·태그 텍스트만으로 수행했으며 영상 내용을 시청해 검증하지 않았다."
+  ],
+  "data": {
+    "region": {
+      "code": "12130",
+      "name": "여수시"
+    },
+    "model": {
+      "name": "solar-pro3-260323",
+      "provider": "upstage",
+      "prompt_version": "agent2_content_type_v1.1"
+    },
+    "items": [
+      {
+        "video_id": "Oh0Vs26VmSQ",
+        "title": "전시부터 섬캠핑, 레저까지 #여수에서_만나요 #세계섬박람회",
+        "channel": "대한민국정부",
+        "published_at": "2026-08-31",
+        "view_count": 1650034,
+        "like_count": 2433,
+        "comment_count": 231,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.95,
+        "evidence": "제목에 '2026 여수세계섬박람회'가 명시되어 있고, 설명에 '9월 5일부터 61일간', '2026.9.5.~11.4. (61일간)' 등 구체적인 기간과 행사 내용이 포함되어 있음",
+        "poi_mentioned": [
+          "여수 돌산 진모지구",
+          "여수세계박람회장",
+          "개도·금오도"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "WOqmm-Oq4DI",
+        "title": "골목에 숨어있는 아저씨들도 줄서는 맛집",
+        "channel": "맛집한끼",
+        "published_at": "2026-07-14",
+        "view_count": 936538,
+        "like_count": 4463,
+        "comment_count": 187,
+        "content_type": "맛집형",
+        "confidence": 0.92,
+        "evidence": "제목에 '골목에 숨어있는 아저씨들도 줄서는 맛집'이 포함되어 있고, 설명에 '시전돌곱창', '돼지곱창전골', '모듬수육' 등 구체적인 메뉴와 점포명이 언급됨",
+        "poi_mentioned": [
+          "시전돌곱창"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "fXMA_okncyA",
+        "title": "여수 밤바다보다 아름다운 외국인 근황‼️#여수#여수밤바다#여수여행#외국인관광",
+        "channel": "코리아핫",
+        "published_at": "2026-08-20",
+        "view_count": 926061,
+        "like_count": 7059,
+        "comment_count": 1542,
+        "content_type": "관광무관",
+        "confidence": 0.65,
+        "evidence": "제목에 '여수 밤바다보다 아름다운 외국인 근황'이 포함되어 있으나, 실제 내용은 특정 외국인의 개인 채널 홍보로 지역 방문 수요와 무관함",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "iDpjKSNJFDA",
+        "title": "여수는 대체 어떤 곳일까... #이은지 #여수 #shorts",
+        "channel": "이은지",
+        "published_at": "2026-07-24",
+        "view_count": 604403,
+        "like_count": 12549,
+        "comment_count": 166,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.88,
+        "evidence": "제목에 '#이은지 #여수 #shorts'가 포함되어 있고, 채널명이 '이은지'로 특정 인물(방송인)의 방문 콘텐츠임을 나타냄",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "J2Md7IhGc9c",
+        "title": "테토커플과 에겐커플의 1박2일 여수여행",
+        "channel": "예보링 ",
+        "published_at": "2026-06-26",
+        "view_count": 406774,
+        "like_count": 3592,
+        "comment_count": 262,
+        "content_type": "코스·일정형",
+        "confidence": 0.9,
+        "evidence": "제목에 '1박2일 여수여행'이 포함되어 있고, 설명에 '명동게장', '낭만포차', '풀빌라' 등 일정별 방문 장소가 시간 순서대로 나열되어 있음",
+        "poi_mentioned": [
+          "명동게장",
+          "낭만포차",
+          "풀빌라"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "_s_4zsbteOA",
+        "title": "퀸가비에 이어 여수까지 잡도리하는 패리스 은지튼튼",
+        "channel": "이은지",
+        "published_at": "2026-07-23",
+        "view_count": 357144,
+        "like_count": 3647,
+        "comment_count": 283,
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.93,
+        "evidence": "채널명이 '이은지'이고, 제목에 '#이은지'가 포함되어 있으며, '패리스 은지튼튼'이라는 특정 인물(방송인)의 방문 콘텐츠임",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "K-Q5nEp3hN0",
+        "title": "화끈했던 구썸녀들과의 1박 2일 마지막 밤",
+        "channel": "채널주인 부재중",
+        "published_at": "2026-08-27",
+        "view_count": 301976,
+        "like_count": 1205,
+        "comment_count": 44,
+        "content_type": "코스·일정형",
+        "confidence": 0.91,
+        "evidence": "제목에 '1박 2일 여수 여행'이 포함되어 있고, 설명에 '여수유탑', '인피니티풀', '요트', '아쿠아플라넷' 등 일정별 방문 장소가 시간 순서대로 나열되어 있음",
+        "poi_mentioned": [
+          "여수유탑"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "aCpPgnWN7lA",
+        "title": "“이런 오돌뼈 처음 먹어봐!” 박세리가 극찬한 여수 필수코스 맛집! | 여수 오대생갈비, 생오돌뼈, 여수밤바다",
+        "channel": "박세리의 속사정",
+        "published_at": "2026-08-14",
+        "view_count": 295906,
+        "like_count": 5511,
+        "comment_count": 262,
+        "content_type": "맛집형",
+        "confidence": 0.94,
+        "evidence": "제목에 '박세리가 극찬한 여수 필수코스 맛집'이 포함되어 있고, 설명에 '오대생갈비', '생오돌뼈', '여수밤바다' 등 구체적인 메뉴와 점포명이 언급됨",
+        "poi_mentioned": [
+          "오대생갈비",
+          "생오돌뼈"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "uwUkQSH-HQw",
+        "title": "3명의 구 썸녀들과 떠나는 1박 2일 여수 여행",
+        "channel": "채널주인 부재중",
+        "published_at": "2026-08-25",
+        "view_count": 224092,
+        "like_count": 1584,
+        "comment_count": 50,
+        "content_type": "코스·일정형",
+        "confidence": 0.89,
+        "evidence": "제목에 '1박 2일 여수 여행'이 포함되어 있고, 설명에 'KTX 여수엑스포역', '꽃돌게장1번가', '유탑 마리나 호텔&리조트', '여수해상케이블카' 등 일정별 방문 장소가 시간 순서대로 나열되어 있음",
+        "poi_mentioned": [
+          "꽃돌게장1번가",
+          "유탑 마리나 호텔&리조트",
+          "여수해상케이블카"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "ryPAVmMiBpw",
+        "title": "혼자 여수여행 가면 생기는 일 #shorts",
+        "channel": "이키ikki",
+        "published_at": "2026-08-06",
+        "view_count": 182606,
+        "like_count": 1564,
+        "comment_count": 32,
+        "content_type": "코스·일정형",
+        "confidence": 0.9,
+        "evidence": "제목에 '1박 2일 여수 여행'이 포함되어 있고, 설명에 'KTX 여수엑스포역', '꽃돌게장1번가', '유탑 마리나 호텔&리조트', '낮일', '탐하다', '여수해상케이블카' 등 일정별 방문 장소가 시간 순서대로 나열되어 있음",
+        "poi_mentioned": [
+          "꽃돌게장1번가",
+          "유탑 마리나 호텔&리조트",
+          "여수해상케이블카"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "hf8bTFS02A0",
+        "title": "아재들의 여수 여행 맛집 투어ㅋㅋㅋ",
+        "channel": "대구형제_대구맛집",
+        "published_at": "2026-08-01",
+        "view_count": 181656,
+        "like_count": 1093,
+        "comment_count": 36,
+        "content_type": "맛집형",
+        "confidence": 0.91,
+        "evidence": "제목에 '여수 여행 맛집 투어'가 포함되어 있고, 설명에 '여수 찐 맛집', '여수 현지인 추천' 등 구체적인 점포 정보가 포함됨",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "dIfMJ09BgkY",
+        "title": "여수언니가 말아주는 여수 풀코스⭐️이대로만 따라오면 실패없는 여수여행🚗불꽃놀이+여수맛집 먹방❤️엄마매점+바다김밥+꽃돌게장+노랑고래+폭탄과일빙수+백반한상+미남크루즈❤️MUKBANG",
+        "channel": "여수언니 정혜영 [Yeosu Unnie]",
+        "published_at": "2026-08-20",
+        "view_count": 165283,
+        "like_count": 1656,
+        "comment_count": 155,
+        "content_type": "코스·일정형",
+        "confidence": 0.92,
+        "evidence": "제목에 '여수 풀코스'가 포함되어 있고, 설명에 '엄마매점', '바다김밥', '꽃돌게장', '노랑고래', '폭탄과일빙수', '백반한상', '미남크루즈' 등 일정별 방문 장소가 시간 순서대로 나열되어 있음",
+        "poi_mentioned": [
+          "엄마매점",
+          "바다김밥",
+          "꽃돌게장",
+          "노랑고래",
+          "폭탄과일빙수",
+          "백반한상",
+          "미남크루즈"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "OQJ14m4Xogg",
+        "title": "여수 토박이와 함께 다니는 진짜 현지인 맛집 여행",
+        "channel": "양자야 yangja",
+        "published_at": "2026-07-21",
+        "view_count": 161891,
+        "like_count": 2892,
+        "comment_count": 440,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '여수 현지인 맛집 여행'이 포함되어 있고, 설명에 '썸원호텔', '교동포차 사랑도19번 포차' 등 구체적인 점포명이 언급됨",
+        "poi_mentioned": [
+          "썸원호텔",
+          "교동포차 사랑도19번 포차"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "RLXVsm2WVI8",
+        "title": "여수 사람들이 낭만포차 말고 가는 포장마차",
+        "channel": "맛집한끼",
+        "published_at": "2026-08-03",
+        "view_count": 156736,
+        "like_count": 584,
+        "comment_count": 130,
+        "content_type": "맛집형",
+        "confidence": 0.94,
+        "evidence": "제목에 '여수 포장마차'가 포함되어 있고, 설명에 '교동포차 사랑도19번', '매운갈비찜', '산꼼장어볶음' 등 구체적인 메뉴와 점포명이 언급됨",
+        "poi_mentioned": [
+          "교동포차 사랑도19번"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "vy_2ANaR2UQ",
+        "title": "역대급 반전이라는 여수 근황?",
+        "channel": "전남광주통합특별시 (구.전남)",
+        "published_at": "2026-08-25",
+        "view_count": 149325,
+        "like_count": 818,
+        "comment_count": 1091,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.95,
+        "evidence": "제목에 '여수세계섬박람회'가 포함되어 있고, 설명에 '#여수세계섬박람회', '2026 여수세계섬박람회' 등 구체적인 행사 내용이 포함됨",
+        "poi_mentioned": [
+          "여수세계섬박람회"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "AdX4afT7x60",
+        "title": "여수 사람의 여수 펜션 여행 추천 ㅎㅋ",
+        "channel": "지멋",
+        "published_at": "2026-07-04",
+        "view_count": 110026,
+        "like_count": 2481,
+        "comment_count": 35,
+        "content_type": "코스·일정형",
+        "confidence": 0.88,
+        "evidence": "제목에 '여수 펜션 여행'이 포함되어 있고, 설명에 '여수 맛집', '여수 펜션' 등 일정별 방문 장소가 시간 순서대로 나열되어 있음",
+        "poi_mentioned": [
+          "여수펜션"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "SKRpylM6dPE",
+        "title": "테라스 문 열면 워터파크? 무제한 풀캉스 쌔삥 리조트",
+        "channel": "돈캣 PL․EX",
+        "published_at": "2026-06-26",
+        "view_count": 107635,
+        "like_count": 1194,
+        "comment_count": 173,
+        "content_type": "자연경관형",
+        "confidence": 0.9,
+        "evidence": "제목에 '라테라스 리조트', '오션뷰 인피니티풀'이 포함되어 있고, 설명에 '여수', '여수 호텔', '여수 여행' 등 자연 경관 중심의 리조트 소개",
+        "poi_mentioned": [
+          "라테라스 리조트"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "g6CfUtVECwk",
+        "title": "\"여수 밤바다보다 무서운 게 이 손맛이랑께\" 먹으러 가는 여수. 왜 여기는 맛있는 음식이 이렇게 가득할까? 해산물 가득 백반에 노포까지 싹 돌아봤더니｜고향민국｜#골라듄다큐",
+        "channel": "EBSDocumentary (EBS 다큐)",
+        "published_at": "2026-07-24",
+        "view_count": 92080,
+        "like_count": 404,
+        "comment_count": 41,
+        "content_type": "맛집형",
+        "confidence": 0.92,
+        "evidence": "제목에 '여수', '해산물 가득 백반', '노포'가 포함되어 있고, 설명에 '봉산동 돌게장 백반', '돌게빵', '새조개 샤브' 등 구체적인 메뉴와 점포명이 언급됨",
+        "poi_mentioned": [
+          "봉산동 돌게장 백반",
+          "돌게빵",
+          "새조개 샤브"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "rpnnJxAeT1A",
+        "title": "[Official Teaser] 2026 여수세계섬박람회",
+        "channel": "전남광주통합특별시 (구. 광주)",
+        "published_at": "2026-08-31",
+        "view_count": 57811,
+        "like_count": 12,
+        "comment_count": 0,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '4만원에 전복 무제한으로 주는 독채로 된 맛집'이 포함되어 있고, 설명에 '노을횟집', '노을이예쁜횟집', '전복요리' 등 구체적인 메뉴와 점포명이 언급됨",
+        "poi_mentioned": [
+          "노을횟집",
+          "노을이예쁜횟집"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "5rRj1jVhaTI",
+        "title": "4만원에 전복 무제한으로 주는 독채로 된 맛집",
+        "channel": "맛집한끼",
+        "published_at": "2026-07-23",
+        "view_count": 57468,
+        "like_count": 304,
+        "comment_count": 14,
+        "content_type": "맛집형",
+        "confidence": 0.95,
+        "evidence": "제목에 '전복 무제한으로 주는 독채로 된 맛집'이 포함되어 음식점 방문이 목적임을 명시하며, 설명에서 '여수맛집 노을횟집 노을이예쁜횟집'이라는 점포명이 구체적으로 언급되고 메뉴, 가격, 주차, 영업시간 등 식당 정보가 상세히 제공된다.",
+        "poi_mentioned": [
+          "노을횟집",
+          "노을이예쁜횟집"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "Co9JJgRR3JU",
+        "title": "[ 여 수 ] 찐 현지인 맛집 + ‘9만원대’ 바다뷰호텔🏬🌊  인도네시아 소품샵🛋️ & 해변카페 (feat.60만유투버)",
+        "channel": "루씨앤정",
+        "published_at": "2026-06-26",
+        "view_count": 56936,
+        "like_count": 725,
+        "comment_count": 111,
+        "content_type": "코스·일정형",
+        "confidence": 0.95,
+        "evidence": "제목에 '1박 2일' 또는 일정 단위가 명시되지 않았으나, 타임라인에 00:00 intro부터 19:06까지 숙소, 맛집, 카페, 쇼핑 등 여러 장소를 순차적으로 방문하는 흐름이 포함되어 있어 방문 계획 수립 목적의 코스형으로 판단",
+        "poi_mentioned": [
+          "신라스테이여수",
+          "종포에쏘",
+          "봄나리베이커리",
+          "바다김밥",
+          "라이프워크 메가스토어 여수",
+          "당머리첫집",
+          "여수꿀빵 사랑빵집",
+          "노랑고래",
+          "무슬소리",
+          "천사돌산갓김치",
+          "한꾼에88"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "VcuUsb0gAL4",
+        "title": "샤라웃 여수! 섬으로🏝️｜2026여수세계섬박람회",
+        "channel": "전남광주통합특별시 (구. 광주)",
+        "published_at": "2026-08-26",
+        "view_count": 56042,
+        "like_count": 9,
+        "comment_count": 9,
+        "content_type": "축제·이벤트형",
+        "confidence": 0.92,
+        "evidence": "제목에 '2026여수세계섬박람회'가 명시되어 있고, 설명에 '2026. 9. 5.(토) ~ 11. 4.(수)'라는 기간과 '돌산 진모지구, 여수세계박람회장, 개도·금오도 일원'이라는 장소가 구체적으로 언급되어 있어 특정 기간에 열리는 행사 안내 콘텐츠",
+        "poi_mentioned": [
+          "돌산 진모지구",
+          "여수세계박람회장",
+          "개도",
+          "금오도"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "KWzxPDCPM8I",
+        "title": "성수 최애 도시 여수 여행♥️ 돌문어부터 회무침까지 여수 14첩 반상 먹방 찍는 성수♥소윤 #신랑수업2",
+        "channel": "채널아하: 채널A Health & Asset",
+        "published_at": "2026-08-24",
+        "view_count": 52869,
+        "like_count": 360,
+        "comment_count": 91,
+        "content_type": "맛집형",
+        "confidence": 0.94,
+        "evidence": "제목에 '돌문어부터 회무침까지 여수 14첩 반상 먹방'이 포함되어 있고, 설명에 '신랑수업2' 예능 프로그램명이 언급되었으나, 콘텐츠의 핵심은 특정 음식(돌문어, 회무침 등)을 먹는 먹방이며, 장소보다는 음식 소개가 중심",
+        "poi_mentioned": [
+          "돌문어",
+          "회무침"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "I_h9mRKK5TE",
+        "title": "여수는 이제 삼합구이 말고 오합구이 #늘푸른섬바다 해산물 여수바다 오합구이 숨은 맛집이며#여수맛집 #여수여행 #여수낭만포차 #여수삼합",
+        "channel": "전국맛집 이장",
+        "published_at": "2026-07-29",
+        "view_count": 52490,
+        "like_count": 724,
+        "comment_count": 7,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '#여수맛집', '#여수삼합'이 포함되어 있고, '오합구이'라는 특정 해산물 요리(돌문어, 해산물 등)를 소개하는 내용으로 음식점 방문이 목적",
+        "poi_mentioned": [
+          "오합구이"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "Ktl62YSu8OI",
+        "title": "여수 꽃게장 찐맛집 현지 어머님 간장게장 #늘푸른식당 아이부터 어르신까지 사로잡는 마성의 맛!#여수맛집 #여수게장맛집 #여수게장 #여수여행",
+        "channel": "전국맛집 이장",
+        "published_at": "2026-07-29",
+        "view_count": 51702,
+        "like_count": 557,
+        "comment_count": 3,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '#여수게장맛집', '#여수게장'이 포함되어 있고, '간장게장'을 소개하는 내용으로 특정 음식점 방문이 목적",
+        "poi_mentioned": [
+          "간장게장"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "YaKvx8jDXXA",
+        "title": "여수 현지 노포 도가니탕 #명품한우한마리설렁탕  현지인 단골맛집의 산더미 한우 수육까지#여수맛집 #여서동맛집 #여수보양식 #여수여행",
+        "channel": "전국맛집 이장",
+        "published_at": "2026-07-30",
+        "view_count": 49832,
+        "like_count": 407,
+        "comment_count": 8,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '#여수보양식', '#여수여행'이 포함되어 있고, '도가니탕'과 '한우 수육'을 소개하는 내용으로 특정 음식점 방문이 목적",
+        "poi_mentioned": [
+          "도가니탕",
+          "한우 수육"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "BKcRjCgJJ60",
+        "title": "일상 먹방 브이로그:) 화학적 유산😭 후 힐링 여행 여수&전주 다녀왔어요~😆 몸보신 삼계탕, 간장게장🦀, 돌문어삼합, 갓참치김밥, 육전등등 먹방 mukbang v-log",
+        "channel": "용용먹방 YongYong",
+        "published_at": "2026-08-09",
+        "view_count": 48941,
+        "like_count": 1543,
+        "comment_count": 145,
+        "content_type": "맛집형",
+        "confidence": 0.92,
+        "evidence": "제목에 '몸보신 삼계탕, 간장게장, 돌문어삼합, 갓참치김밥, 육전' 등 여러 음식을 나열하고 있으며, '여수&전주 여행' 중 여수에서 먹은 음식들을 소개하는 내용으로 음식점 방문이 목적",
+        "poi_mentioned": [
+          "삼계탕",
+          "간장게장",
+          "돌문어삼합",
+          "갓참치김밥",
+          "육전"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "FyuWMImPTeA",
+        "title": "여수 산더미 한우수육 우설맛집 #명품한우한마리설렁탕 현지인 단골맛집의 산더미 한우 수육까지#여수맛집 #여서동맛집 #여수보양식 #여수여행",
+        "channel": "전국맛집 이장",
+        "published_at": "2026-08-01",
+        "view_count": 47647,
+        "like_count": 275,
+        "comment_count": 8,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '#여수맛집', '#여수보양식'이 포함되어 있고, '산더미 한우수육'을 소개하는 내용으로 특정 음식점 방문이 목적",
+        "poi_mentioned": [
+          "한우수육"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "bHlgxm79NnM",
+        "title": "would you wait 2 hours for 김밥 (kimbap)?!! #yeosu #맛집 #koreatravel #여수맛집 #koreanfood",
+        "channel": "serena",
+        "published_at": "2026-07-11",
+        "view_count": 43763,
+        "like_count": 1739,
+        "comment_count": 6,
+        "content_type": "맛집형",
+        "confidence": 0.92,
+        "evidence": "제목에 '#여수맛집', '#koreatravel'이 포함되어 있고, '김밥'을 먹는 내용으로 특정 음식점 방문이 목적",
+        "poi_mentioned": [
+          "김밥"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "jrRTv4CHj8A",
+        "title": "여수 산더미 한우 우설 몰래 먹이기 #명품한우한마리설렁탕 현지인 단골맛집의 산더미 한우 수육까지#여수맛집 #여서동맛집 #여수보양식 #여수여행",
+        "channel": "전국맛집 이장",
+        "published_at": "2026-07-31",
+        "view_count": 39397,
+        "like_count": 217,
+        "comment_count": 7,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '#여수맛집', '#여수보양식'이 포함되어 있고, '한우 우설'을 소개하는 내용으로 특정 음식점 방문이 목적",
+        "poi_mentioned": [
+          "한우 우설"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "Oo7sfslSims",
+        "title": "여수 유해란 골프선수 단골 주문 게장집 #늘푸른식당 아이부터 어르신까지 사로잡는 마성의 맛!#여수맛집 #여수게장맛집 #여수게장 #여수여행",
+        "channel": "전국맛집 이장",
+        "published_at": "2026-08-01",
+        "view_count": 31663,
+        "like_count": 673,
+        "comment_count": 1,
+        "content_type": "맛집형",
+        "confidence": 0.93,
+        "evidence": "제목에 '#여수게장맛집', '#여수게장'이 포함되어 있고, '유해란 골프선수 단골 주문 게장집'을 소개하는 내용으로 특정 음식점 방문이 목적",
+        "poi_mentioned": [
+          "게장"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "fNAkwKpPZfM",
+        "title": "😮세윤의 단골 맛집!! 의도치 않은 사전 답사?!😮 아귀 요리 전문점 | 여수 밥 바다 특집【맛있는 녀석들】 570회",
+        "channel": "맛있는 녀석들 (Tasty Guys)",
+        "published_at": "2026-07-03",
+        "view_count": 26159,
+        "like_count": 200,
+        "comment_count": 13,
+        "content_type": "맛집형",
+        "confidence": 0.94,
+        "evidence": "제목에 '아귀 요리 전문점'이 포함되어 있고, '여수 밥 바다 특집'으로 특정 음식(아귀)을 먹는 내용이 중심이며, '맛있는 녀석들' 예능 프로그램명이 언급되었으나 콘텐츠 자체는 맛집 소개",
+        "poi_mentioned": [
+          "아귀 요리"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      },
+      {
+        "video_id": "_4t_z_jBreQ",
+        "title": "오션뷰 객실 20% + 낭만포차 10%할인까지 받을 수 있는 여수더호텔수 파파트래블 패키지",
+        "channel": "파파트래블(PAPATRAVEL)",
+        "published_at": "2026-07-16",
+        "view_count": 19430,
+        "like_count": 325,
+        "comment_count": 180,
+        "content_type": "코스·일정형",
+        "confidence": 0.95,
+        "evidence": "제목에 '여수더호텔수 파파트래블 패키지'가 포함되어 있고, 설명에 '00:00 인트로'부터 '11:08'까지 호텔 객실, 루프탑 수영장, 낭만포차, 조식 등 여러 시설을 순차적으로 소개하는 타임라인이 포함되어 있어 방문 계획 수립 목적의 코스형으로 판단",
+        "poi_mentioned": [
+          "더호텔수",
+          "8F 낭만포차 야해(夜海)",
+          "디럭스 트윈 오션 객실",
+          "루프탑 수영장",
+          "조식"
+        ],
+        "sentiment": "긍정",
+        "zone_signal": "핫존"
+      }
+    ],
+    "summary": [
+      {
+        "content_type": "맛집형",
+        "count": 18,
+        "ratio": 0.5625,
+        "total_views": 2384549
+      },
+      {
+        "content_type": "축제·이벤트형",
+        "count": 3,
+        "ratio": 0.0938,
+        "total_views": 1855401
+      },
+      {
+        "content_type": "코스·일정형",
+        "count": 8,
+        "ratio": 0.25,
+        "total_views": 1467123
+      },
+      {
+        "content_type": "예능·방송 노출형",
+        "count": 2,
+        "ratio": 0.0625,
+        "total_views": 961547
+      },
+      {
+        "content_type": "자연경관형",
+        "count": 1,
+        "ratio": 0.0312,
+        "total_views": 107635
+      }
+    ],
+    "unclassified_count": 1,
+    "zone_signals": {
+      "핫존": 28,
+      "데드존": 5,
+      "데드존_지점": [
+        "여수펜션"
+      ]
+    }
+  }
+}

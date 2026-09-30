@@ -1,0 +1,216 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:41:21+09:00",
+  "source": [
+    {
+      "name": "한국관광 데이터랩 방문자 프로파일 원자료 (성연령/거리/거주지/소비/동반유형)",
+      "provider": "한국관광공사 — 팀 DB datalab_detail_row",
+      "retrieved_at": "2026-09-23",
+      "url": "https://datalab.visitkorea.or.kr/"
+    },
+    {
+      "name": "한국관광 데이터랩 월별 패널 (총 방문자수)",
+      "provider": "한국관광공사 — 팀 DB datalab_monthly_panel",
+      "retrieved_at": "2026-09-23"
+    }
+  ],
+  "period": {
+    "start": "2025-07-01",
+    "end": "2026-08-01",
+    "granularity": "월"
+  },
+  "caveat": [
+    "성연령/거리/거주지/동반유형은 한국관광 데이터랩 원자료의 최신 수집 구간(2025-07~2026-08)만 썼다. 같은 항목이 여러 시점에 재수집돼 있어 구간을 섞지 않았다.",
+    "거리 구간은 데이터랩 6구간(30/70/140/190/240km 경계)을 스키마 4구간(50/100/200km 경계)으로 재매핑했다. 경계가 걸치는 구간은 폭 비례로 나눴다(구간 내 균등분포 가정) — 근사치다.",
+    "0~9세 방문자는 스키마 연령대에 대응 밴드가 없어 gender_age에서 제외했다(비율 합이 100%에 못 미칠 수 있다).",
+    "spending은 관광소비_내국인 데이터에 금액(원) 필드가 없어 관광소비_외국인(업종중분류 소비액) 기준으로 만들었다 — 외국인 방문객의 소비 구조이며 전체 방문객(내국인 다수)의 소비 구조와 다를 수 있다.",
+    "동반유형은 데이터랩 원 분류(기타가족/배우자/부모님/자녀/싱글/친구/연인/학생/회사동료)를 스키마 4분류로 합쳐 집계했다(예: 학생·회사동료 → 단체).",
+    "local_external_mix(현지인/외지인)는 이 DB의 소비 비중 필드가 스키마 정의와 정확히 일치하는지 확인되지 않아 비웠다.",
+    "total_visitors는 datalab_monthly_panel 최신월(2026-08) 방문자수다(judge_signal_status.py와 동일 소스)."
+  ],
+  "data": {
+    "region": {
+      "code": "51210",
+      "name": "속초시"
+    },
+    "total_visitors": 3285426,
+    "gender_age": [
+      {
+        "gender": "남",
+        "age_band": "10대",
+        "ratio": 0.03
+      },
+      {
+        "gender": "남",
+        "age_band": "20대",
+        "ratio": 0.075
+      },
+      {
+        "gender": "남",
+        "age_band": "30대",
+        "ratio": 0.099
+      },
+      {
+        "gender": "남",
+        "age_band": "40대",
+        "ratio": 0.097
+      },
+      {
+        "gender": "남",
+        "age_band": "50대",
+        "ratio": 0.096
+      },
+      {
+        "gender": "남",
+        "age_band": "60대이상",
+        "ratio": 0.116
+      },
+      {
+        "gender": "여",
+        "age_band": "10대",
+        "ratio": 0.029
+      },
+      {
+        "gender": "여",
+        "age_band": "20대",
+        "ratio": 0.07
+      },
+      {
+        "gender": "여",
+        "age_band": "30대",
+        "ratio": 0.094
+      },
+      {
+        "gender": "여",
+        "age_band": "40대",
+        "ratio": 0.083
+      },
+      {
+        "gender": "여",
+        "age_band": "50대",
+        "ratio": 0.09
+      },
+      {
+        "gender": "여",
+        "age_band": "60대이상",
+        "ratio": 0.108
+      }
+    ],
+    "residence": [
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "용인시 기흥구"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "부천시 원미구"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "화성시 병점구"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "의정부시"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "화성시 만세구"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "성남시 중원구"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "화성시 효행구"
+      },
+      {
+        "sido": "경기도",
+        "ratio": 0.322,
+        "sigungu": "수원시 팔달구"
+      }
+    ],
+    "distance": [
+      {
+        "band": "50km 미만",
+        "ratio": 0.163
+      },
+      {
+        "band": "50~100km",
+        "ratio": 0.0591
+      },
+      {
+        "band": "100~200km",
+        "ratio": 0.5832
+      },
+      {
+        "band": "200km 이상",
+        "ratio": 0.1947
+      }
+    ],
+    "spending": [
+      {
+        "category": "식음료업",
+        "amount_krw": 5755767000,
+        "ratio": 0.4486
+      },
+      {
+        "category": "쇼핑업",
+        "amount_krw": 3295961000,
+        "ratio": 0.2569
+      },
+      {
+        "category": "숙박업",
+        "amount_krw": 2960040000,
+        "ratio": 0.2307
+      },
+      {
+        "category": "의료웰니스업",
+        "amount_krw": 363094000,
+        "ratio": 0.0283
+      },
+      {
+        "category": "여가서비스업",
+        "amount_krw": 229043000,
+        "ratio": 0.0179
+      },
+      {
+        "category": "운송업",
+        "amount_krw": 222499000,
+        "ratio": 0.0173
+      },
+      {
+        "category": "여행업",
+        "amount_krw": 2815000,
+        "ratio": 0.0002
+      }
+    ],
+    "companion": [
+      {
+        "type": "가족",
+        "ratio": 0.6023
+      },
+      {
+        "type": "친구·연인",
+        "ratio": 0.2289
+      },
+      {
+        "type": "단체",
+        "ratio": 0.1087
+      },
+      {
+        "type": "나홀로",
+        "ratio": 0.0601
+      }
+    ],
+    "profile_tags": []
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "prompt_version": "agent2_content_type_v1.1",
+  "provider": "upstage",
+  "model": "solar-pro3-260323",
+  "user": "{\n \"region\": \"인제군\",\n \"videos\": [\n  {\n   \"video_id\": \"VpCtHHQ8l88\",\n   \"title\": \"인제 홍보\",\n   \"channel\": \"김선태\",\n   \"published_at\": \"2026-08-21\",\n   \"description\": \"*이번 영상은 인제군의 유료광고를 포함하고 있습니다\\n\\n🎁 인제군 고향사랑기부 특별 이벤트 2가지!\\n\\n이벤트 ① 이름이 ‘인제’인 분을 찾습니다!(8/31까지)\\n대상 : 이름이 '인제'이면서 인제군에 10만 원 이상 고향사랑기부하신 분 (선착순)\\n혜택 : 세액공제 + 답례품 + 추가증정 답례품(인제 굿즈 5종+오미자에이드)\\n🔗이벤트 자세히 보기 :\\nhttps://www.ilovegohyang.go.kr/items/details-main.html?code=G2002041840\\n\\n이벤트 ② 인제군 지정기부 응원 이벤트\\n대상 : 인제군 지정기부 사업에 10만 원 이상 고향사랑기부하신 분 (선착순)\\n혜택 : 세액공제 + 답례품 + 추가증정 답례품(하추샌드)\\n※ 사업별(4개 사업) 선착순 10명 (총 40명 한정)\\n🔗이벤트 자세히 보기 :\\n https://www.ilovegohyang.go.kr/items/details-main.html?code=G2002043426\\n\\n👉인제군 인기 답례품 구경하기 👇\\nhttps://www.ilovegohyang.go.kr/goods/searchGoods-main.html?type=L&locgov=51810\",\n   \"tags\": [\n    \"김선태\",\n    \"충주맨\",\n    \"홍보맨\",\n    \"충주\",\n    \"충주시\",\n    \"홍보\",\n    \"인제\",\n    \"내린천\",\n    \"관광\",\n    \"여행\",\n    \"공무원\",\n    \"군청\",\n    \"래프팅\",\n    \"인제군\"\n   ],\n   \"view_count\": 983677,\n   \"comment_count\": 2614\n  },\n  {\n   \"video_id\": \"MAmdxB88aR8\",\n   \"title\": \"먹으러 또 간 속초 9끼,,\",\n   \"channel\": \"연타니 yeontani\",\n   \"published_at\": \"2026-08-09\",\n   \"description\": \"\",\n   \"tags\": [],\n   \"view_count\": 606019,\n   \"comment_count\": 199\n  }\n ]\n}",
+  "response": {
+    "judgments": [
+      {
+        "video_id": "VpCtHHQ8l88",
+        "content_type": "예능·방송 노출형",
+        "confidence": 0.93,
+        "evidence": "제목이 '인제 홍보'로 지역 자체를 알리는 콘텐츠이며, 설명에서 '인제군 고향사랑기부 특별 이벤트'를 강조하고 있어 지역 방문 수요보다는 기부 유도 목적의 콘텐츠",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      },
+      {
+        "video_id": "MAmdxB88aR8",
+        "content_type": "관광무관",
+        "confidence": 0.45,
+        "evidence": "제목이 '먹으러 또 간 속초 9끼'로 인제군과 무관한 속초 지역 콘텐츠이며, 설명도 비어 있어 방문 수요와의 연관성이 없음",
+        "poi_mentioned": [],
+        "sentiment": "긍정",
+        "zone_signal": "데드존"
+      }
+    ]
+  }
+}

@@ -1,0 +1,147 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T16:47:11+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-29",
+      "note": "영월 여행, 영월 가볼만한곳, 영월 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."
+  ],
+  "data": {
+    "region": {
+      "code": "51750",
+      "name": "영월군"
+    },
+    "videos": [
+      {
+        "video_id": "HM8IqlqUoWc",
+        "title": "힐링이 필요해 🗯´ˎ˗ 초록초록 영월에서 보낸 2박 3일 VLOG 🍵🐢🥝 (feat.📸)",
+        "channel": "데이 DAY",
+        "published_at": "2026-09-27",
+        "view_count": 7989
+      },
+      {
+        "video_id": "_8g2GjJvb14",
+        "title": "헐!! 웨이팅만 2시간~?! #영월군 #맛집 #왕과사는남자 #박가네",
+        "channel": "자연의 소리TV",
+        "published_at": "2026-09-24",
+        "view_count": 3374
+      },
+      {
+        "video_id": "HfKffhbkNPo",
+        "title": "청령포를 갔더니 휴장!  #영월청령포 #청령포 #영월여행 #영월가볼만한곳 #강원도여행 #국내여행 #여행영상 #여행기록 #단종유배지 #청령포소나무숲 #영월관광 #힐링여행 #이게말돼",
+        "channel": "이게말돼",
+        "published_at": "2026-09-27",
+        "view_count": 1495
+      },
+      {
+        "video_id": "CkhgYLROgOI",
+        "title": "#강원도#영월#청령포#단종유배지#영월힐링여행ep:2",
+        "channel": "한 수선화 Vlog",
+        "published_at": "2026-09-26",
+        "view_count": 1381
+      },
+      {
+        "video_id": "xKMy74TmMB4",
+        "title": "왕과 사는 남자의 무대, 영월 청령포 | 단종의 유배지",
+        "channel": "조용한 문화유산 산책 | 고고학",
+        "published_at": "2026-09-26",
+        "view_count": 1355
+      },
+      {
+        "video_id": "UCAGgDq9-6c",
+        "title": "#영월 #붉은메밀꽃 #동강 #강원도여행",
+        "channel": "나이스가이 TV",
+        "published_at": "2026-09-27",
+        "view_count": 1316
+      },
+      {
+        "video_id": "TWX9oHvqYoA",
+        "title": "영월 캠핑 왔더니 딸이 낚시를 시작했습니다 🎣 “뭐가 잡힐까?” | We Went Camping in Yeongwol… and My Daughter Went Fishing 🎣",
+        "channel": "대디레슨 : Daddy's One Point Lessons",
+        "published_at": "2026-09-26",
+        "view_count": 1296
+      },
+      {
+        "video_id": "3oLjhxGTSJs",
+        "title": "#청령포 #단종#자규시#영월 #김선우 #여행",
+        "channel": "모든 삶은 시 이다  김선우 채널",
+        "published_at": "2026-09-26",
+        "view_count": 1292
+      },
+      {
+        "video_id": "J8WoAhaXebM",
+        "title": "선돌 #여행 #travel #아이와영월 #왕사남 #왕사남 선돌 #영월 #왕사남 촬영지 #영월여행 #영월갈만한곳",
+        "channel": "JJ story",
+        "published_at": "2026-09-26",
+        "view_count": 1257
+      },
+      {
+        "video_id": "iZJqlBbh5m0",
+        "title": "강원도 영월 평창 여행 #뗏목 #육백마지기 #강원도여행 #영월 #평창",
+        "channel": "장은앵",
+        "published_at": "2026-09-28",
+        "view_count": 1256
+      },
+      {
+        "video_id": "8hWRyPiZ9ZY",
+        "title": "영월에 이런 곳이? 온몸으로 속도감을 즐기는 친환경 전기카트 체험 #카트라이더 #영월  #한반도전기카트장",
+        "channel": "짱구니튜브 JJangguni tube",
+        "published_at": "2026-09-26",
+        "view_count": 1213
+      },
+      {
+        "video_id": "MaqssftaGqU",
+        "title": "#여행 #korea#영월 #단종#청령포",
+        "channel": "맛집과 여행88",
+        "published_at": "2026-09-29",
+        "view_count": 1184
+      },
+      {
+        "video_id": "ixFM18Lg84E",
+        "title": "댕댕이와 떠나는 영월 이색 산책로 #영월여행 #요선암 #돌개구멍",
+        "channel": "petstival with miso",
+        "published_at": "2026-09-28",
+        "view_count": 1171
+      },
+      {
+        "video_id": "pkg-Mmi5rug",
+        "title": "왕이 머물던 집을 찾아갑니다 🚤🏡 | 영월 청령포 | Now We're Looking for the King's House 🚤🏡 | Cheongnyeongpo",
+        "channel": "대디레슨 : Daddy's One Point Lessons",
+        "published_at": "2026-09-26",
+        "view_count": 1136
+      },
+      {
+        "video_id": "he8eaiq2e1M",
+        "title": "장릉 #여행 #travel #아이와영월 #영월 #단종 #왕사남 #조선왕릉 #역사여행",
+        "channel": "JJ story",
+        "published_at": "2026-09-26",
+        "view_count": 1121
+      },
+      {
+        "video_id": "_G5toy7pCFg",
+        "title": "한국의 사파 단양·영월 | 마음 편해지는 국내 힐링 코스",
+        "channel": "나물일기",
+        "published_at": "2026-09-25",
+        "view_count": 948
+      },
+      {
+        "video_id": "EZUkUJ8DSn4",
+        "title": "영화속한장면 비쥬얼 붉은메밀꽃밭🩷​#영월여행 #영월가볼만한곳 #붉은메밀꽃#영월붉은메밀꽃축제 #가을여행지 #가을축제",
+        "channel": "워메이",
+        "published_at": "2026-09-29",
+        "view_count": 777
+      }
+    ]
+  }
+}

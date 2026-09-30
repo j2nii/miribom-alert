@@ -1,0 +1,7 @@
+﻿event_key,region_id,event_name,event_type,evidence_url,evidence_note
+TL-001,48310,거제 — 리센느 '거제 야호' 확산과 해수욕장 방문 급증,수요 급증,https://www.youtube.com/watch?v=OrCOflk2QmQ,근거 전체: data/prod/timeline.json
+TL-002,51750,영월 — 영화 '왕과 사는 남자' 흥행과 청령포 혼잡,수요 급증,https://www.issueon.co.kr/news/articleView.html?idxno=12361,근거 전체: data/prod/timeline_51750.json
+TL-003,12130,여수 — 식당 불친절 영상 확산과 시의 대응,평판 위기,https://www.youtube.com/watch?v=7tQmo__7JG0,근거 전체: data/prod/timeline_12130.json
+TL-004,47940,울릉 — 바가지·서비스 폭로 영상과 군수 사과,평판 위기,https://www.youtube.com/watch?v=9zafUsI9_UY,근거 전체: data/prod/timeline_47940.json
+TL-005,51210,속초 — 오징어난전 불친절 영상의 뒤늦은 확산,평판 위기,https://v.daum.net/v/20250806141942417,근거 전체: data/prod/timeline_51210.json
+TL-006,51810,인제 — 산불 등 비관광 사건의 검색 급증,비관광 급증,https://www.seoul.co.kr/news/society/accident/2025/04/26/20250426500032,근거 전체: data/prod/timeline_51810.json

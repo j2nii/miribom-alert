@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/outlook.schema.json",
+  "title": "outlook — 앞으로 6개월 월별 외지인 방문자 전망과 그 근거",
+  "description": "analysis/src/forecast/monthly_outlook.py 산출. 행사 기획·예산 편성 참고용 월 합계 전망. 예측값마다 계산 근거(작년 같은 달 × 추세 × 보정)와 방법 선택 근거(방법별 검증·시험 오차)를 함께 싣는다 — 화면이 '어떻게 나온 숫자인가'를 보여줄 수 있어야 한다.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "method", "as_of", "history", "outlook", "methods", "rule", "accuracy"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "method": {
+          "type": "object",
+          "required": ["key", "label"],
+          "properties": { "key": { "type": "string" }, "label": { "type": "string" } }
+        },
+        "as_of": { "type": "string", "pattern": "^\\d{4}-\\d{2}$", "description": "학습에 쓴 마지막 완전한 달" },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["month", "visitors", "days", "full"],
+            "properties": {
+              "month": { "type": "string", "pattern": "^\\d{4}-\\d{2}$" },
+              "visitors": { "type": "integer", "minimum": 0 },
+              "days": { "type": "integer", "minimum": 1, "maximum": 31 },
+              "full": { "type": "boolean", "description": "달이 다 채워졌는가. false면 부분 실측" },
+              "ly": { "type": ["integer", "null"] }
+            }
+          }
+        },
+        "outlook": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "required": ["month", "h", "predicted", "lower", "upper", "last_year", "yoy", "trend_factor", "adjust_factor"],
+            "properties": {
+              "month": { "type": "string", "pattern": "^\\d{4}-\\d{2}$" },
+              "h": { "type": "integer", "minimum": 1, "maximum": 6, "description": "학습 마지막 달로부터 몇 달 앞" },
+              "predicted": { "type": "integer", "minimum": 0 },
+              "lower": { "type": "integer", "minimum": 0 },
+              "upper": { "type": "integer", "minimum": 0 },
+              "last_year": { "type": "integer", "minimum": 0 },
+              "yoy": { "type": "number" },
+              "trend_factor": { "type": "number", "description": "근거 분해: 최근 추세 배율 (추세를 안 쓰는 방법은 1)" },
+              "adjust_factor": { "type": "number", "description": "근거 분해: 휴일·명절 등 나머지 보정 배율" },
+              "major_holiday_days": { "type": "integer" },
+              "major_holiday_days_ly": { "type": "integer" },
+              "rest_days_diff": { "type": "integer" },
+              "weekday_holiday_diff": { "type": "integer" }
+            }
+          }
+        },
+        "methods": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key", "label", "valid_smape", "test_smape", "chosen"],
+            "properties": {
+              "key": { "type": "string" },
+              "label": { "type": "string" },
+              "valid_smape": { "type": "number" },
+              "test_smape": { "type": "number" },
+              "mean_smape": { "type": "number" },
+              "chosen": { "type": "boolean" }
+            }
+          }
+        },
+        "rule": { "type": "string" },
+        "split": { "type": "object" },
+        "accuracy": { "type": "object" }
+      }
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://tourism-early-warning/schema/forecast.schema.json",
+  "title": "forecast — 90일 방문객 예측과 요일별 집중률",
+  "description": "매뉴얼 p.10 STEP5 '혼잡도 사전 예측'에 대응. 예측은 반드시 구간(lower/upper)과 성능지표를 함께 제시한다.",
+  "allOf": [{ "$ref": "_envelope.schema.json" }],
+  "properties": {
+    "data": {
+      "type": "object",
+      "required": ["region", "model", "daily", "weekday_concentration"],
+      "properties": {
+        "region": { "$ref": "_envelope.schema.json#/definitions/region" },
+        "model": {
+          "type": "object",
+          "required": ["name", "trained_on", "metric"],
+          "properties": {
+            "name": { "type": "string", "description": "예: SARIMAX(주간계절성+공휴일)" },
+            "trained_on": { "$ref": "_envelope.schema.json#/definitions/period" },
+            "metric": {
+              "type": "object",
+              "description": "검증 성능. 값이 없으면 예측을 화면에 띄우지 않는다.",
+              "required": ["name", "value"],
+              "properties": {
+                "name": { "type": "string", "enum": ["MAPE", "RMSE", "MAE"] },
+                "value": { "type": "number", "minimum": 0 },
+                "validation_period": { "$ref": "_envelope.schema.json#/definitions/period" }
+              }
+            },
+            "features": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "daily": {
+          "type": "array",
+          "description": "예측 대상 90일",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["date", "predicted", "lower", "upper"],
+            "properties": {
+              "date": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "predicted": { "type": "number", "minimum": 0 },
+              "lower": { "type": "number", "minimum": 0 },
+              "upper": { "type": "number", "minimum": 0 },
+              "expected_alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+              "is_holiday": { "type": "boolean" },
+              "event": { "type": "string", "description": "해당일 축제·행사명" }
+            }
+          }
+        },
+        "weekday_concentration": {
+          "type": "array",
+          "description": "요일별 방문 집중률. 합이 1이 되도록 한다.",
+          "minItems": 7,
+          "maxItems": 7,
+          "items": {
+            "type": "object",
+            "required": ["weekday", "ratio"],
+            "properties": {
+              "weekday": { "type": "string", "enum": ["월", "화", "수", "목", "금", "토", "일"] },
+              "ratio": { "$ref": "_envelope.schema.json#/definitions/ratio" }
+            }
+          }
+        },
+        "peak_days": {
+          "type": "array",
+          "description": "예측 기간 중 경보 상향이 예상되는 날. 브리핑에서 먼저 언급된다.",
+          "items": {
+            "type": "object",
+            "required": ["date", "predicted", "reason"],
+            "properties": {
+              "date": { "$ref": "_envelope.schema.json#/definitions/date" },
+              "predicted": { "type": "number" },
+              "expected_alert_level": { "$ref": "_envelope.schema.json#/definitions/alert_level" },
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

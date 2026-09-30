@@ -1,0 +1,128 @@
+{
+  "_mock": true,
+  "generated_at": "2026-09-12T13:00:00+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-12",
+      "note": "'거제' 검색 결과 중 최근 90일 업로드 영상"
+    },
+    {
+      "name": "이동통신 기반 유동인구",
+      "provider": "한국관광공사(통신사 제휴 데이터)",
+      "retrieved_at": "2026-09-12",
+      "note": "관광 데이터랩 제공 가공 지표"
+    },
+    {
+      "name": "한국관광 데이터랩 지역별 방문자 통계",
+      "provider": "한국관광공사",
+      "retrieved_at": "2026-09-12",
+      "url": "https://datalab.visitkorea.or.kr/"
+    }
+  ],
+  "period": {
+    "start": "2026-06-20",
+    "end": "2026-08-25",
+    "granularity": "일"
+  },
+  "caveat": [
+    "목업 데이터임 — 실데이터 도착 시 전량 교체 대상. 수치로 판단하지 말 것.",
+    "민원 건수는 지자체 공개 통계 기준이며 접수 경로에 따라 누락이 있다.",
+    "lead_time_days는 이 사례 한 건의 값으로, 다른 사례에 그대로 적용할 수 없다."
+  ],
+  "data": {
+    "case_id": "TL-001",
+    "region": {
+      "code": "48310",
+      "name": "거제시"
+    },
+    "title": "매미성 영상 확산 이후 경사 구간 혼잡 발생 및 대응",
+    "spatial_type": "지형·경사 이동·저항 흐름형",
+    "content_type": "포토스팟형",
+    "lead_time_days": 18,
+    "events": [
+      {
+        "date": "2026-06-20",
+        "type": "콘텐츠 확산",
+        "description": "매미성 소개 영상이 업로드 후 1주일 만에 조회수 30만을 넘김",
+        "value": 312000,
+        "unit": "회",
+        "source": {
+          "name": "YouTube Data API v3",
+          "provider": "Google",
+          "retrieved_at": "2026-09-12",
+          "note": "'거제' 검색 결과 중 최근 90일 업로드 영상"
+        },
+        "is_signal": true
+      },
+      {
+        "date": "2026-07-08",
+        "type": "방문 급증",
+        "description": "주말 방문객이 직전 4주 평균 대비 2.1배로 증가",
+        "value": 2.1,
+        "unit": "배",
+        "source": {
+          "name": "이동통신 기반 유동인구",
+          "provider": "한국관광공사(통신사 제휴 데이터)",
+          "retrieved_at": "2026-09-12",
+          "note": "관광 데이터랩 제공 가공 지표"
+        },
+        "is_signal": true
+      },
+      {
+        "date": "2026-07-13",
+        "type": "혼잡 발생",
+        "description": "진입 계단 구간에서 평균 이동속도가 0.7m/s 아래로 떨어짐",
+        "value": 0.68,
+        "unit": "m/s",
+        "source": {
+          "name": "이동통신 기반 유동인구",
+          "provider": "한국관광공사(통신사 제휴 데이터)",
+          "retrieved_at": "2026-09-12",
+          "note": "관광 데이터랩 제공 가공 지표"
+        },
+        "is_signal": true
+      },
+      {
+        "date": "2026-07-19",
+        "type": "민원 발생",
+        "description": "주차·소음 관련 민원이 주간 기준 최고치 기록",
+        "value": 47,
+        "unit": "건",
+        "source": {
+          "name": "지자체 민원 접수 통계",
+          "provider": "거제시",
+          "retrieved_at": "2026-09-12"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2026-08-01",
+        "type": "조치 시행",
+        "description": "상·하행 분리 및 우회 경로 안내 시행",
+        "source": {
+          "name": "지속가능한 관광지 혼잡도 운영 관리 매뉴얼",
+          "provider": "한국관광공사",
+          "retrieved_at": "2026-09-12",
+          "url": "https://datalab.visitkorea.or.kr/site/portal/ex/bbs/View.do?cbIdx=1603&bcIdx=310400"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2026-08-25",
+        "type": "완화",
+        "description": "병목 구간 평균 체류시간이 13.8분에서 9.1분으로 감소",
+        "value": 9.1,
+        "unit": "분",
+        "source": {
+          "name": "이동통신 기반 유동인구",
+          "provider": "한국관광공사(통신사 제휴 데이터)",
+          "retrieved_at": "2026-09-12",
+          "note": "관광 데이터랩 제공 가공 지표"
+        },
+        "is_signal": false
+      }
+    ]
+  }
+}

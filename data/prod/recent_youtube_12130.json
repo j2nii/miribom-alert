@@ -1,0 +1,315 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T16:47:11+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-29",
+      "note": "여수 여행, 여수 가볼만한곳, 여수 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."
+  ],
+  "data": {
+    "region": {
+      "code": "12130",
+      "name": "여수시"
+    },
+    "videos": [
+      {
+        "video_id": "qhBrn505dcA",
+        "title": "何を食べても美味しい麗水で、夫婦でまったり旅行vlog【日韓夫婦】【韓国グルメ】",
+        "channel": "KaoruTV",
+        "published_at": "2026-09-28",
+        "view_count": 68821
+      },
+      {
+        "video_id": "fTT6hDvSDEI",
+        "title": "여수여행 #여수",
+        "channel": "MC호방",
+        "published_at": "2026-09-29",
+        "view_count": 7252
+      },
+      {
+        "video_id": "PAwsRspvgII",
+        "title": "여수섬박람회 방문객 추석 맞아 급증..개막 이후 최다 #shorts #여수 #여수섬박람회 #여수맛집  #광주mbc #광주mbc뉴스",
+        "channel": "광주MBC뉴스",
+        "published_at": "2026-09-27",
+        "view_count": 6332
+      },
+      {
+        "video_id": "7UOfSlhhtCA",
+        "title": "Beautiful Yeosu (2026 여수세계섬박람회)",
+        "channel": "Napkins Music",
+        "published_at": "2026-09-28",
+        "view_count": 5854
+      },
+      {
+        "video_id": "f0Q0UPjWl9s",
+        "title": "전기자전거 여행~ 21일차 순천 에서 여수이동",
+        "channel": "라온지아",
+        "published_at": "2026-09-28",
+        "view_count": 3355
+      },
+      {
+        "video_id": "aNUQ4vT2Aq0",
+        "title": "여수 여행 갔다가 인생 막걸리 찾았습니다 #여수맛집 #막걸리 #양조장",
+        "channel": "흔한부부 소뱅이네",
+        "published_at": "2026-09-27",
+        "view_count": 2355
+      },
+      {
+        "video_id": "UdQXwK1S-1A",
+        "title": "누가 여수박람회좀 살려줘… #섬박람회 #여수피라미드",
+        "channel": "때지투게더",
+        "published_at": "2026-09-27",
+        "view_count": 2162
+      },
+      {
+        "video_id": "LqfMyx3tVOA",
+        "title": "여수 소노캄호텔 조식",
+        "channel": "황꾸커플",
+        "published_at": "2026-09-26",
+        "view_count": 1452
+      },
+      {
+        "video_id": "7No6Y7zAIBk",
+        "title": "🥁 ‘쿵!’가을 여수를 북소리로 물들일2026 여수동동북축제!📅 26. 10. 3.(토) ~ 10. 4.(일)📍 선소 및 용기공원 일원 #여수동동북축제 #여수축제 #여수가볼만한곳",
+        "channel": "샘",
+        "published_at": "2026-09-26",
+        "view_count": 1429
+      },
+      {
+        "video_id": "n3zkznBBeec",
+        "title": "#스타벅스더여수돌산DT점 #여수카페 #여수여행 #여수맛집 #여수핫플 여수여행 중 들른 여수에서 만나볼 수 있는 여수 바다 자몽 피지오🍊와 부드러운 쑥팥생크림롤🌿까지 먹어봤어요!",
+        "channel": "고니먹방",
+        "published_at": "2026-09-26",
+        "view_count": 1428
+      },
+      {
+        "video_id": "xFe5ZLaQJ2I",
+        "title": "여수여행 필수 먹방 맛집",
+        "channel": "연토크by연예인들의 재미있는 토크스토리",
+        "published_at": "2026-09-26",
+        "view_count": 1330
+      },
+      {
+        "video_id": "zx-rJHYp7To",
+        "title": "여수 섬박람회 입장권 할인 팁 #여수섬박람회 #여수여행 #여수가볼만한곳",
+        "channel": "survnz",
+        "published_at": "2026-09-27",
+        "view_count": 1325
+      },
+      {
+        "video_id": "wyRwNoaNSVo",
+        "title": "밤이 더 예쁜 여수 밤바다 🌊✨ #여수여행 #Shorts",
+        "channel": "지니의 마음건강",
+        "published_at": "2026-09-26",
+        "view_count": 1302
+      },
+      {
+        "video_id": "kVoyFPbfHeE",
+        "title": "#여수게장 #간장게장 #여수여행 #양념게장 #박명수맛집 #여수맛집 #성산밥집",
+        "channel": "BABA BBUU",
+        "published_at": "2026-09-26",
+        "view_count": 1279
+      },
+      {
+        "video_id": "nZ9UsJSPImY",
+        "title": "#광주맛집 여수회수산",
+        "channel": "뚜나미은바리",
+        "published_at": "2026-09-28",
+        "view_count": 1233
+      },
+      {
+        "video_id": "AhHIkCMmpbw",
+        "title": "여수여행 3일차!!!(좀 많이 늦었쥐만-3-)#여수 #여수여행 #오동도 #자전거 #분수 #브이로그 #김시소놀이터",
+        "channel": "김시소 놀이터",
+        "published_at": "2026-09-26",
+        "view_count": 1222
+      },
+      {
+        "video_id": "2FDND5dYckM",
+        "title": "아기랑 여수여행2 #아기랑여수 #아기랑여행 #귀여운아기 #아기일상 #32개월아기",
+        "channel": "IRU이루",
+        "published_at": "2026-09-28",
+        "view_count": 1220
+      },
+      {
+        "video_id": "MV8Y4xANhdk",
+        "title": "여수 백숙맛집",
+        "channel": "냠냠씨",
+        "published_at": "2026-09-27",
+        "view_count": 1212
+      },
+      {
+        "video_id": "EYEm8XKdpgM",
+        "title": "🐟 여수여행 마지막 미션! 생신 맞은 여수 할아버지와 하모 한상💙",
+        "channel": "준준브로",
+        "published_at": "2026-09-27",
+        "view_count": 1177
+      },
+      {
+        "video_id": "WinsTieCJw4",
+        "title": "#여수여행#여수밤바다#여수맛집",
+        "channel": "후니짜잔_V",
+        "published_at": "2026-09-27",
+        "view_count": 1172
+      },
+      {
+        "video_id": "S4Rljwsqe8E",
+        "title": "여수 섬박람회 공짜로 가는 법 #여수섬박람회 #여수여행 #여수가볼만한곳",
+        "channel": "보통사람들의 이야기",
+        "published_at": "2026-09-27",
+        "view_count": 1153
+      },
+      {
+        "video_id": "pYffFPQOqA0",
+        "title": "출근길 드라이브 #출근 #연휴끝 #이순신대교 #드라이브 #출근길 #운전 #광양 #여수 #묘도 #월요일 #오늘도내가1등으로출근 #광양가볼만한곳",
+        "channel": "철인TV",
+        "published_at": "2026-09-27",
+        "view_count": 1139
+      },
+      {
+        "video_id": "tkUZiCK7BP0",
+        "title": "[여수] 여수 하모골목 안쪽, 하모 샤브샤브 맛집 하얀집!",
+        "channel": "주.차장TV",
+        "published_at": "2026-09-27",
+        "view_count": 1133
+      },
+      {
+        "video_id": "ewm0NCyUrsM",
+        "title": "여수섬박람회 갔다왔슈? 나도갔다왔는디ㅋㅋ11월4일까지 입니다ㅋㅋ #순천언니 #dance #팔도언니 #여수섬박람회 #여수여행",
+        "channel": "팔도언니양서영",
+        "published_at": "2026-09-28",
+        "view_count": 1131
+      },
+      {
+        "video_id": "arcJ557p668",
+        "title": "2026 여수세계섬박람회",
+        "channel": "Kims",
+        "published_at": "2026-09-26",
+        "view_count": 1120
+      },
+      {
+        "video_id": "fkEbtGm4D5c",
+        "title": "#여수맛집 #여수한정식 #바다푸짐한상한정식 #바다장터 #여수여행맛집🌊 여수 바다를 한 상 가득 담아낸 날여수에서 푸짐하게 한 끼 먹고 온 이야기♡여수 어항단지에 있는 [바다장터]",
+        "channel": "Jenny teacher 박제니영어쌤",
+        "published_at": "2026-09-27",
+        "view_count": 1100
+      },
+      {
+        "video_id": "oudYFJM7CLo",
+        "title": "#여수맛집 #삼대옥 #딸기모찌 #웨이칭",
+        "channel": "BABA BBUU",
+        "published_at": "2026-09-26",
+        "view_count": 1098
+      },
+      {
+        "video_id": "4-Ulz-Px9bE",
+        "title": "여수 야호ꯁ 여수 맛집부터 인생 소품샵까지 다털기~ (여수브이로그, 여수맛집, 여수게장, 여수카페, 여수숙소)",
+        "channel": "효빵",
+        "published_at": "2026-09-24",
+        "view_count": 1088
+      },
+      {
+        "video_id": "6PGtLVDGSIY",
+        "title": "충남 홍성에서 여수의 섬박람회 여행 이순신장군광장 여수바다 케이블카 #여수 #여수섬박람회 #이순신공원",
+        "channel": "홍성미용실 내포미용실 홍성 헤어두비취",
+        "published_at": "2026-09-28",
+        "view_count": 1071
+      },
+      {
+        "video_id": "TMWLzbMFqqc",
+        "title": "여수여행^^ 보고싶은분들이 많네요ㅎ#부천#mc호방#호동아라#술먹방#비어#광주#전라도#까치산#강서구#화곡동#헬스#운동#재호이#술엑셀",
+        "channel": "만수선생",
+        "published_at": "2026-09-28",
+        "view_count": 1005
+      },
+      {
+        "video_id": "UGfarJw4KxQ",
+        "title": "여수에는진남관#진 남관#여수가볼만한곳",
+        "channel": "천지삐까리TV",
+        "published_at": "2026-09-26",
+        "view_count": 1001
+      },
+      {
+        "video_id": "5R3N5-oxx3U",
+        "title": "축제는 61일 건물은 수십 년 갑니다 #여수박람회 #세금낭비 #지자체축제 #바가지",
+        "channel": "알쓸경제학",
+        "published_at": "2026-09-28",
+        "view_count": 862
+      },
+      {
+        "video_id": "2mCjB80rFsw",
+        "title": "7개월 아기와 2박3일 여수여행, 첫째날 #아기랑여수 #아기랑여행 #7개월아기여행 #7개월아기 #여수여행 #아기랑가볼만한곳",
+        "channel": "지호지요",
+        "published_at": "2026-09-28",
+        "view_count": 765
+      },
+      {
+        "video_id": "IXrVoqGz6SQ",
+        "title": "여수에 세계 최초 축제 열린대요 #여수여행 #여수세계섬박람회 #여수축제",
+        "channel": "데이빗의 여행전략",
+        "published_at": "2026-09-28",
+        "view_count": 743
+      },
+      {
+        "video_id": "fRXlFQShUTw",
+        "title": "아기랑 다녀온 남해 여수 여행 추천코스! #baby #아기일상  #육아일상 #육아일기 #아기랑여행 #아기랑가볼만한곳 #아기랑갈만한곳 #아기랑놀기 #남해여행 #여수여행",
+        "channel": "거니얌 GEONiYAM",
+        "published_at": "2026-09-29",
+        "view_count": 724
+      },
+      {
+        "video_id": "JOKEMevcOR8",
+        "title": "여수 역대 카페에서 방대한 바다 뷰를 보며 마시는 커피, 그리고 동백꽃으로 유명한 오동도.",
+        "channel": "폴과다이앤 Paul and Diane",
+        "published_at": "2026-09-27",
+        "view_count": 642
+      },
+      {
+        "video_id": "Q3FPLpFHIY8",
+        "title": "#큰언니네갓김치#여수맛집#여수갓김치#여수김치맛집#돌산갓김치#전라도김치#김장김치#생포기김치#생김치#국산고추#김치#파김치#갓김치맛집#GGEZ#육아#신생아#육아일상#baby#cuty",
+        "channel": "여수향일암_큰언니네 갓김치",
+        "published_at": "2026-09-27",
+        "view_count": 629
+      },
+      {
+        "video_id": "oXofByjRE1k",
+        "title": "Day12_여수 편 #대학생 #여수 #국내여행 #여행브이로그 #맛집 #여수간장게장 #여수 소품샵 #여수케이블카 #우정여행 #휴학생 #대학생브이로그",
+        "channel": "무이",
+        "published_at": "2026-09-29",
+        "view_count": 589
+      },
+      {
+        "video_id": "4eHnzFIQY7o",
+        "title": "여수여행^^ 보고싶은분들이 많네요ㅎ#부천#mc호방#호동아라#술먹방#비어#광주#전라도#까치산#강서구#화곡동#헬스#운동#재호이#술엑셀",
+        "channel": "만수선생",
+        "published_at": "2026-09-28",
+        "view_count": 569
+      },
+      {
+        "video_id": "-EGCN90AHOM",
+        "title": "여수 여행에서 기념품 뭐 사갈지 고민된다면 여기 저장해두세요📌",
+        "channel": "힐링햄톨",
+        "published_at": "2026-09-26",
+        "view_count": 537
+      },
+      {
+        "video_id": "4_4lZOEvlnU",
+        "title": "🌟먹스타 Mr Han. 발로뛰는 경제살리기🌟❣️교동시장 포차거리 사랑도 19번 맛, 가성비, 친절함 최고❣️#여수 #여수여행 #여수맛집추천 #교동시장 #교동시장포차",
+        "channel": "먹스타 Mr Han.",
+        "published_at": "2026-09-27",
+        "view_count": 504
+      }
+    ]
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T16:47:11+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-29",
+      "note": "속초 여행, 속초 가볼만한곳, 속초 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."
+  ],
+  "data": {
+    "region": {
+      "code": "51210",
+      "name": "속초시"
+    },
+    "videos": [
+      {
+        "video_id": "i0xF8kqo-l8",
+        "title": "속초가 이렇게 위험한 동네였습니까? | 1박 2일 술맛 여행 완벽 코스!",
+        "channel": "술맛여행놈",
+        "published_at": "2026-09-27",
+        "view_count": 74379
+      },
+      {
+        "video_id": "wt19AsQqQfw",
+        "title": "속초에 이런 시장이 있다고?😳 속초관광수산시장·종합중앙시장 구석구석 공개🍇🐟#koreanstreetfood #속초맛집 #속초가볼만한곳 #속초여행 #속초시장 #kfood #음식",
+        "channel": "원푸드 One Food",
+        "published_at": "2026-09-27",
+        "view_count": 7545
+      },
+      {
+        "video_id": "Cq1tRxnUrCs",
+        "title": "대게 먹을 줄 아는 사람들은 여기감!! #속초대게정 ##속초맛집 #대게맛집",
+        "channel": "이든찡🎀🐰",
+        "published_at": "2026-09-27",
+        "view_count": 1974
+      },
+      {
+        "video_id": "zoB-lj-wXBA",
+        "title": "솥밥으로 시작해서 속초 찍고 락페로 끝난 미친 휴가 브이로그",
+        "channel": "집순이일기 ✍🏻",
+        "published_at": "2026-09-29",
+        "view_count": 1788
+      },
+      {
+        "video_id": "ovldXnm9T60",
+        "title": "속초 중앙시장 실패 없는 회포장 #속초맛집 #속초여행 #속초회포장",
+        "channel": "사과향기",
+        "published_at": "2026-09-26",
+        "view_count": 1528
+      },
+      {
+        "video_id": "Z09RRMm17E4",
+        "title": "설악산 케이블카 대기 없는 시간 #설악산단풍 #설악산케이블카 #속초여행",
+        "channel": "김도희",
+        "published_at": "2026-09-28",
+        "view_count": 1437
+      },
+      {
+        "video_id": "BN5uUn2f6W4",
+        "title": "속초 중앙시장에서 가장 가성비가 좋은 매장! 장터순대국에 다녀왔어요! 착한가격, 착한가게로 유명한 곳 답게 저렴하고 푸짐하게 만족스러운 식사를 즐길 수 있는 곳 속초맛집 장터순대국",
+        "channel": "안나나 브이로그",
+        "published_at": "2026-09-26",
+        "view_count": 1353
+      },
+      {
+        "video_id": "H1jvpImwr8M",
+        "title": "속초맛집 육구방앗간",
+        "channel": "소담개구리",
+        "published_at": "2026-09-27",
+        "view_count": 1328
+      },
+      {
+        "video_id": "fFTEh77fm1U",
+        "title": "속초 - 속초삼순이 #맛집",
+        "channel": "골저씨",
+        "published_at": "2026-09-28",
+        "view_count": 1316
+      },
+      {
+        "video_id": "Org22q8UZhk",
+        "title": "속초 핫플 #육구방앗간 #속초맛집",
+        "channel": "모몽니 _ 쉽고 간단한 레시피 ",
+        "published_at": "2026-09-28",
+        "view_count": 1302
+      },
+      {
+        "video_id": "EWzWbpXOt7M",
+        "title": "속초 여행중에 인생 제육을 만날 확률은?",
+        "channel": "뮤정",
+        "published_at": "2026-09-28",
+        "view_count": 1300
+      },
+      {
+        "video_id": "5kuWx7xoGh8",
+        "title": "속초가서 진짜 가야하는 곳 #가을여행 #국내여행지추천 #국내여행 #가을드라이브 #가을단풍 #단풍명소 #설악산 #속초맛집",
+        "channel": "다주세요",
+        "published_at": "2026-09-25",
+        "view_count": 1287
+      },
+      {
+        "video_id": "fEVrZXyVD2I",
+        "title": "속초에 유명한 떡집 #육구방앗간 !! 원래 대기를 엄청 오래해야 먹을 수 있는 곳인데 운 좋게 오늘은 바로 구매해서 먹었어요✌🏻❤️ #속초 #속초여행 #속초맛집 #속초떡집 #떡집",
+        "channel": "럭희",
+        "published_at": "2026-09-28",
+        "view_count": 1256
+      },
+      {
+        "video_id": "a4JGzuNd9ps",
+        "title": "남편과 둘이 2026 속초 여행 ❣️#속초여행#속초맛집#속초여행추천#속초여행일정추천#육구방앗간#속초육구방앗간#속초중앙시장#속초핫플#속초관광시장#속초가보오통닭#설악산카페#남경막국수",
+        "channel": "세입클로버",
+        "published_at": "2026-09-27",
+        "view_count": 1245
+      },
+      {
+        "video_id": "y-8b0Xn-GTA",
+        "title": "#여행브이로그 #가을여행 #속초중앙시장 #속초해수욕장 #속초여행 #국내여행 #속초닭강정 #속초 #부부여행",
+        "channel": "루나설아",
+        "published_at": "2026-09-28",
+        "view_count": 1221
+      },
+      {
+        "video_id": "YwLc0I8Pw8Q",
+        "title": "속초·고성 1박 2일 뚜벅이 힐링 여행｜바다 앞 가리비·오션뷰 카페·첫 캠핑｜韓国・束草＆高城1泊2日の癒やし旅｜海辺のホタテ・絶景カフェ・人生初キャンプ",
+        "channel": "여행잊츠미(旅行イッツミ)",
+        "published_at": "2026-09-25",
+        "view_count": 1217
+      },
+      {
+        "video_id": "-8KmhNJmT70",
+        "title": "낭만 넘치는 #속초 🌊 낭만을 싣고 다니는 진짜 개성 넘치시는 세발서점 사장님❤️ 꼭 한번씩 만나보시길 바래요🙏🏻📚 #세발서점 #속초여행 #속초해수욕장 #속초카페",
+        "channel": "럭희",
+        "published_at": "2026-09-28",
+        "view_count": 1194
+      },
+      {
+        "video_id": "dZ-WzizjUF0",
+        "title": "추석에 여행왔어요^^#속초 #청초수물회집 #추석여행 #속초가볼만한곳#속초맛집",
+        "channel": "은경TV BEK TV",
+        "published_at": "2026-09-25",
+        "view_count": 1174
+      },
+      {
+        "video_id": "kRdD-7cuZYQ",
+        "title": "[속초중앙시장] 완전 한바퀴 / 남들 잘 시간인데…  여긴 난리가 났어요!",
+        "channel": "introKorea [인트로코리아]",
+        "published_at": "2026-09-28",
+        "view_count": 1161
+      },
+      {
+        "video_id": "iU8ekHH7bdo",
+        "title": "9월 날씨까지 완벽했던 날🍃 속초 영랑호 산책",
+        "channel": "노을을 담다",
+        "published_at": "2026-09-26",
+        "view_count": 1123
+      },
+      {
+        "video_id": "Wm_K0ao2C58",
+        "title": "속초 중앙시장 오픈런 필수! 역대급 비주얼 속초 대게 맛집 대게여왕 🦀 #속초대게 #속초중앙시장맛집 #대게여왕 #속초여행",
+        "channel": "토닥토닥",
+        "published_at": "2026-09-28",
+        "view_count": 1109
+      },
+      {
+        "video_id": "fP3zRwgtB1A",
+        "title": "강원도 속초 돌짜장 짬뽕 탕수육맛집 가보오토종닭#여행#koreanfood#전현무계획#중국요리맛집#shorts",
+        "channel": "쩡 강원도살이",
+        "published_at": "2026-09-28",
+        "view_count": 1103
+      },
+      {
+        "video_id": "V9mtaGr93WM",
+        "title": "속초 여행중에 인생 재육을 만날 확률은?",
+        "channel": "유쩡",
+        "published_at": "2026-09-28",
+        "view_count": 1096
+      },
+      {
+        "video_id": "mgi5oXGW-NI",
+        "title": "#가을여행 #가족여행 #10월여행 서울 경기 남양주 에서 가족낚시 주변 여행코스 부부동반 아이들과 강원도 배낚시 당일치기여행 속초 설악산 양양 가볼만한곳 낙산항 가을낚시 시즌",
+        "channel": "속초 양양 대선단 배낚시",
+        "published_at": "2026-09-28",
+        "view_count": 1096
+      },
+      {
+        "video_id": "aT5A_iYjRd8",
+        "title": "보스턴성게는 어떤맛인가요? 속초갓포 성게의신 성게는속초갓포 속초중앙시장 갓포한판",
+        "channel": "속초는속초갓포",
+        "published_at": "2026-09-28",
+        "view_count": 1090
+      },
+      {
+        "video_id": "N5xiewKxbjA",
+        "title": "속초 고성 여행 코스 추천! 국산 메밀로 만든 동치미 막국수와 아이들은 동물구경에 봉포호 산책까지 | 구정막국수 속초고성점",
+        "channel": "골든은주",
+        "published_at": "2026-09-25",
+        "view_count": 1056
+      },
+      {
+        "video_id": "DZSgu_EzwQ4",
+        "title": "속초에서 사계절 수영 가능한 호캉스 숙소 #홈마리나속초",
+        "channel": "놀윰",
+        "published_at": "2026-09-28",
+        "view_count": 1046
+      },
+      {
+        "video_id": "TIJtj3SnxVY",
+        "title": "속초 1박2일 태교여행 코스🌊소품샵 대게 라마다호텔",
+        "channel": "쌍둥이맘 디지털노마드 일기",
+        "published_at": "2026-09-26",
+        "view_count": 991
+      },
+      {
+        "video_id": "8Wz0SaJ1P2E",
+        "title": "속초 1박2일 호수와 바다 코스 🌊 #Shorts",
+        "channel": "블루킥",
+        "published_at": "2026-09-26",
+        "view_count": 911
+      },
+      {
+        "video_id": "7s4o2DJ9KhI",
+        "title": "#속초오징어난전#속초오징어포#오징어회#속초오징어통찜#속초여행#속초동명항#동명항#강원도여행#속초가볼만한곳#오징어맛집#오징어난전포차#포차#바다",
+        "channel": "일상힐링좋아",
+        "published_at": "2026-09-27",
+        "view_count": 781
+      },
+      {
+        "video_id": "8erK8JyKJ2w",
+        "title": "속초여행 가볼만한곳 한화리조트 설악워터피아 ✨️ 속초가족여행 으로 추천 드려요✨️ #설악쏘라노",
+        "channel": "솔하진",
+        "published_at": "2026-09-29",
+        "view_count": 586
+      },
+      {
+        "video_id": "LnxnKHu0dm4",
+        "title": "속초 대게 끝판왕! 중앙시장 대게여왕 🦀 #속초대게 #대게여왕 #속초맛집",
+        "channel": "토닥토닥",
+        "published_at": "2026-09-28",
+        "view_count": 513
+      }
+    ]
+  }
+}

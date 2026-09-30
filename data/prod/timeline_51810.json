@@ -1,0 +1,137 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-16T23:51:26+09:00",
+  "source": [
+    {
+      "name": "강원 인제 산불 대응 ‘2단계’ 격상…서울양양고속도 통제",
+      "provider": "서울신문",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.seoul.co.kr/news/society/accident/2025/04/26/20250426500032",
+      "note": "보도 2025-04-26"
+    },
+    {
+      "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+      "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+      "retrieved_at": "2026-09-16",
+      "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+    }
+  ],
+  "period": {
+    "start": "2025-04-26",
+    "end": "2025-11-30",
+    "granularity": "일"
+  },
+  "caveat": [
+    "이 사례는 관광 수요가 아닌 사건이 검색지수를 끌어올리는 경우를 보여 준다. 7일 지속 조건이 1~2일짜리 급증을 걸렀다.",
+    "2025-11-20~21 검색 급증은 원인을 확인하지 못했다.",
+    "2025년 12월~2026년 2월 인제 외지인 방문자수가 전년 대비 1.5배 이상인 구간이 한 달 넘게 이어졌으나 원인을 확인하지 못했다. 인제 빙어축제는 3년 연속 열리지 않아(문화일보 2026-01-12 「인제 빙어축제 3년 연속 무산」) 축제로는 설명되지 않는다.",
+    "시스템 신호 규칙은 임시값(D-12)이다. 역할2의 백테스트로 임계와 지속 조건이 바뀔 수 있다.",
+    "기사 이벤트는 웹 검색으로 찾은 것이며 전수 조사가 아니다. 더 이른 조치가 보도되지 않았을 수 있다.",
+    "유튜브 게시일은 DB에 적재된 시각의 날짜 부분이며, 조회수는 적재 시점 값이다."
+  ],
+  "data": {
+    "case_id": "TL-006",
+    "region": {
+      "code": "51810",
+      "name": "인제군"
+    },
+    "title": "인제 — 산불 등 비관광 사건의 검색 급증",
+    "case_kind": "비관광 급증",
+    "signal_rule": {
+      "metric": "네이버 검색지수 (일별)",
+      "statistic": "전년 동요일(364일 전) 대비 배율의 최근 7일 중앙값",
+      "threshold": 1.73,
+      "threshold_basis": "2024년 전국 99백분위 (합성 지역 제외, 사례 지역을 보고 정하지 않음)",
+      "min_duration_days": 7
+    },
+    "signal_check": [
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2025-04-26",
+        "window_end": "2025-05-16",
+        "max_value": 2.15,
+        "max_date": "2025-04-30",
+        "threshold": 1.73,
+        "signaled": false,
+        "note": "하남리 산불"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2025-04-26",
+        "window_end": "2025-05-16",
+        "max_value": 1.48,
+        "max_date": "2025-05-06",
+        "threshold": 1.51,
+        "signaled": false,
+        "note": "하남리 산불"
+      },
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2025-11-15",
+        "window_end": "2025-11-30",
+        "max_value": 1.05,
+        "max_date": "2025-11-23",
+        "threshold": 1.73,
+        "signaled": false,
+        "note": "원인 미확인 — 웹 검색으로 해당 일자 사건을 찾지 못함"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2025-11-15",
+        "window_end": "2025-11-30",
+        "max_value": 1.68,
+        "max_date": "2025-11-30",
+        "threshold": 1.51,
+        "signaled": true,
+        "note": "원인 미확인 — 웹 검색으로 해당 일자 사건을 찾지 못함 — 11/28부터 7일 이상 초과"
+      }
+    ],
+    "events": [
+      {
+        "type": "외부 요인",
+        "description": "인제군 상남면 하남리 산불 — 대응 단계 격상, 서울양양고속도로 일부 통제",
+        "date": "2025-04-26",
+        "date_basis": "사건일",
+        "quote": "26일 오후 강원 인제 상남면에서 발생한 산불이 확산하자 당국이 대응 단계를 격상하는 등 진화에 총력을 기울이고 있다.",
+        "source": {
+          "name": "강원 인제 산불 대응 ‘2단계’ 격상…서울양양고속도 통제",
+          "provider": "서울신문",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.seoul.co.kr/news/society/accident/2025/04/26/20250426500032",
+          "note": "보도 2025-04-26"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2025-04-26",
+        "date_basis": "관측일",
+        "type": "검색 급증",
+        "description": "네이버 검색지수가 하루 전년 동요일의 35.3배까지 치솟았으나 7일 중앙값의 임계 초과가 3일에 그쳐 7일 지속 조건 미충족 — 신호를 내지 않음",
+        "value": 35.31,
+        "unit": "배(전년 동요일 대비 일별)",
+        "source": {
+          "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+          "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+          "retrieved_at": "2026-09-16",
+          "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+        },
+        "is_signal": false
+      },
+      {
+        "date": "2025-11-21",
+        "date_basis": "관측일",
+        "type": "검색 급증",
+        "description": "네이버 검색지수가 하루 전년 동요일의 7.3배까지 치솟았으나 7일 중앙값은 임계를 넘지 않아 7일 지속 조건 미충족 — 신호를 내지 않음",
+        "value": 7.33,
+        "unit": "배(전년 동요일 대비 일별)",
+        "source": {
+          "name": "네이버 데이터랩 검색어 트렌드 일별 검색지수",
+          "provider": "NAVER — 팀 DB fact_signal(interest_naver)",
+          "retrieved_at": "2026-09-16",
+          "note": "전년 동요일(364일 전) 대비 배율의 7일 중앙값 (agents/signals.py)"
+        },
+        "is_signal": false
+      }
+    ]
+  }
+}

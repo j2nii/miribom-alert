@@ -1,0 +1,1033 @@
+@font-face {
+  font-family: "NanumSquare";
+  src: url("./assets/fonts/NanumSquareR.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NanumSquare";
+  src: url("./assets/fonts/NanumSquareB.woff") format("woff");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "NanumSquare";
+  src: url("./assets/fonts/NanumSquareEB.woff") format("woff");
+  font-style: normal;
+  font-weight: 800 900;
+  font-display: swap;
+}
+
+/* A data portal visual language, with the Radar's own content and identity. */
+:root {
+  --font-kr: "NanumSquare", "Malgun Gothic", sans-serif;
+  --font-display: var(--font-kr);
+  --font-mono: var(--font-kr);
+  --ink: #141e26;
+  --ink-soft: #526573;
+  --muted: #6f808a;
+  --line: #dce7ed;
+  --border: #dce7ed;
+  --mist: #eef8fc;
+  --portal-purple: #caeaf7;
+  --portal-accent: #007bbd;
+  --surface-accent: #e8f5fb;
+  --panel-tint: #f8fcfe;
+  --teal: #007bbd;
+}
+
+.app {
+  color: var(--ink);
+  background: #fff;
+  font-family: var(--font-kr);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.55;
+  overflow-x: clip;
+}
+
+.app :is(button, input, select, textarea) { font-family: var(--font-kr); }
+.app :is(h1, h2, h3, h4, strong) { letter-spacing: -.045em; }
+.app :is(h1, h2, h3, h4) { font-family: var(--font-display); }
+.app :is(h1, h2) { font-weight: 800; }
+.portal-width { width: min(1240px, calc(100% - 64px)); }
+
+.app .portal-utility { background: #fff; color: #61717b; border-bottom: 1px solid #eef1f3; font-size: 11px; }
+.portal-utility .portal-width { padding-block: 8px; }
+.app .app-header { border-bottom: 1px solid #e4ebef; }
+.portal-header-row { min-height: 68px; }
+.app .portal-brand {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.055em;
+  color: #16212a;
+}
+.app .portal-brand > span:last-child { color: #008bc9; }
+.app .brand-radar { width: 40px; height: 40px; color: #008bc9; }
+.app .header-region-picker label { color: #344b5c; font-weight: 700; }
+.header-region-search input { border-color: #b9ccd7; border-radius: 5px; min-height: 42px; color: #172733; background: #fff; }
+.header-region-search input:focus { outline-color: #4ca9d8; }
+.header-region-results { width: min(400px, 90vw); max-height: min(430px, calc(100vh - 180px)); border-color: #bfd3de; background: #fff; box-shadow: 0 12px 28px #123b571c; }
+.app .header-region-results-title { color: #385365; font-size: 12px; }
+.app .header-region-alert-counts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin: 0 2px 8px; padding: 3px 8px 9px; border-bottom: 1px solid #e8eff3; color: #405767; font-size: 11px; font-weight: 700; }
+.header-region-alert-counts > span { display: inline-flex; align-items: center; gap: 4px; }
+.header-region-alert-counts small { color: #687d89; font-size: 10px; }
+.app .header-region-group-title { margin: 8px 2px 3px; padding: 5px 8px; color: #617987; font-size: 11px; font-weight: 800; }
+.app .header-region-picker .header-region-results button { min-height: 43px; padding: 8px 10px; border: 0; border-radius: 5px; background: #fff; color: #1c3441; font-size: 13px; font-weight: 700; white-space: normal; }
+.app .header-region-picker .header-region-results button:hover,
+.app .header-region-picker .header-region-results button.is-active { background: #eaf6fb; color: #11374a; }
+.region-result-name { min-width: 0; text-align: left; }
+.region-result-name small { margin-left: 5px; color: #6d818d; font-size: 11px; font-weight: 600; }
+.region-result-badges { display: inline-flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 4px; }
+.region-depth-badge, .region-alert-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; line-height: 1.2; white-space: nowrap; }
+.region-depth-badge { background: #e8f5f3; color: #2b766d; }
+.region-alert-badge { border: 1px solid #e6ecef; background: #fff; color: #344d5b; }
+.region-alert-dot { display: inline-block; flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: #39a18b; }
+.region-alert-dot[data-level="주의"] { background: #e7a53a; }
+.region-alert-dot[data-level="경계"] { background: #d8792a; }
+.region-alert-dot[data-level="심각"] { background: #c84848; }
+/* 시도 칩 -- 타이핑 없이 전국을 훑는 입구. 고르면 그 시도 이름이 검색어로 들어가
+   그 안에서 다시 고른다. 목록 행 버튼과 같은 컨테이너 안에 있으므로 위
+   ".header-region-results button" 규칙을 한 단계 더 좁은 선택자로 덮는다. */
+.app .header-region-picker .header-region-results .header-region-sidos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 0 2px 2px;
+  padding: 2px 6px 8px;
+}
+.app .header-region-picker .header-region-results .header-region-sidos button {
+  width: auto;
+  min-height: 0;
+  display: inline-flex;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 11px;
+  border: 1px solid #cfe0e9;
+  border-radius: 999px;
+  background: #f7fbfd;
+  color: #26576e;
+  font-size: 12px;
+  font-weight: 800;
+}
+.app .header-region-picker .header-region-results .header-region-sidos button:hover {
+  border-color: #7fb6d3;
+  background: #eaf6fb;
+  color: #11374a;
+}
+.app .header-region-sidos button > span {
+  color: #6e8a99;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.app .header-region-picker button[type="submit"] { background: #007bbd; color: #fff; border-radius: 5px; font-weight: 700; }
+.app .header-region-picker button[type="submit"]:hover { background: #006ca6; }
+
+.portal-navigation { background: #fff; border-bottom: 1px solid #d9e4ea; }
+.app .workflow-nav { display: grid; grid-template-columns: repeat(5, max-content); justify-content: space-between; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+.app .workflow-step { min-height: 48px; justify-content: center; gap: 9px; padding: 7px 8px; color: #142530; border-radius: 0; }
+.app .workflow-step:hover { color: #007bbd; background: #f0f9fd; }
+.app .workflow-step + .workflow-step::before { display: none; }
+.app .workflow-icon { width: 27px; height: 27px; border: 0; background: none; border-radius: 0; color: #007bbd; }
+.app .workflow-icon svg { width: 23px; height: 23px; }
+.app .workflow-step:hover .workflow-icon { background: none; transform: none; }
+.app .workflow-label { font-family: var(--font-display); font-size: 18px; font-weight: 800; letter-spacing: -.035em; }
+.app .workflow-label small { display: none; }
+
+.portal-notice { background: #f6f9fa; border-bottom: 1px solid #edf0f2; }
+.portal-notice .portal-width { min-height: 43px; display: flex; align-items: center; gap: 16px; }
+.portal-notice .portal-width > span { border-radius: 20px; padding: 4px 13px; background: #006bb0; color: #fff; font-weight: 700; white-space: nowrap; }
+.portal-notice p { margin: 0; flex: 1; font-size: 12px; font-weight: 600; }
+.portal-notice a { color: #254355; font-size: 12px; text-underline-offset: 3px; }
+
+.app .portal-hero { color: #102d3d; background: #ccebf8; border: 0; }
+.app .hero-inner { padding-top: 0; }
+.app .hero-copy { padding: 31px 0 24px; max-width: none; }
+.app .hero-kicker { margin: 0 0 4px; color: #006fae; font-size: 11px; font-weight: 800; letter-spacing: .07em; }
+.app .hero-copy h1 { color: #102e3d; font-size: clamp(25px, 2.8vw, 34px); line-height: 1.3; font-weight: 800; letter-spacing: -.055em; }
+.app .hero-description { margin: 6px 0 0; color: #3a6477; font-size: 13px; }
+.app .hero-radar { display: none; }
+
+.app .app-grid {
+  position: relative;
+  max-width: 1304px;
+  margin-top: 0;
+  padding: 0 32px 32px;
+  gap: 24px;
+  isolation: isolate;
+}
+.app-grid::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  height: 310px;
+  background: #ccebf8;
+}
+.app .panel {
+  --ink: #15242e;
+  --ink-soft: #536775;
+  --muted: #6b7e89;
+  --mist: #eef8fc;
+  --line: #dce7ed;
+  --border: #dce7ed;
+  --panel-tint: #f8fcfe;
+  --surface-accent: #e9f6fb;
+  padding: 26px 30px;
+  border: 1px solid #dde7ec;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 5px 18px #12425a0c;
+}
+.app .panel-dashboard { margin-top: 0; box-shadow: 0 9px 22px #194d6215; }
+.app .panel-head { margin-bottom: 18px; padding-bottom: 14px; border-color: #e4ecef; }
+.app .panel-eyebrow { margin: 0 0 3px; color: #007bbd; font-family: var(--font-display); font-size: 12px; font-weight: 800; letter-spacing: .015em; }
+.app .panel-head h2 { color: #14242e; font-family: var(--font-display); font-size: 27px; font-weight: 800; letter-spacing: -.055em; }
+.app .section-title { color: #172833; font-size: 18px; font-family: var(--font-display); font-weight: 800; }
+.app .panel-subtitle { color: #586d78; }
+
+.app :is(.daily-peak, .daily-peak.is-settled) { padding: 0; border: 0; border-radius: 0; background: #fff; }
+.app .daily-peak-meta { color: #536c78; }
+.app .daily-peak-mock { color: #006fae; background: #e6f4fa; border-radius: 3px; font-weight: 700; }
+.app .daily-peak-heading h3 { color: #102938; font-family: var(--font-display); font-size: 23px; font-weight: 800; }
+.app .daily-peak-range { border-color: #cbdde6; background: #f1f8fb; border-radius: 7px; }
+.app .daily-peak-range button { color: #3b5869; border-radius: 5px; }
+.app .daily-peak-range button:hover { background: #dceef7; }
+.app .daily-peak-range button.is-active { background: #007bbd; color: #fff; }
+.app .briefing-stats { gap: 0; border: 0; border-block: 1px solid #dce7ed; border-radius: 0; background: #fff; overflow: visible; }
+.app .briefing-stats > * { display: flex; flex-direction: column; align-items: flex-start; min-height: 102px; padding: 12px 16px; border-color: #e0e9ed; text-align: left; }
+.app .briefing-stats > :first-child { padding-left: 16px; }
+.app .briefing-stats > * { color: #172b36; font-size: 15px; font-weight: 800; }
+.app .briefing-stats strong { display: block; margin: 2px 0 0; }
+.app .briefing-stats small { margin-top: auto; padding-top: 5px; }
+.app .briefing-stats > span:first-child strong { color: #007dbb; }
+.app .briefing-stats > span:nth-child(2) strong { color: #1b708c; }
+.app .briefing-stats small { color: #647782; }
+@media (min-width: 901px) {
+  .app .briefing-stats > span small { white-space: nowrap; }
+}
+.app .brief-forecast-summary strong { color: #006fae; }
+.app .brief-status-line { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 6px; row-gap: 2px; width: 100%; }
+.app .brief-status-line strong { margin: 2px 0 0; line-height: 1.55; }
+.app .brief-alert-asof { color: #647782; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.app .brief-observed-signal { color: #4a626e; font-size: 11px; font-style: normal; font-weight: 700; line-height: 1.2; white-space: nowrap; }
+.app .brief-observed-signal.is-detected { color: #007bbd; font-weight: 800; }
+.app .brief-chart-grid { margin-top: 12px; }
+.app .brief-chart-card { background: #fff; border: 1px solid #dce7ed; border-radius: 3px; }
+.app .brief-chart-card.search-chart-card { background: #fff; border: 1px solid #dce7ed; }
+.app .brief-chart-title, .app .search-chart-card .brief-chart-title { color: #234454; }
+.app .brief-chart-title strong { color: #182f3b; font-size: 15px; font-weight: 800; }
+.app .brief-chart-title span, .app .search-chart-card .brief-chart-title span { color: #5f7886; }
+.app .daily-peak-next a { background: #f2f9fc; border-color: #d3e8f1; border-radius: 4px; font-family: var(--font-kr); font-weight: 700; }
+.app .daily-peak-next a:hover { background: #e3f2f9; border-color: #99cde3; }
+.app .daily-peak-next strong { color: #006fae; font-weight: 800; }
+.app .daily-peak-next small { color: #526d7a; font-weight: 700; }
+.app .daily-peak-next a > span:last-child { color: #007bbd; }
+.app .daily-peak-next.has-forecast { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.app :is(.content-feed-card, .profile-highlight, .policy-now-list li, .briefing-item, .summary-details, .report-evidence, .morning-topic) {
+  border-color: #dce7ed;
+  border-radius: 5px;
+  box-shadow: none;
+}
+.app :is(.policy-now-list li, .profile-highlight, .info-box, .rank-row, .report-sns-value, .youtube-comparison) { background: #f5fafc; }
+.app :is(.content-topic-title, .content-feed-card h3 a, .policy-now-list strong, .profile-highlight > strong, .briefing-item-label, .report-topics-heading h3) { color: #173342; }
+.app :is(.content-feed-tags span, .policy-now-number, .source-tag-real, .report-observed) { color: #006fae; background: #e7f4fa; }
+.app .summary-details > summary { color: #315568; }
+.app .summary-lead { border-radius: 3px; }
+.app .summary-signal { border-radius: 4px; }
+.app .content-feed-card { border-radius: 4px; }
+.app .policy-now-list li { border-radius: 3px; border-left: 3px solid #a8d2e2; }
+.app .report-evidence { border-radius: 4px; }
+.app .youtube-comparison { border-radius: 3px; }
+.app .morning-metrics { border-radius: 3px; }
+.app .summary-details-body { border-color: #dce7ed; }
+.app .summary-lead { background: #eaf7fc; border-left-color: #007bbd; }
+.app :is(.summary-eyebrow, .summary-section-head > a, .summary-actions > a:hover strong) { color: #007bbd; }
+.app .summary-alert { color: #006fae; background: #e5f4fa; }
+.app .summary-signal.is-detected { border-color: #9bcede; background: #f0fafc; }
+.app .summary-signal.is-detected strong { color: #007bbd; }
+.app .summary-action-number { background: #e6f4fa; color: #007bbd; }
+.app .panel-summary .tab-switch { border-color: #dce7ed; background: #f3f9fc; }
+.app .panel-summary .tab-btn { color: #4c6572; }
+.app .panel-summary .tab-btn.is-active { background: #007bbd; color: #fff; }
+.app .panel-summary .tab-btn:hover:not(.is-active) { background: #e2f2f9; }
+.app .footer-link-btn { color: #006fae; background: #eaf6fb; }
+.app .chat-popup-launcher, .app .chat-popup-header { background: #007bbd; }
+/* 예시 질문 칩 -- 빈 대화창의 시작점. 팝업이 ui 것이므로 팝업 색을 따른다. */
+.app .chat-popup-suggestions { display: grid; gap: 6px; margin: 10px 0 2px; }
+.app .chat-popup-suggestions button {
+  padding: 9px 12px;
+  border: 1px solid #cde2ec;
+  border-radius: 8px;
+  background: #f7fbfd;
+  color: #1c4457;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.app .chat-popup-suggestions button:hover:not(:disabled) { border-color: #7fb6d3; background: #eaf6fb; }
+.app .chat-popup-suggestions button:disabled { opacity: .5; cursor: default; }
+/* 답변이 무엇을 근거로 섰는지 -- 실측 / 샘플 / 준비 전·조회 실패를 색으로 가른다. */
+.app .chat-popup-sources { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.app .chat-popup-source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.app .chat-popup-source-chip b { font-weight: 800; }
+.app .chat-popup-source-chip.is-real { background: #e6f4fb; color: #1c5673; }
+.app .chat-popup-source-chip.is-sample { background: #fdf2e3; color: #7d5312; }
+.app .chat-popup-source-chip.is-none { background: #eef1f3; color: #5c6b74; }
+.app .chat-popup-panel { border-color: #bddae6; }
+.app .caveat-note { background: #f8fcfd; border-color: #dce7ed; }
+.app :is(.morning-metrics, .report-evidence, .report-sns-value, .youtube-comparison) { border-color: #dce7ed; }
+.app .morning-metrics { background: #f3f9fc; }
+.app :is(.morning-metrics strong, .report-sns-value strong, .report-search-value strong, .youtube-comparison-row strong) { color: #006fae; }
+.app .morning-topic-meta > span:first-child { color: #006fae; background: #e6f4fa; }
+.app .report-channel { color: #007bbd; }
+.app .report-search-chart { color: #007bbd; }
+.app .report-evidence .morning-meta > span:first-child { background: none; color: #354956; padding: 0; border-radius: 0; }
+.app .report-evidence .report-search-chart { height: auto; margin-top: 16px; }
+.app .report-monthly-search-chart rect { fill: #74bdd7; }
+.app .report-monthly-search-chart rect.is-latest { fill: #007bbd; }
+.app .report-monthly-search-chart text { fill: #526e7d; font-size: 11px; font-weight: 700; }
+.app .report-monthly-search-chart .report-monthly-value { fill: #174458; font-size: 12px; font-weight: 800; }
+.app .youtube-comparison-track { background: #dcecf3; }
+.app .youtube-comparison-track > span { background: #9bc8dc; }
+.app .youtube-comparison-track > .is-current { background: #007bbd; }
+.app .report-evidence-grid .report-channel { margin-bottom: 5px; }
+.app .report-evidence-grid .report-evidence h3:not(.report-channel) { margin-top: 10px; }
+.app .youtube-video-report .morning-meta { margin: 0; }
+.app .youtube-recent-total { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin: 10px 0 12px; }
+.app .youtube-recent-total > span { color: #173747; font-size: 18px; font-weight: 800; }
+.app .youtube-recent-total strong { color: #006fae; font-size: 28px; line-height: 1; font-weight: 800; }
+.app .youtube-recent-total small { margin-left: 3px; color: #354956; font-size: 14px; font-weight: 700; }
+.app .youtube-video-report { display: flex; flex-direction: column; }
+.app .youtube-video-list-wrap { position: relative; display: flex; flex: 0 0 315px; height: 315px; min-height: 0; }
+.app .youtube-recent-videos { display: grid; grid-auto-rows: minmax(112px, auto); align-content: start; flex: 1; height: 100%; min-height: 0; overflow-y: auto; scrollbar-gutter: stable; list-style: none; margin: 0; padding: 0 12px 34px; border: 1px solid #dce7ed; border-radius: 7px; background: #fff; scrollbar-color: #91b9ca #eef4f7; }
+.app .youtube-recent-videos::-webkit-scrollbar { width: 10px; }
+.app .youtube-recent-videos::-webkit-scrollbar-track { background: #eef4f7; border-radius: 6px; }
+.app .youtube-recent-videos::-webkit-scrollbar-thumb { background: #91b9ca; border: 2px solid #eef4f7; border-radius: 6px; }
+.app .youtube-list-status { position: absolute; right: 27px; bottom: 9px; color: #426477; font-size: 12px; font-weight: 800; pointer-events: none; }
+.app .youtube-recent-videos li { min-width: 0; border-bottom: 1px solid #e2ebef; }
+.app .youtube-recent-videos li:last-child { border-bottom: 0; }
+.app .youtube-recent-videos li > a { display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 14px; align-items: center; height: 100%; padding: 12px 0; color: inherit; text-decoration: none; }
+.app .youtube-recent-videos li > a:hover { background: #f5fafc; }
+.app .youtube-recent-videos img { display: block; width: 136px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; background: #dce7ed; }
+.app .youtube-recent-video-details { display: grid; min-width: 0; gap: 5px; }
+.app .youtube-recent-video-meta, .app .youtube-recent-video-channel { color: #506675; font-size: 13px; font-weight: 700; }
+.app .youtube-recent-video-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 8px; }
+.app .youtube-recent-video-views { color: #006fae; font-weight: 800; white-space: nowrap; }
+.app .youtube-recent-video-details > strong { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: #153746; font-size: 15px; line-height: 1.45; font-weight: 800; }
+.app .youtube-recent-videos a:hover strong { color: #006fae; text-decoration: underline; }
+@media (max-width: 1000px) {
+  .app .youtube-recent-videos li > a { grid-template-columns: 112px minmax(0, 1fr); gap: 10px; }
+  .app .youtube-recent-videos img { width: 112px; }
+}
+@media (max-width: 480px) {
+  .app .youtube-recent-videos li > a { grid-template-columns: 110px minmax(0, 1fr); }
+  .app .youtube-recent-videos img { width: 110px; }
+}
+.app .app-footer { color: #617784; border-top: 1px solid #e2eaee; }
+.app a:focus-visible, .app button:focus-visible, .app select:focus-visible { outline-color: #007bbd; }
+
+@media (max-width: 850px) {
+  .app .workflow-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .app .workflow-label { font-size: 14px; }
+  .app .workflow-icon { width: 22px; height: 22px; }
+  .app .workflow-icon svg { width: 20px; height: 20px; }
+  .app .app-grid { gap: 18px; }
+}
+
+@media (max-width: 700px) {
+  .portal-width { width: calc(100% - 30px); }
+  .portal-utility .portal-width { padding-block: 6px; }
+  .portal-utility .portal-width > span:last-child { display: none; }
+  .portal-header-row { min-height: 0; padding-block: 9px; }
+  .app .portal-brand { font-size: 24px; }
+  .app .workflow-nav { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .app .workflow-step { min-height: 56px; padding: 5px 2px; gap: 3px; }
+  .app .workflow-label { font-size: 13px; white-space: normal; text-align: center; line-height: 1.25; }
+  .portal-notice .portal-width { min-height: 42px; gap: 9px; }
+  .portal-notice p { font-size: 11px; }
+  .portal-notice a { display: none; }
+  .app .hero-copy { padding: 30px 0 24px; }
+  .app .hero-copy h1 { font-size: 25px; }
+  .app .hero-description { font-size: 12px; }
+  .app .app-grid { padding-inline: 12px; gap: 14px; }
+  .app-grid::before { height: 320px; }
+  .app .panel { padding: 16px; border-radius: 8px; }
+  .app .panel-head h2 { font-size: 22px; }
+  .app :is(.daily-peak, .daily-peak.is-settled) { padding: 0; }
+  .app .daily-peak-heading h3 { font-size: 20px; }
+  .app .briefing-stats > * { min-height: 0; padding: 9px 2px; }
+  .app .briefing-stats > :first-child { padding-left: 2px; }
+  .app .briefing-stats small { margin-top: 5px; padding-top: 0; }
+}
+
+/* The source portal keeps even supporting text dark and substantial. */
+.app :is(
+  .hero-description,
+  .daily-peak-meta,
+  .daily-peak-next small,
+  .compact-details > summary,
+  .summary-details > summary,
+  .morning-metrics small,
+  .report-sns-value small,
+  .report-search-value small,
+  .youtube-comparison-row small,
+  .panel-summary .tab-btn,
+  .footer-link-btn
+) { font-weight: 700; }
+
+.app :is(
+  .portal-utility,
+  .hero-description,
+  .daily-peak-meta,
+  .briefing-stats small,
+  .brief-chart-title span,
+  .report-intro,
+  .report-comparison-note,
+  .report-evidence .morning-meta,
+  .morning-meta,
+  .morning-window,
+  .content-scope,
+  .content-evidence-caption,
+  .content-feed-toolbar,
+  .content-feed-date,
+  .content-feed-channel,
+  .content-feed-description,
+  .policy-now-period,
+  .policy-now-note,
+  .policy-now-list p,
+  .summary-caption,
+  .summary-video-meta,
+  .summary-video > p,
+  .profile-period,
+  .app-footer
+) { color: #354956; }
+
+.app :is(
+  .daily-peak-meta,
+  .briefing-stats small,
+  .brief-chart-title span,
+  .morning-meta,
+  .morning-window,
+  .report-evidence .morning-meta,
+  .content-evidence-caption,
+  .content-feed-toolbar,
+  .content-feed-date,
+  .content-feed-channel,
+  .policy-now-period,
+  .policy-now-note,
+  .summary-caption,
+  .summary-video-meta,
+  .summary-video > p,
+  .profile-period
+) { font-size: 12px; font-weight: 700; line-height: 1.55; }
+
+.app :is(
+  .report-intro,
+  .content-scope,
+  .content-feed-description,
+  .policy-now-list p,
+  .daily-peak-next small,
+  .summary-details > summary,
+  .compact-details > summary
+) { font-size: 13px; font-weight: 700; }
+
+.app .content-feed-card :is(p, li, small),
+.app .report-evidence :is(p, small),
+.app .policy-now-list :is(p, small),
+.app .briefing-item :is(p, small) { color: #354956; font-weight: 700; }
+
+.app .app-footer { font-size: 12px; font-weight: 700; }
+.app svg text { font-family: var(--font-kr); font-weight: 700; }
+
+.app :is(
+  .report-channel,
+  .report-evidence h3:not(.report-channel),
+  .report-topics-heading h3,
+  .morning-topic h4,
+  .content-topic-title,
+  .content-feed-card h3,
+  .policy-now-list strong,
+  .section-title
+) { font-family: var(--font-display); font-weight: 800; }
+
+.app .report-channel { color: #143747; font-size: 21px; line-height: 1.35; margin-bottom: 14px; }
+.app :is(
+  .morning-topic-meta,
+  .report-topics-heading > span,
+  .morning-video-label,
+  .morning-action,
+  .youtube-comparison-row span,
+  .source-badge,
+  .caveat-note
+) { color: #354956; font-weight: 700; }
+
+/* Supporting copy stays readable without competing with headings and values. */
+.app .panel :is(
+  .forecast-caption,
+  .forecast-axis,
+  .summary-signal small,
+  .summary-caption,
+  .summary-video-meta,
+  .summary-video > p,
+  .interest-chart-heading > strong small,
+  .interest-bar-row > p,
+  .profile-highlight > span,
+  .profile-highlight > small,
+  .profile-period,
+  .source-badge__note,
+  .content-evidence-caption,
+  .content-feed-date,
+  .content-feed-channel,
+  .content-feed-toolbar,
+  .policy-now-list p
+) {
+  color: #354956;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.app .panel :is(.summary-details > summary, .compact-details > summary, .source-badge summary) {
+  color: #254353;
+  font-weight: 800;
+}
+
+/* Show the three immediate actions side by side. */
+.app .panel-briefing .policy-now-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 8px 0 7px;
+  border: 0;
+}
+.app .panel-briefing .policy-now-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  min-height: 78px;
+  padding: 13px 15px;
+  border: 1px solid #dce7ed;
+  border-radius: 5px;
+  background: #f5fafc;
+}
+.app .panel-briefing .policy-now-list li > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5px;
+  min-width: 0;
+}
+.app .panel-briefing .policy-now-list strong {
+  color: #173342;
+  font-size: 17px;
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.app .panel-briefing .policy-now-list p {
+  margin: 0;
+  font-size: 14px;
+}
+.app .panel-briefing .policy-now-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 18px;
+  font-weight: 800;
+}
+.app .panel-briefing .panel-head { margin-bottom: 8px; padding-bottom: 9px; }
+.app .panel-briefing .policy-now-period { margin: 0 0 8px; font-size: 13px; }
+.app .panel-briefing { padding-top: 20px; padding-bottom: 20px; }
+.app .panel-briefing .policy-report-link { margin-bottom: 4px; padding-block: 5px; }
+.app .panel-briefing .compact-details { margin-top: 2px; }
+
+@media (max-width: 700px) {
+  .app .daily-peak-next.has-forecast,
+  .app .panel-briefing .policy-now-list { grid-template-columns: 1fr; }
+}
+
+/* The briefing links to the regional forecast. */
+.app .app-grid {
+  grid-template-areas: "dashboard" "summary" "briefing" "analysis-head" "scan" "evidence" "policy" "performance";
+  grid-template-rows: repeat(8, auto);
+}
+.app :is(.analysis-report-intro, .panel-scan, .panel-evidence, .panel-policy-report) { font-family: var(--font-kr); }
+.analysis-report-intro { grid-area: analysis-head; scroll-margin-top: 20px; margin-top: 18px; padding: 24px 2px 4px; border-top: 3px solid #007bbd; }
+.analysis-report-intro h2 { margin: 0 0 6px; color: #152f3d; font-size: clamp(25px, 2.6vw, 34px); font-weight: 800; }
+.analysis-report-intro p { margin: 0; color: #55707e; font-size: 14px; font-weight: 700; }
+.analysis-report-intro nav { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+.analysis-report-intro nav a { padding: 9px 13px; border: 1px solid #cbdfe8; border-radius: 4px; background: #fff; color: #225469; font-size: 14px; font-weight: 800; text-decoration: none; }
+.analysis-report-intro nav a:hover { background: #e9f6fb; }
+.panel-evidence { grid-area: evidence; }
+.panel-policy-report { grid-area: policy; scroll-margin-top: 20px; }
+.app .policy-report-link { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 12px; padding: 9px 0; color: #006fae; font-size: 16px; font-weight: 800; text-decoration: none; }
+.app .policy-report-link:hover { text-decoration: underline; }
+.deep-analysis-body { display: grid; gap: 28px; }
+.analysis-report-block { min-width: 0; scroll-margin-top: 20px; }
+.analysis-report-block + .analysis-report-block { padding-top: 26px; border-top: 1px solid #dce7ed; }
+.analysis-report-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; padding-top: 26px; border-top: 1px solid #dce7ed; }
+.analysis-block-heading { margin-bottom: 16px; }
+.analysis-block-heading > span { color: #007bbd; font-size: 11px; font-weight: 800; }
+.analysis-block-heading h3 { margin: 5px 0 4px; color: #173747; font-size: 21px; font-weight: 800; }
+.analysis-block-heading p, .analysis-data-date { margin: 0; color: #58717f; font-size: 12px; font-weight: 700; }
+.app :is(.analysis-signal-list p, .analysis-signal-list small) { font-family: var(--font-kr); font-size: 12px; }
+.analysis-data-date { margin-bottom: 14px; }
+.analysis-evidence-lead { display: flex; align-items: end; justify-content: space-between; gap: 20px; padding: 16px 18px; border-left: 3px solid #007bbd; background: #f0f8fc; }
+.analysis-evidence-lead > div { display: grid; gap: 4px; }
+.analysis-evidence-lead span { color: #537180; font-size: 11px; font-weight: 700; }
+.analysis-evidence-lead strong { color: #006fae; font-size: 23px; font-weight: 800; }
+.analysis-evidence-lead p { margin: 0; color: #315367; font-size: 13px; font-weight: 700; }
+.analysis-signal-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0 10px; }
+.analysis-signal-list > div { min-width: 0; padding: 14px; border: 1px solid #dce7ed; background: #fff; }
+.analysis-signal-list > div > div { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 5px; }
+.analysis-signal-stage { color: #264858; font-size: 13px; font-weight: 800; }
+.analysis-signal-list strong { color: #007bbd; font-size: 12px; font-weight: 800; }
+.analysis-signal-list p { min-height: 2.8em; margin: 8px 0 5px; color: #415f6e; font-size: 11px; line-height: 1.4; font-weight: 700; }
+.analysis-signal-list small { display: block; color: #5d7480; font-size: 11px; font-weight: 700; }
+.analysis-type-list { display: grid; gap: 12px; list-style: none; margin: 0 0 14px; padding: 0; }
+.analysis-type-list li { display: grid; grid-template-columns: minmax(105px, 1fr) minmax(120px, 2.5fr) 44px 76px; align-items: center; gap: 12px; color: #264858; font-size: 13px; font-weight: 800; }
+.analysis-type-track { height: 12px; background: #e7f2f7; }
+.analysis-type-track > span { display: block; height: 100%; background: #61acc8; }
+.analysis-type-list strong { text-align: right; white-space: nowrap; }
+.analysis-type-list small { text-align: right; line-height: 1.35; }
+.analysis-type-list small { color: #58717f; font-size: 11px; }
+.policy-checklist-section { margin-top: 12px; }
+.policy-generated-section { margin-top: 26px; padding-top: 26px; border-top: 1px solid #dce7ed; }
+.policy-precedents { margin-top: 18px; }
+@media (max-width: 850px) {
+  .analysis-report-pair, .analysis-signal-list { grid-template-columns: 1fr; }
+  .analysis-signal-list p { min-height: 0; }
+}
+@media (max-width: 700px) {
+  .analysis-report-intro { margin-top: 10px; padding-top: 18px; }
+  .analysis-report-intro nav a { font-size: 13px; }
+  .analysis-evidence-lead { display: block; }
+  .analysis-evidence-lead p { margin-top: 8px; }
+  .analysis-type-list li { grid-template-columns: minmax(85px, 1fr) minmax(65px, 1.5fr) 38px 64px; gap: 6px; font-size: 11px; }
+}
+/* The regional panel moves from observed signal to place, audience and forecast. */
+.app .panel-scan .section-block { margin-top: 22px; }
+.app .regional-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+.app .regional-section-head h3 { margin: 2px 0 0; color: #153443; font-size: 19px; font-weight: 800; }
+.app .regional-section-head p { margin: 0; color: #536b78; font-size: 12px; font-weight: 700; }
+.app .regional-step { color: #007bbd; font-size: 11px; font-weight: 800; }
+.app .regional-visitor-signal {
+  display: grid;
+  grid-template-columns: minmax(205px, .9fr) minmax(0, 1.5fr);
+  align-items: stretch;
+  border: 1px solid #cee3ed;
+  background: #f3faff;
+}
+.app .regional-signal-lead { display: flex; flex-direction: column; justify-content: center; padding: 22px 24px; border-right: 1px solid #dceaf1; }
+.app .regional-signal-lead > span { color: #446372; font-size: 14px; font-weight: 700; }
+.app .regional-signal-lead > strong { display: block; margin-top: 9px; color: #173a4c; font-size: 26px; font-weight: 800; line-height: 1.3; }
+.app .regional-signal-lead > p { margin: 8px 0 0; color: #486777; font-size: 15px; font-weight: 700; }
+.app .regional-visitor-signal.is-detected { border-color: #91c6d9; background: #eaf8fe; }
+.app .regional-visitor-signal.is-detected .regional-signal-lead > strong { color: #006fae; }
+.app .regional-signal-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center; }
+.app .regional-signal-facts > div { display: flex; min-height: 85px; flex-direction: column; justify-content: center; gap: 8px; padding: 18px 20px; border-right: 1px solid #dceaf1; }
+.app .regional-signal-facts > div:last-child { border-right: 0; }
+.app .regional-signal-facts span { color: #456473; font-size: 14px; font-weight: 700; }
+.app .regional-signal-facts strong { color: #153443; font-size: 23px; font-weight: 800; white-space: nowrap; }
+.app .regional-signal-method { margin: 12px 0 0; color: #536d7a; font-size: 13px; font-weight: 700; }
+.app .regional-top-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 22px; }
+.app .regional-top-grid > .section-block { min-width: 0; margin-top: 0; padding-top: 20px; border-top: 1px solid #dce7ed; }
+.app .regional-data-period { margin: 0 0 8px; color: #536d7a; font-size: 13px; font-weight: 700; }
+.app .regional-top-grid .regional-section-head { margin-bottom: 6px; }
+.app .analysis-report-pair .analysis-block-heading { margin-bottom: 8px; }
+.app .regional-top-list, .app .regional-profile-list { width: min(100%, 420px); }
+.app .regional-top-list { list-style: none; margin: 0; padding: 0; }
+.app .regional-top-list li, .app .regional-profile-list > div {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) max-content;
+  align-items: center;
+  justify-content: start;
+  gap: 14px;
+  min-height: 55px;
+  padding: 9px 10px;
+  border-top: 1px solid #dfebf0;
+}
+.app .regional-top-list li:last-child, .app .regional-profile-list > div:last-child { border-bottom: 1px solid #dfebf0; }
+.app .regional-rank { color: #007bbd; font-size: 16px; font-weight: 800; }
+.app .regional-top-list strong, .app .regional-profile-list strong { min-width: 0; color: #173443; font-size: 16px; font-weight: 800; }
+.app .regional-top-list li > span:last-child, .app .regional-profile-list b { color: #1e526b; font-size: 15px; font-weight: 800; white-space: nowrap; }
+.app .regional-profile-list > div { grid-template-columns: 105px minmax(0, 1fr) max-content; }
+.app .regional-profile-list > div > span { color: #536d7a; font-size: 14px; font-weight: 700; }
+.app .analysis-hotspot-list { max-height: 320px; overflow-y: auto; gap: 0; margin: 0; border-top: 1px solid #dce7ed; border-bottom: 1px solid #dce7ed; scrollbar-color: #91b9ca #eef4f7; }
+.app .analysis-hotspot-list .rank-row { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: start; gap: 11px; padding: 12px 8px; border: 0; border-bottom: 1px solid #e5edf1; border-radius: 0; background: #fff; font-family: var(--font-kr); }
+.app .analysis-hotspot-list .rank-row:last-child { border-bottom: 0; }
+.app .analysis-hotspot-list .rank-index { width: 21px; height: 21px; margin-top: 1px; background: #173747; font-family: var(--font-kr); font-size: 12px; font-weight: 800; }
+.app .analysis-hotspot-main { min-width: 0; }
+.app .analysis-hotspot-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: #173747; font-size: 16px; }
+.app .analysis-hotspot-head strong { min-width: 0; font-weight: 800; }
+.app .analysis-hotspot-head .dept-chip { margin-left: 7px; }
+.app .analysis-hotspot-head > span { flex: 0 0 auto; font-weight: 800; }
+.app .analysis-hotspot-head .is-up { color: #df4050; }
+.app .analysis-hotspot-head .is-down { color: #087e84; }
+.app .analysis-hotspot-meta { margin: 4px 0 0; color: #526c7a; font-size: 14px; line-height: 1.4; font-weight: 700; }
+.app .regional-empty { color: #536d7a; font-size: 12px; font-weight: 700; }
+.app .panel .profile-highlight { gap: 5px; padding: 12px 14px; }
+.app #audience-analysis .profile-highlight > span { color: #315367; font-size: 14px; font-weight: 800; }
+.app .panel .profile-highlight > strong { color: #173747; font-size: 17px; line-height: 1.4; font-weight: 800; }
+.app #audience-analysis .profile-highlight > small { color: #315367; font-size: 14px; line-height: 1.4; font-weight: 800; }
+.app .panel-scan .source-badge { margin-top: 10px; }
+.app .trend-daily-forecast { scroll-margin-top: 20px; }
+.app .trend-daily-forecast .forecast-view {
+  padding: 20px 22px 15px;
+  border: 1px solid #d4e5ed;
+  background: linear-gradient(180deg, #f7fcff 0%, #fff 80%);
+}
+.app .trend-daily-forecast .forecast-heading { align-items: start; margin: 0 0 12px; }
+.app .trend-daily-forecast .forecast-heading > div:first-child > strong { color: #173747; font-size: 17px; font-weight: 800; }
+.app .trend-daily-forecast .forecast-heading span { color: #58717f; font-size: 12px; font-weight: 700; }
+.app .trend-daily-forecast .forecast-peak-summary { align-items: end; gap: 2px; text-align: right; }
+.app .trend-daily-forecast .forecast-peak-summary > span { color: #087bac; }
+.app .trend-daily-forecast .forecast-peak-summary > strong { color: #006fa8; font-size: 25px; font-weight: 800; line-height: 1.15; }
+.app .trend-daily-forecast .forecast-peak-summary small { margin-left: 2px; font-size: 13px; }
+.app .trend-daily-forecast .forecast-plot { width: 100%; max-height: 310px; overflow: visible; }
+.app .forecast-grid line { stroke: #e2edf2; stroke-dasharray: 3 5; }
+.app .forecast-grid text { fill: #617986; font-size: 11px; font-weight: 700; }
+.app .forecast-boundary { stroke: #a4b9c4; stroke-width: 1.5; stroke-dasharray: 4 5; }
+.app .forecast-actual-line { fill: none; stroke: #536c7b; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.app .forecast-actual-dot { fill: #fff; stroke: #536c7b; stroke-width: 2.5; }
+.app .forecast-bridge { stroke: #829eac; stroke-width: 2; stroke-dasharray: 4 5; }
+.app .forecast-line { fill: none; stroke: #007fb8; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.app .forecast-dot { fill: #fff; stroke: #007fb8; stroke-width: 3; }
+.app .forecast-dot.is-peak { fill: #007fb8; stroke: #fff; stroke-width: 2; }
+.app .forecast-peak-ring { fill: #a7def0; opacity: .75; }
+.app .forecast-date { fill: #4a6777; font-size: 11px; font-weight: 700; }
+.app .forecast-peak-label { fill: #006fa8; font-size: 12px; font-weight: 800; }
+.app .forecast-legend { display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin-top: 1px; color: #516d7b; font-size: 11px; font-weight: 700; }
+.app .forecast-legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.app .forecast-legend-line { display: inline-block; width: 16px; border-top: 3px solid #007fb8; }
+.app .forecast-legend-actual { display: inline-block; width: 16px; border-top: 3px solid #536c7b; }
+.app .forecast-legend-band { display: inline-block; width: 14px; height: 10px; background: #c7e9f6; }
+.app .forecast-peak-context { margin: 12px 0 0; padding: 10px 12px; border-left: 3px solid #75b9d2; background: #eef8fc; color: #244d60; font-size: 14px; font-weight: 700; line-height: 1.5; }
+.app .forecast-sources { display: flex; flex-wrap: wrap; align-items: center; column-gap: 18px; row-gap: 6px; margin-top: 10px; }
+.app .forecast-sources .source-badge { margin: 0; }
+
+@media (max-width: 800px) {
+  .app .regional-visitor-signal, .app .regional-top-grid { grid-template-columns: 1fr; }
+  .app .regional-signal-lead { border-right: 0; border-bottom: 1px solid #dceaf1; }
+}
+@media (max-width: 580px) {
+  .app .regional-section-head { align-items: start; flex-direction: column; }
+  .app .regional-signal-facts > div { padding-inline: 9px; }
+  .app .regional-signal-facts span { font-size: 12px; }
+  .app .regional-signal-facts strong { font-size: 17px; }
+  .app .regional-top-list li { grid-template-columns: 30px minmax(0, 1fr) max-content; gap: 9px; }
+  .app .regional-profile-list > div { grid-template-columns: 95px minmax(0, 1fr) max-content; gap: 9px; }
+  .app .trend-daily-forecast .forecast-view { padding: 15px 10px 12px; }
+  .app .trend-daily-forecast .forecast-peak-summary { align-items: start; text-align: left; }
+  .app .trend-daily-forecast .forecast-peak-summary > strong { font-size: 21px; }
+}
+
+/* Daily report and analysis copy should remain legible beside the large metrics. */
+.app { font-size: 16px; }
+.app :is(
+  .panel-head p,
+  .content-scope,
+  .content-feed-description,
+  .summary-details > summary,
+  .compact-details > summary,
+  .regional-section-head p,
+  .analysis-block-heading p
+) { font-size: 14px; line-height: 1.6; }
+.app :is(
+  .daily-peak-meta,
+  .brief-chart-title span,
+  .morning-meta,
+  .content-evidence-caption,
+  .content-feed-toolbar,
+  .content-feed-date,
+  .content-feed-channel,
+  .policy-now-period,
+  .policy-now-note,
+  .analysis-data-date,
+  .regional-data-period,
+  .regional-signal-method,
+  .forecast-legend
+) { font-size: 13px; line-height: 1.5; }
+.app :is(.youtube-recent-video-meta, .youtube-recent-video-channel) { font-size: 13px; }
+.app .youtube-recent-video-details > strong { font-size: 15px; }
+.app :is(.analysis-signal-list p, .analysis-signal-list small, .analysis-type-list small) { font-size: 12px; line-height: 1.5; }
+.app .analysis-type-list li > span { font-size: 16px; font-weight: 800; line-height: 1.4; }
+.app .panel-policy-report .briefing-item-label { font-size: 16px; font-weight: 800; line-height: 1.5; }
+.app .briefing-item-owner { color: #405866; font-size: 14px; font-weight: 700; }
+.app .briefing-item-owner .dept-chip { font-size: 13px; font-weight: 700; }
+.app .priority-tag { font-size: 12px; }
+.app .manual-ref-cite--visible { margin: 3px 0 0; padding: 8px 12px; border: 1px solid #cfe4ee; border-left: 3px solid #73b9d3; border-radius: 9px; background: #f2f9fc; font-size: 14px; line-height: 1.45; }
+.app .manual-ref-cite--visible > strong { display: block; margin-bottom: 3px; color: #173747; font-size: 15px; line-height: 1.5; font-weight: 800; }
+.app .manual-ref-cite--visible .manual-ref-cite__source { margin: 0; color: #365667; font-family: var(--font-kr); font-size: 14px; font-weight: 700; line-height: 1.6; }
+.app .manual-ref-cite--visible .manual-ref-cite__quote { color: #274757; font-size: 14px; font-style: normal; overflow-wrap: anywhere; }
+.app :is(.morning-window, .policy-now-list p, .source-badge, .source-badge__note, .source-badge__details ul, .footer-link-btn) { font-size: 13px; line-height: 1.55; }
+.app :is(.source-tag-real, .source-tag-sample, .source-badge summary, .analysis-block-heading > span, .regional-step, .brief-alert-asof, .brief-observed-signal) { font-size: 12px; }
+.app :is(.briefing-stats small, .daily-peak-next small) { font-size: 13px; }
+.app .hero-description { font-size: 14px; }
+
+.app .policy-checklist-progress { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 4px 0 16px; padding: 12px 14px; border: 1px solid #d6e8f0; background: #f3faff; color: #24495a; font-size: 14px; font-weight: 700; }
+.app .policy-checklist-progress strong { color: #006fae; font-size: 17px; font-weight: 800; }
+.app .policy-checklist-phase { margin-bottom: 23px; }
+.app .policy-checklist-phase h4 { margin: 0 0 10px; color: #173747; font-size: 18px; font-weight: 800; }
+.app .policy-checklist-phase .briefing-list { gap: 10px; }
+.app .policy-checklist-phase .briefing-item { padding: 12px 14px; }
+.app .policy-checklist-phase .briefing-item.is-complete { border-color: #a5cfcb; background: #f7fcfa; }
+.app .policy-checklist-item-top { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+.app .policy-checklist-action { display: flex; align-items: start; gap: 11px; min-width: 0; cursor: pointer; }
+.app .policy-checklist-action input { flex: 0 0 auto; width: 18px; height: 18px; margin: 3px 0 0; accent-color: #007bbd; cursor: pointer; }
+/* 진행률 막대와 저장 안내는 진행 상자 안에서 아랫줄로 내려간다. */
+/* 오늘의 결론 -- AREA0 브리핑 카드 안 접기. develop의 .today-action 계열은 쓰지 않고
+   ui 브리핑 카드 톤(흰 배경 · #007bbd 강조 · 얇은 청회색 테두리)을 따른다. */
+.app .today-conclusion { margin-top: 14px; }
+.app .today-conclusion__situations { display: grid; gap: 8px; margin: 10px 0 12px; }
+.app .today-conclusion__situations > div { padding: 10px 12px; border: 1px solid #dce7ed; border-radius: 6px; background: #f8fbfd; }
+.app .today-conclusion__situations p { margin: 6px 0 0; color: #43616f; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.app .today-conclusion__actions { display: grid; gap: 10px; list-style: none; margin: 0 0 12px; padding: 0; }
+.app .today-conclusion__actions li { display: flex; align-items: start; gap: 10px; }
+.app .today-conclusion__actions strong { display: block; color: #17323f; font-size: 13px; font-weight: 800; line-height: 1.45; }
+.app .today-conclusion__actions p { margin: 4px 0 0; color: #4a6a7a; font-size: 12px; font-weight: 700; line-height: 1.5; }
+.app .policy-checklist-progress { flex-wrap: wrap; }
+.app .policy-checklist-progress__bar {
+  flex: 0 0 100%;
+  height: 6px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: #dbeaf2;
+  overflow: hidden;
+}
+.app .policy-checklist-progress__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: #007bbd;
+}
+.app .policy-checklist-progress__note {
+  flex: 0 0 100%;
+  color: #5d7c8b;
+  font-size: 12px;
+  font-weight: 700;
+}
+/* 구간 제목 옆 완료 수 */
+.app .policy-checklist-phase h4 small {
+  margin-left: 8px;
+  color: #5d7c8b;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* 이 조치가 뽑힌 이유 */
+.app .policy-checklist-reason {
+  margin: 6px 0 0;
+  color: #4a6a7a;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.app .policy-checklist-matched {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.app .policy-checklist-excluded { margin: 14px 0 0; color: #526c7a; font-size: 13px; font-weight: 700; }
+
+/* 헤더의 투어 재생 버튼. form 밖에 있어 .header-region-picker button 규칙이 닿지 않으므로
+   여기서 따로 칠한다 -- "현황 보기" submit과 구분되는 조용한 보조 버튼. */
+.app .header-tour-replay {
+  padding: 10px 14px;
+  border: 1px solid #bfd3de;
+  border-radius: 5px;
+  background: #fff;
+  color: #2a5a72;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.app .header-tour-replay:hover {
+  border-color: #7fb6d3;
+  background: #f2f9fc;
+  color: #11374a;
+}
+
+/* ============================================================
+   사용법 투어 (GuideTour)
+   develop의 .tour* 규칙(index.css)은 클래스 이름을 guide-tour*로 바꿔 닿지 않는다.
+   여기서 데이터랩 테마 톤으로 새로 칠한다 -- 강조 #007bbd, 본문 #17323f,
+   보조 #4a6a7a, 테두리 #dce7ed, 반경 6~10px.
+   ============================================================ */
+.app .guide-tour {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+}
+/* 스포트라이트: 대상만 남기고 나머지를 덮는다. 큰 그림자 하나로 구멍을 만든다. */
+.app .guide-tour__hole {
+  position: fixed;
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px #0c2a3ab8;
+  outline: 2px solid #4ca9d8;
+  outline-offset: 3px;
+  pointer-events: none;
+  transition: top .18s ease, left .18s ease, width .18s ease, height .18s ease;
+}
+.app .guide-tour__backdrop {
+  position: fixed;
+  inset: 0;
+  background: #0c2a3ab8;
+}
+.app .guide-tour__card {
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 18px 20px 16px;
+  border: 1px solid #cfe0e9;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 16px 36px #0b2b3d33;
+}
+.app .guide-tour__card--intro {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: min(520px, calc(100vw - 32px));
+  transform: translate(-50%, -50%);
+}
+.app .guide-tour__progress {
+  margin: 0 0 6px;
+  color: #6a8494;
+  font-size: 11px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.app .guide-tour__title {
+  margin: 0 0 8px;
+  color: #17323f;
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.app .guide-tour__body {
+  margin: 0;
+  color: #40606f;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.app .guide-tour__points {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  color: #34576a;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.8;
+}
+.app .guide-tour__note {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid #007bbd;
+  border-radius: 0 6px 6px 0;
+  background: #f0f8fc;
+  color: #315367;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.app .guide-tour__buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+.app .guide-tour__nav {
+  display: flex;
+  gap: 8px;
+}
+.app .guide-tour__skip {
+  padding: 8px 4px;
+  border: 0;
+  background: none;
+  color: #6a8494;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.app .guide-tour__skip:hover {
+  color: #315367;
+  text-decoration: underline;
+}
+.app :is(.guide-tour__back, .guide-tour__next) {
+  padding: 9px 16px;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.app .guide-tour__back {
+  border: 1px solid #bfd3de;
+  background: #fff;
+  color: #2a5a72;
+}
+.app .guide-tour__back:hover {
+  border-color: #7fb6d3;
+  background: #f2f9fc;
+}
+.app .guide-tour__next {
+  border: 1px solid #007bbd;
+  background: #007bbd;
+  color: #fff;
+}
+.app .guide-tour__next:hover {
+  border-color: #006ca6;
+  background: #006ca6;
+}
+@media (max-width: 860px) {
+  .app .guide-tour__card--intro {
+    top: auto;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    transform: none;
+  }
+}
+
+/* 서비스 메뉴 상단 고정 — 스크롤을 내려도 다른 영역으로 바로 이동할 수 있게 (09.30).
+   .app의 overflow-x: clip은 sticky를 깨지 않는다(hidden이면 깨짐). 메뉴로 이동한 섹션 제목이
+   고정 메뉴 밑에 숨지 않도록 앵커 대상에 메뉴 높이만큼 scroll-margin을 준다. */
+.app { --sticky-nav-h: 50px; }
+.portal-navigation { position: sticky; top: 0; z-index: 40; box-shadow: 0 2px 8px rgba(16, 37, 48, .06); }
+.app .header-region-results { z-index: 45; } /* 지역 검색 목록이 고정 메뉴 위로 펼쳐지게 */
+.app [id] { scroll-margin-top: calc(var(--sticky-nav-h) + 16px); }
+@media (max-width: 700px) {
+  .app { --sticky-nav-h: 58px; }
+}

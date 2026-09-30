@@ -1,0 +1,33 @@
+{
+  "snapshot_id": "tour_earlywarning_20260922",
+  "frozen_date_kst": "2026-09-22",
+  "database": "tour_earlywarning",
+  "git_branch": "poolhan/data-analysis",
+  "base_commit": "e3dac57",
+  "objects": [
+    "snap_20260922_daily_core",
+    "snap_20260922_datalab_monthly",
+    "snap_20260922_anomaly_final",
+    "snap_20260922_event",
+    "snap_20260922_event_point",
+    "snap_20260922_evidence_top3",
+    "snap_20260922_asos_daily",
+    "analysis_snapshot_manifest_20260922"
+  ],
+  "expected": {
+    "canonical_regions": 228,
+    "daily_core_rows_approx": 301416,
+    "datalab_monthly_rows": 18240,
+    "anomaly_episodes": 450,
+    "festival_events": 2562,
+    "festival_event_points": 5124,
+    "asos_daily_rows": 128535
+  },
+  "excluded_from_git": [
+    "raw CSV and ZIP files",
+    "database dumps",
+    "credentials and API keys",
+    "browser sessions",
+    "generated analysis exports"
+  ]
+}

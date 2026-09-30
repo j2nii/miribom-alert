@@ -1,0 +1,173 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-16T23:51:26+09:00",
+  "source": [
+    {
+      "name": "YouTube 「여수 연예인 추천 맛집 5 (성시경, 전현무, 풍자 또간집, 허영만)」 (유난히 오늘)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=7tQmo__7JG0",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "'혼밥 유튜버 홀대' 여수 식당 결국…위생 위반 '행정처분'",
+      "provider": "한국경제",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.hankyung.com/article/2025072402027",
+      "note": "보도 2025-07-24"
+    },
+    {
+      "name": "YouTube 「현재 난리난 또간집 여수식당」 (콩자반)",
+      "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://www.youtube.com/watch?v=kd18fTVCUL4",
+      "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+    },
+    {
+      "name": "2인분 시켰는데 홀대에 '왈칵'…'발칵' 뒤집힌 여수시 결국",
+      "provider": "연합뉴스(다음뉴스)",
+      "retrieved_at": "2026-09-16",
+      "url": "https://v.daum.net/v/20250717180351295",
+      "note": "보도 2025-07-17"
+    }
+  ],
+  "period": {
+    "start": "2025-07-03",
+    "end": "2025-08-31",
+    "granularity": "일"
+  },
+  "caveat": [
+    "평판 위기는 방문 수요를 만들지 않아 검색·방문자 지표에 신호가 나타나지 않는다. 이 시스템(수요 급증 조기경보)의 탐지 범위 밖이며, 혼잡도 매뉴얼도 가격·친절 문제를 다루지 않는다.",
+    "시스템 신호 규칙은 임시값(D-12)이다. 역할2의 백테스트로 임계와 지속 조건이 바뀔 수 있다.",
+    "기사 이벤트는 웹 검색으로 찾은 것이며 전수 조사가 아니다. 더 이른 조치가 보도되지 않았을 수 있다.",
+    "유튜브 게시일은 DB에 적재된 시각의 날짜 부분이며, 조회수는 적재 시점 값이다."
+  ],
+  "data": {
+    "case_id": "TL-003",
+    "region": {
+      "code": "12130",
+      "name": "여수시"
+    },
+    "title": "여수 — 식당 불친절 영상 확산과 시의 대응",
+    "case_kind": "평판 위기",
+    "lags": {
+      "content_date": "2025-07-03",
+      "first_action_date": "2025-07-04",
+      "content_to_action_days": 1
+    },
+    "signal_rule": {
+      "metric": "네이버 검색지수 (일별)",
+      "statistic": "전년 동요일(364일 전) 대비 배율의 최근 7일 중앙값",
+      "threshold": 1.73,
+      "threshold_basis": "2024년 전국 99백분위 (합성 지역 제외, 사례 지역을 보고 정하지 않음)",
+      "min_duration_days": 7
+    },
+    "signal_check": [
+      {
+        "metric": "네이버 검색지수",
+        "window_start": "2025-07-03",
+        "window_end": "2025-08-31",
+        "max_value": 1.21,
+        "max_date": "2025-07-20",
+        "threshold": 1.73,
+        "signaled": false,
+        "note": "논란 이후"
+      },
+      {
+        "metric": "외지인 방문자수",
+        "window_start": "2025-07-03",
+        "window_end": "2025-08-31",
+        "max_value": 1.15,
+        "max_date": "2025-08-20",
+        "threshold": 1.51,
+        "signaled": false,
+        "note": "논란 이후"
+      }
+    ],
+    "events": [
+      {
+        "type": "콘텐츠 확산",
+        "description": "유튜브 '유난히 오늘' 「여수 연예인 추천 맛집 5」 게시 — 혼자 온 손님을 재촉하는 장면이 담긴 원 영상. 연합뉴스가 이 채널을 영상 출처로 표기했다",
+        "date": "2025-07-03",
+        "date_basis": "게시일",
+        "value": 1694559,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「여수 연예인 추천 맛집 5 (성시경, 전현무, 풍자 또간집, 허영만)」 (유난히 오늘)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=7tQmo__7JG0",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "여수시가 논란 다음 날 해당 식당 현장 사실관계 조사",
+        "actor": "행정",
+        "is_case_response": true,
+        "date": "2025-07-04",
+        "date_basis": "사건일",
+        "quote": "시는 지난 3일 해당 식당에서 '불친절 논란'이 일자 다음 날 현장을 찾아 사실관계를 조사했다.",
+        "source": {
+          "name": "'혼밥 유튜버 홀대' 여수 식당 결국…위생 위반 '행정처분'",
+          "provider": "한국경제",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.hankyung.com/article/2025072402027",
+          "note": "보도 2025-07-24"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "여수시 식품위생과 특별위생점검, 위생 기준 위반으로 과태료 처분",
+        "actor": "행정",
+        "is_case_response": true,
+        "date": "2025-07-15",
+        "date_basis": "사건일",
+        "quote": "24일 여수시에 따르면 시 식품위생과는 이달 15일 해당 식당을 방문해 특별위생점검을 실시했다.",
+        "source": {
+          "name": "'혼밥 유튜버 홀대' 여수 식당 결국…위생 위반 '행정처분'",
+          "provider": "한국경제",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.hankyung.com/article/2025072402027",
+          "note": "보도 2025-07-24"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "콘텐츠 확산",
+        "description": "「현재 난리난 또간집 여수식당」 게시 — 논란이 대형 채널로 번진 확산 국면",
+        "date": "2025-07-16",
+        "date_basis": "게시일",
+        "value": 4101975,
+        "unit": "회(조회수)",
+        "source": {
+          "name": "YouTube 「현재 난리난 또간집 여수식당」 (콩자반)",
+          "provider": "YouTube — 팀 DB youtube_video (월별 조회수 상위)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://www.youtube.com/watch?v=kd18fTVCUL4",
+          "note": "조회수는 DB 적재 시점(2026-09-15) 기준"
+        },
+        "is_signal": false
+      },
+      {
+        "type": "조치 시행",
+        "description": "여수시가 관내 음식점 5천여 곳에 친절 서비스 당부 공문 발송",
+        "actor": "행정",
+        "is_case_response": true,
+        "date": "2025-07-17",
+        "date_basis": "사건일",
+        "quote": "여수시는 이날 관내 5천개 음식점 업주에게 공문을 발송해 부드러운 말투와 충분한 식사 시간 보장 등 친절 서비스를 다시 한번 당부했다고 밝혔습니다.",
+        "source": {
+          "name": "2인분 시켰는데 홀대에 '왈칵'…'발칵' 뒤집힌 여수시 결국",
+          "provider": "연합뉴스(다음뉴스)",
+          "retrieved_at": "2026-09-16",
+          "url": "https://v.daum.net/v/20250717180351295",
+          "note": "보도 2025-07-17"
+        },
+        "is_signal": false
+      }
+    ]
+  }
+}

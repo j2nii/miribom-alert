@@ -1,0 +1,133 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-29T16:47:11+09:00",
+  "source": [
+    {
+      "name": "YouTube Data API v3",
+      "provider": "Google",
+      "retrieved_at": "2026-09-29",
+      "note": "인제 여행, 인제 가볼만한곳, 인제 맛집 검색어별 최신 최대 50건에서 지역 관광 관련 영상 선별, 조회수 500회 이상, 채널별 최대 2건"
+    }
+  ],
+  "period": {
+    "start": "2026-09-23",
+    "end": "2026-09-29",
+    "granularity": "일"
+  },
+  "caveat": [
+    "검색어와 검색 결과 수 제한 때문에 유튜브의 전체 게시 영상을 뜻하지 않습니다."
+  ],
+  "data": {
+    "region": {
+      "code": "51810",
+      "name": "인제군"
+    },
+    "videos": [
+      {
+        "video_id": "gICPPS5phUE",
+        "title": "설악산 단풍 들기 전에 인제 꽃대궐 개막! 100만 송이 가을꽃 축제 실황, 설악산 가는 길에 들러보세요!",
+        "channel": "나교수의 등산·여행 스케치",
+        "published_at": "2026-09-27",
+        "view_count": 8380
+      },
+      {
+        "video_id": "6bWdIHw7XOs",
+        "title": "인제 가을꽃축제 보랏빛 꽃길 💜 지금 가면 딱 좋아요 #shorts",
+        "channel": "푸바오 언니 | 福宝姐姐",
+        "published_at": "2026-09-27",
+        "view_count": 3785
+      },
+      {
+        "video_id": "uWItxr7C_CQ",
+        "title": "인제 가을꽃축제 개막현장 실시간 가수, 입장료, 프로그램, 주차 정보 이찬원 배경음악 꽃다운 날 #인제가을꽃축제 #가을꽃축제 #인제가을꽃축제박인환 #이찬원 #꽃다운날",
+        "channel": "정보맨",
+        "published_at": "2026-09-25",
+        "view_count": 2006
+      },
+      {
+        "video_id": "cqrXdN7VJNw",
+        "title": "가을 여행지 추천 🍁 하늘과 꽃이 미쳐버린 '강원도 인제 가을꽃축제' 🌸 #Shorts",
+        "channel": "동동이네블라블라 :)",
+        "published_at": "2026-09-26",
+        "view_count": 1517
+      },
+      {
+        "video_id": "8j5Z8UASEso",
+        "title": "강원도 가을여행의 시작은 인제 여기!",
+        "channel": "RaonisM",
+        "published_at": "2026-09-26",
+        "view_count": 1310
+      },
+      {
+        "video_id": "5fdur6PF1ks",
+        "title": "인제 곰배령 가을 등산 명품숲길 힐링 산행 부부등산 #곰배령 #인제곰배령 #가을등산",
+        "channel": "용쓰패밀리",
+        "published_at": "2026-09-27",
+        "view_count": 1283
+      },
+      {
+        "video_id": "WaYzcruKNmQ",
+        "title": "강원도 힐링 여기 어때? #강원도여행 #인제가볼만한곳 #자작나무숲 #인제자작나무숲 #강원도여행필수코스 #친구랑 #강원도인제",
+        "channel": "산길수다",
+        "published_at": "2026-09-24",
+        "view_count": 1235
+      },
+      {
+        "video_id": "bYGc1B5acag",
+        "title": "#방동약수 #아침가리계곡 #소월숲스테이 #방태천막국수 #인제여행",
+        "channel": "kdm",
+        "published_at": "2026-09-26",
+        "view_count": 1202
+      },
+      {
+        "video_id": "vtaHERPiqbU",
+        "title": "우정 여행은 내가 봤을 때 아닐꺼야. 4명 중에 2명은 커플 여행이였을거야 ㅋㅋ #번지점프 #63미터 #인제 #여행 #유튜브 #우정 #bunjeejumping #shorts",
+        "channel": "63미터 뛸래 말래?",
+        "published_at": "2026-09-27",
+        "view_count": 1160
+      },
+      {
+        "video_id": "3UiP9Bd59Y0",
+        "title": "우정 여행에 마무리를 번지 점프로 근데..정말 우정 여행 맞지..?! 궁금해서 그래^^ #번지점프 #63미터 #인제 #여행 #유튜브 #bunjeejumping #shorts",
+        "channel": "63미터 뛸래 말래?",
+        "published_at": "2026-09-27",
+        "view_count": 1112
+      },
+      {
+        "video_id": "DL3Lq7ik5p4",
+        "title": "인제 여행명소, 방태산 이단폭포",
+        "channel": "여행스케치",
+        "published_at": "2026-09-25",
+        "view_count": 1017
+      },
+      {
+        "video_id": "dLxKfBio-h8",
+        "title": "인제 가을꽃축제에서        잃어버린 4명을 찾았다.",
+        "channel": "สมหวัง 범로기형 인생2막",
+        "published_at": "2026-09-26",
+        "view_count": 780
+      },
+      {
+        "video_id": "J8n4OtJkXV0",
+        "title": "2026인제가을꽃축제",
+        "channel": "검볼",
+        "published_at": "2026-09-23",
+        "view_count": 637
+      },
+      {
+        "video_id": "Mt9FfravpB4",
+        "title": "비 오는 날 더 감성적인 알록달록 꽃대궐 🌼 2026 인제가을꽃축제 현장 5분 랜선 산책",
+        "channel": "서서농부 이종선",
+        "published_at": "2026-09-26",
+        "view_count": 586
+      },
+      {
+        "video_id": "Fp77trBpOVI",
+        "title": "2026 강원도 10월 첫째 주 가을축제｜정선·속초·인제·원주",
+        "channel": "득템자료실",
+        "published_at": "2026-09-28",
+        "view_count": 540
+      }
+    ]
+  }
+}

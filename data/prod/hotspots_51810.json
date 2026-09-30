@@ -1,0 +1,93 @@
+{
+  "_mock": false,
+  "generated_at": "2026-09-23T22:38:40+09:00",
+  "source": [
+    {
+      "name": "주요관광지점 입장객 통계",
+      "provider": "문화체육관광부 — 팀 DB major_attraction_visitors_monthly",
+      "retrieved_at": "2026-09-23",
+      "note": "지역 매핑은 attraction_region_map(문자열 시군구명 → canonical_region_id)을 사용했다."
+    }
+  ],
+  "period": {
+    "start": "2026-02-01",
+    "end": "2026-03-31",
+    "granularity": "월"
+  },
+  "caveat": [
+    "순위·증감률은 문화체육관광부 주요관광지점 입장객 통계(월별) 기준이다. 통신사 유동인구가 아니라 관광지점이 자체 집계·제출한 입장객 수라 무료 개방지·비집계 지점은 실제 방문자보다 과소 대표될 수 있다.",
+    "증감률은 직전월 대비다(전월 값이 0이거나 없는 지점은 증감률을 계산할 수 없어 순위에서 제외했다).",
+    "coord(좌표)·visitor_mix(현지인/외지인)·congestion_level·bottleneck은 이 DB에 없어 비웠다. visitor_mix를 내국인/외국인 비율로 대체하지 않았다 — 스키마가 뜻하는 거주지 기준 현지인/외지인과 다르다.",
+    "spatial_type(매뉴얼 p.13 공간유형)은 DB에 없는 값이라 사람이 지점별로 분류했다(현장 확인 전 잠정 분류).",
+    "공간유형 분류가 없어 순위에서 제외한 지점: 점봉산곰배령"
+  ],
+  "data": {
+    "region": {
+      "code": "51810",
+      "name": "인제군"
+    },
+    "baseline_period": {
+      "start": "2026-02-01",
+      "end": "2026-02-28",
+      "granularity": "월"
+    },
+    "ranking": [
+      {
+        "rank": 1,
+        "poi_name": "농촌체험마을(황태마을)",
+        "visitors": 16531,
+        "change_rate": 0.1793,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 2,
+        "poi_name": "농촌체험마을(하추리마을)",
+        "visitors": 1399,
+        "change_rate": -0.2162,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 3,
+        "poi_name": "dmz평화생명동산",
+        "visitors": 507,
+        "change_rate": 21.0435,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 4,
+        "poi_name": "합강정공원(번지점프)",
+        "visitors": 120,
+        "change_rate": 0.9048,
+        "spatial_type": "지형·경사 이동·저항 흐름형"
+      },
+      {
+        "rank": 5,
+        "poi_name": "농촌체험마을(냇강마을)",
+        "visitors": 85,
+        "change_rate": 1.0732,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 6,
+        "poi_name": "농촌체험마을(신월리마을)",
+        "visitors": 81,
+        "change_rate": 1.0769,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 7,
+        "poi_name": "농촌체험마을(산채마을)",
+        "visitors": 79,
+        "change_rate": -0.3876,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      },
+      {
+        "rank": 8,
+        "poi_name": "농촌체험마을(소치마을)",
+        "visitors": 26,
+        "change_rate": 0.1304,
+        "spatial_type": "실외 공간 가치 체류 중심형"
+      }
+    ]
+  }
+}
